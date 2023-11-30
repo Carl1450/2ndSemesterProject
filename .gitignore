@@ -26,3 +26,8 @@ replay_pid*
 # IDK general eclipse stuff
 *.classpath
 *.project
+
+# Intellij stuff
+*.xml
+*.iml
+.idea/
