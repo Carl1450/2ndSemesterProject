@@ -9,7 +9,7 @@ public class DBTest {
 	
 	public static void main(String[] args) {
 		
-		Connection connection = DBConnection.getInstance().getConnection();
+		Connection connection = DBConnection.getInstance(ConnectionEnvironment.PRODUCTION).getConnection();
 		String query = "SELECT * FROM test_table";
 		try {
 			Statement stat = connection.createStatement();
