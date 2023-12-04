@@ -24,8 +24,8 @@ public class CampsiteDAO {
 					+ "SELECT 1 FROM Booking WHERE campsiteId = Campsite.id " + "AND startDate <= ? AND endDate >= ?)";
 
 			try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-				preparedStatement.setDate(1, startDate);
-				preparedStatement.setDate(2, endDate);
+				preparedStatement.setDate(1, endDate);
+				preparedStatement.setDate(2, startDate);
 
 				try (ResultSet resultSet = preparedStatement.executeQuery()) {
 					while (resultSet.next()) {
