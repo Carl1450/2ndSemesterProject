@@ -15,7 +15,11 @@ public class DBConnection {
     private static final String userName = "DMA-CSD-V23_10478739";
     private static final String password = "Password1!";
 
+    private ConnectionEnvironment env;
+
     private DBConnection(ConnectionEnvironment env) {
+        this.env = env;
+
         String connectionString = String.format("jdbc:sqlserver://%s:%d;databaseName=%s;user=%s;password=%s;encrypt=false",
                 serverAddress, serverPort, env.getDatabaseName(), userName, password);
         try {
@@ -62,6 +66,17 @@ public class DBConnection {
 
 
     public Connection getConnection() {
+        try {
+            if (connection == null || connection.isClosed()) {
+                // Reinitialize the connection
+                String connectionString = String.format(
+                        "jdbc:sqlserver://%s:%d;databaseName=%s;user=%s;password=%s;encrypt=false",
+                        serverAddress, serverPort, env.getDatabaseName(), userName, password);
+                connection = DriverManager.getConnection(connectionString);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return connection;
     }
 
