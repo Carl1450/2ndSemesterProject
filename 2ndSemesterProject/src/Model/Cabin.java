@@ -1,9 +1,15 @@
 package Model;
 
 public class Cabin extends Campsite{
+	
+	private int maxPeople;
+	private float deposit;
 
-	public Cabin() {
-		// TODO Auto-generated constructor stub
+	public Cabin(String section, String route, int siteNumber, Price price, int maxPeople, float deposit) {
+		super(section, route, siteNumber, price);
+		
+		this.deposit = deposit;
+		this.maxPeople = maxPeople;
 	}
 
 }
