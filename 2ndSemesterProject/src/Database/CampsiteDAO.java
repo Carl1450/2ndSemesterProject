@@ -20,52 +20,33 @@ public class CampsiteDAO {
 		List<Campsite> campsiteList = new ArrayList<>();
 
 		try (Connection connection = DBConnection.getInstance(ConnectionEnvironment.PRODUCTION).getConnection()) {
-			String query = "SELECT id, section, road, siteNo, type FROM Campsite WHERE NOT EXISTS (" +
-					"SELECT 1 FROM Booking WHERE campsiteId = Campsite.id " +
-					"AND startDate <= ? AND endDate >= ?)";
-
+			String query = "SELECT id, section, road, siteNo, type FROM Campsite WHERE NOT EXISTS ("
+					+ "SELECT 1 FROM Booking WHERE campsiteId = Campsite.id " + "AND startDate <= ? AND endDate >= ?)";
 
 			try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 				preparedStatement.setDate(1, startDate);
 				preparedStatement.setDate(2, endDate);
-				
-				try(ResultSet resultSet = preparedStatement.executeQuery()){
-					while(resultSet.next()) {
-						
+
+				try (ResultSet resultSet = preparedStatement.executeQuery()) {
+					while (resultSet.next()) {
+
 						Campsite campsite = null;
-						
+
 						int id = resultSet.getInt(1);
 						String section = resultSet.getNString(2);
 						String road = resultSet.getNString(3);
 						int siteNo = resultSet.getInt(4);
 						String type = resultSet.getNString(5);
-						
-						if(type.equals("Cabin")) {
-							String cabinQuery = "SELECT maxPeople, deposit FROM Cabin WHERE id = ?";
-							PreparedStatement cabinPreparedStatement = connection.prepareStatement(cabinQuery);
-							cabinPreparedStatement.setInt(1, id);
-							ResultSet cabinResultSet = cabinPreparedStatement.executeQuery();
-							
-							int maxPeople = cabinResultSet.getInt(1);
-							float deposit = cabinResultSet.getFloat(2);
-							
-							Price price = getPrice(connection, id);
-							campsite = new Cabin(section, road, siteNo, price, maxPeople, deposit);
+
+						if (type.equals("Cabin")) {
+							campsite = createCabin(connection, id, section, road, siteNo);
 						}
-						if(type.equals("Pitch")) {
-							String pitchQuery = "SELECT fee FROM Pitch WHERE id = ?";
-							PreparedStatement pitchPreparedStatement = connection.prepareStatement(pitchQuery);
-							pitchPreparedStatement.setInt(1, id);
-							ResultSet pitchResultSet = pitchPreparedStatement.executeQuery();
-							
-							float fee = pitchResultSet.getFloat(1);
-							
-							Price price = getPrice(connection, id);
-							campsite = new Pitch(section, road, siteNo, price, fee);
+						if (type.equals("Pitch")) {
+							campsite = createPitch(connection, id, section, road, siteNo);
 						}
 						campsiteList.add(campsite);
 					}
-					
+
 				}
 			}
 		}
@@ -75,25 +56,69 @@ public class CampsiteDAO {
 		}
 		return campsiteList;
 	}
-	
+
 	private Price getPrice(Connection connection, int id) {
 		Price price = null;
-		try{
+		try {
 			String query = "SELECT price, effectiveDate, campsiteId FROM price WHERE id = ?";
 			PreparedStatement preparedStatement = connection.prepareStatement(query);
 			preparedStatement.setInt(1, id);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			resultSet.next();
-			
+
 			float priceAmount = resultSet.getFloat(1);
 			Date effectiveDate = resultSet.getDate(2);
 			price = new Price(priceAmount, effectiveDate);
-		}
-		catch(SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return price;
-		
+
+	}
+
+	private Cabin createCabin(Connection connection, int id, String section, String road, int siteNo) {
+
+		String cabinQuery = "SELECT maxPeople, deposit FROM Cabin WHERE id = ?";
+		try (PreparedStatement cabinPreparedStatement = connection.prepareStatement(cabinQuery)) {
+
+			cabinPreparedStatement.setInt(1, id);
+			try (ResultSet cabinResultSet = cabinPreparedStatement.executeQuery()) {
+
+				if (cabinResultSet.next()) {
+					int maxPeople = cabinResultSet.getInt(1);
+					float deposit = cabinResultSet.getFloat(2);
+
+					Price price = getPrice(connection, id);
+					return new Cabin(section, road, siteNo, price, maxPeople, deposit);
+				}
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private Pitch createPitch(Connection connection, int id, String section, String road, int siteNo) {
+
+		String pitchQuery = "SELECT fee FROM Pitch WHERE id = ?";
+		try (PreparedStatement pitchPreparedStatement = connection.prepareStatement(pitchQuery)) {
+			pitchPreparedStatement.setInt(1, id);
+			try (ResultSet pitchResultSet = pitchPreparedStatement.executeQuery()) {
+
+				if (pitchResultSet.next()) {
+					float fee = pitchResultSet.getFloat(1);
+
+					Price price = getPrice(connection, id);
+					return new Pitch(section, road, siteNo, price, fee);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+
 	}
 
 }
