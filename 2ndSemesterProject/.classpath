@@ -12,5 +12,6 @@
 	<classpathentry kind="lib" path="sqljdbc_12.4/enu/jars/mssql-jdbc-12.4.0.jre8.jar"/>
 	<classpathentry kind="lib" path="sqljdbc_12.4/enu/jars/mssql-jdbc-12.4.0.jre8-javadoc.jar"/>
 	<classpathentry kind="lib" path="sqljdbc_12.4/enu/jars/mssql-jdbc-12.4.0.jre8-sources.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
