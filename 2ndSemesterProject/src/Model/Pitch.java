@@ -7,8 +7,16 @@ public class Pitch extends Campsite{
 	public Pitch(String section, String road, int siteNumber, Price price, float fee) {
 		super(section, road, siteNumber, price);
 		
-		this.fee = fee;
+		this.setFee(fee);
 		
+	}
+
+	public float getFee() {
+		return fee;
+	}
+
+	public void setFee(float fee) {
+		this.fee = fee;
 	}
 
 }
