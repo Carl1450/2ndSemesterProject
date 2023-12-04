@@ -13,13 +13,11 @@ public class TestBookingController {
 
     @BeforeEach
     void setUp() {
-        // Initialize resources or perform any necessary setup
-        mockCustomer = new Customer();
+        mockCustomer = null;
     }
 
     @AfterEach
     void tearDown() {
-        // Clean up resources or perform any necessary teardown
     }
 
     @Test

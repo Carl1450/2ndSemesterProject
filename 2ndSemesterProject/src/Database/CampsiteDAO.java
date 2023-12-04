@@ -20,8 +20,10 @@ public class CampsiteDAO {
 		List<Campsite> campsiteList = new ArrayList<>();
 
 		try (Connection connection = DBConnection.getInstance(ConnectionEnvironment.PRODUCTION).getConnection()) {
-			String query = "SELECT  id, section, road, siteNo, type FROM Campsite WHERE siteNo NOT IN (SELECT DISTINCT b.siteNo "
-					+ "FROM Booking b WHERE (b.startDate <= ? AND b.endDate >= ?))";
+			String query = "SELECT id, section, road, siteNo, type FROM Campsite WHERE NOT EXISTS (" +
+					"SELECT 1 FROM Booking WHERE campsiteId = Campsite.id " +
+					"AND startDate <= ? AND endDate >= ?)";
+
 
 			try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 				preparedStatement.setDate(1, startDate);
