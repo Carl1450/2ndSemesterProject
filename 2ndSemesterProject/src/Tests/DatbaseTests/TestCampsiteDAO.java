@@ -80,9 +80,9 @@ public class TestCampsiteDAO {
         CampsiteDAO SUT = new CampsiteDAO(); // TODO: Adjust CampsiteDAO for testing environment
 
         // Act & Assert
-        assertThrowsExactly(InvalidDateException.class, () -> {
-            Date startDate = "NULL".equals(startDateString) ? null : Date.valueOf(startDateString);
-            Date endDate = "NULL".equals(endDateString) ? null : Date.valueOf(endDateString);
+        assertThrows(InvalidDateException.class, () -> {
+            Date startDate = (startDateString != null && startDateString.equalsIgnoreCase("NULL")) ? Date.valueOf(startDateString)  : null;
+            Date endDate = (endDateString != null && endDateString.equalsIgnoreCase("NULL")) ? Date.valueOf(endDateString) : null;
             SUT.getAvailableCampsites(startDate, endDate);
         });
     }

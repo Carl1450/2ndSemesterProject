@@ -1,10 +1,13 @@
 package Database;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +19,12 @@ import Model.Price;
 public class CampsiteDAO {
 
 	public List<Campsite> getAvailableCampsites(Date startDate, Date endDate) {
-
+		try {
+			validateDate(startDate);
+			validateDate(endDate);
+		} catch (InvalidDateException e) {
+			e.printStackTrace();
+		}
 		List<Campsite> campsiteList = new ArrayList<>();
 
 		try (Connection connection = DBConnection.getInstance(ConnectionEnvironment.PRODUCTION).getConnection()) {
@@ -119,6 +127,20 @@ public class CampsiteDAO {
 
 		return null;
 
+	}
+	
+	private void validateDate(Date date) throws InvalidDateException {
+		if(date == null) {
+			throw new InvalidDateException();
+		}
+		try {
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			dateFormat.format(date);
+		}
+		catch(IllegalArgumentException e){
+			throw new InvalidDateException();
+			
+		}
 	}
 
 }
