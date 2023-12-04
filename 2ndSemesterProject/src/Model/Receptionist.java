@@ -1,9 +1,9 @@
 package Model;
 
-public class Receptionist extends Employee{
+public class Receptionist extends Employee {
 
-	public Receptionist() {
-		// TODO Auto-generated constructor stub
+	public Receptionist(String name, String address, String phoneNumber, String email) {
+		super(name, address, phoneNumber, email);
 	}
 
 }

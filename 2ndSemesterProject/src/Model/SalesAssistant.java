@@ -2,8 +2,9 @@ package Model;
 
 public class SalesAssistant extends Employee{
 
-	public SalesAssistant() {
-		// TODO Auto-generated constructor stub
+	public SalesAssistant(String name, String address, String phoneNumber, String email) {
+		super( name, address, phoneNumber, email); 
 	}
+
 
 }
