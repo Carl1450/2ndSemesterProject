@@ -15,11 +15,21 @@ import Model.Price;
 
 public class CampsiteDAO {
 
+	ConnectionEnvironment env;
+
+	public CampsiteDAO() {
+		env = ConnectionEnvironment.PRODUCTION;
+	}
+
+	public CampsiteDAO(ConnectionEnvironment env) {
+		this.env = env;
+	}
+
 	public List<Campsite> getAvailableCampsites(Date startDate, Date endDate) {
 
 		List<Campsite> campsiteList = new ArrayList<>();
 
-		try (Connection connection = DBConnection.getInstance(ConnectionEnvironment.PRODUCTION).getConnection()) {
+		try (Connection connection = DBConnection.getInstance(env).getConnection()) {
 			String query = "SELECT id, section, road, siteNo, type FROM Campsite WHERE NOT EXISTS ("
 					+ "SELECT 1 FROM Booking WHERE campsiteId = Campsite.id " + "AND startDate <= ? AND endDate >= ?)";
 
