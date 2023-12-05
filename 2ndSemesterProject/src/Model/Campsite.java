@@ -6,6 +6,7 @@ public abstract class Campsite {
 	private String road;
 	private int siteNumber;
 	private Price price;
+	private int id;
 	
 	public Campsite(String section, String road, int siteNumber, Price price) {
 		this.setPrice(price);
@@ -44,6 +45,10 @@ public abstract class Campsite {
 
 	public void setPrice(Price price) {
 		this.price = price;
+	}
+	
+	public int getId() {
+		return id;
 	}
 
 }

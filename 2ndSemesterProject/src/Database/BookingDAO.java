@@ -1,6 +1,12 @@
 package Database;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Date;
+
 import Model.Booking;
+import Model.Campsite;
 
 public class BookingDAO {
 
@@ -13,8 +19,28 @@ public class BookingDAO {
     public BookingDAO(ConnectionEnvironment env) {
         this.env = env;
     }
+    
     public boolean saveBooking(Booking booking) {
-        return false;
+    	String insertCustomerQ = "INSERT INTO booking(startDate, endDate, totalPrice, amountOfAdults, amountOfChildren, customerId, employeeId, campsiteId, packageId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+    	
+		try (Connection connection = DBConnection.getInstance(env).getConnection()) {
+			PreparedStatement prepStat = connection.prepareStatement(insertCustomerQ);
+			
+			prepStat.setDate(1, booking.getStartDate());
+			prepStat.setDate(2, booking.getEndDate());
+			prepStat.setFloat(3, booking.getTotalPrice());
+			prepStat.setInt(4, booking.getAmountOfAdults());
+			prepStat.setInt(5, booking.getAmountOfChildren());
+			prepStat.setInt(6, booking.getCustomer().getCustomerId());
+			//prepStat.setInt(7, booking.getEmployee().getEmployeeId);
+			prepStat.setInt(8, booking.getCampsite().getId());
+			prepStat.setObject(9, booking.getPackage());
+			
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+    	
+    	return false;
     }
-
 }
