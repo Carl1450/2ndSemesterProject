@@ -13,7 +13,19 @@ public class Booking {
 	private Employee employee;
 	private Campsite campsite; 
 	private Package packageDeal;
-
+	
+	public Booking(Date startDate, Date endDate, float totalPrice, int amountOfAdults, int amountOfChildren, Customer customer, Employee employee, Campsite campsite, Package packageDeal) {
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.totalPrice = totalPrice;
+		this.amountOfAdults = amountOfAdults;
+		this.amountOfChildren = amountOfChildren;
+		this.customer = customer;
+		this.employee = employee;
+		this.campsite = campsite;
+		this.packageDeal = packageDeal;
+	}
+	
     public Customer getCustomer() {
     	return customer;
     }
