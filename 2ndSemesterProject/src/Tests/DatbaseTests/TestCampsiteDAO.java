@@ -1,6 +1,7 @@
 package Tests.DatbaseTests;
 
 import Database.CampsiteDAO;
+import Database.ConnectionEnvironment;
 import Database.InvalidDateException;
 import Model.Campsite;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +31,7 @@ public class TestCampsiteDAO {
     @Test
     void TS_3_TC_1_campsites_are_returned_when_given_valid_dates() {
         // Arrange
-        CampsiteDAO SUT = new CampsiteDAO();  // TODO make it so that CampsiteDAO can take the ConnectionEnvironment.TESTING
+        CampsiteDAO SUT = new CampsiteDAO(ConnectionEnvironment.TESTING);
 
         // Reformatted date strings
         String startDateString = "2023-01-01";
@@ -50,7 +51,7 @@ public class TestCampsiteDAO {
     @Test
     void TS_3_TC_2_empty_list_is_returned_when_there_are_no_available_campsites() {
         // Arrange
-        CampsiteDAO SUT = new CampsiteDAO();  // TODO make it so that CampsiteDAO can take the ConnectionEnvironment.TESTING
+        CampsiteDAO SUT = new CampsiteDAO(ConnectionEnvironment.TESTING);
 
         // Reformatted date strings
         String startDateString = "2023-01-01";
@@ -74,7 +75,7 @@ public class TestCampsiteDAO {
     })
     void TS_4_TC_1_method_throws_InvalidDateException_when_given_invalid_dates(String startDateString, String endDateString) {
         // Arrange
-        CampsiteDAO SUT = new CampsiteDAO(); // TODO: Adjust CampsiteDAO for testing environment
+        CampsiteDAO SUT = new CampsiteDAO(ConnectionEnvironment.TESTING);
 
         // Act & Assert
         assertThrowsExactly(InvalidDateException.class, () -> {

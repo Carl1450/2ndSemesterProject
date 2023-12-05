@@ -1,5 +1,6 @@
 package Tests.DatbaseTests;
 
+import Database.ConnectionEnvironment;
 import Database.CustomerDAO;
 import Model.Customer;
 import org.junit.jupiter.api.Test;
@@ -10,7 +11,7 @@ public class TestCustomerDAO {
     @Test
     void TS_2_TC_1_find_customer_by_phone_number_with_valid_number() {
         // Arrange
-        CustomerDAO SUT = new CustomerDAO();
+        CustomerDAO SUT = new CustomerDAO(ConnectionEnvironment.TESTING);
         String phoneNumber = "+45 12345678";
 
         // Act
@@ -23,7 +24,7 @@ public class TestCustomerDAO {
     @Test
     void TS_2_TC_2_find_customer_by_phone_number_with_invalid_number() {
         // Arrange
-        CustomerDAO SUT = new CustomerDAO();
+        CustomerDAO SUT = new CustomerDAO(ConnectionEnvironment.TESTING);
         String phoneNumber = "";
 
         // Act
@@ -36,7 +37,7 @@ public class TestCustomerDAO {
     @Test
     void TS_2_TC_3_find_customer_by_phone_number_with_null() {
         // Arrange
-        CustomerDAO SUT = new CustomerDAO();
+        CustomerDAO SUT = new CustomerDAO(ConnectionEnvironment.TESTING);
         String phoneNumber = null;
 
         // Act
