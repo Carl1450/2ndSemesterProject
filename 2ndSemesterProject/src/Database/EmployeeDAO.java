@@ -1,0 +1,64 @@
+package Database;
+
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import Model.*;
+
+public class EmployeeDAO {
+
+	ConnectionEnvironment env;
+	private String findEmployeeByIdQ = "SELECT emp.id, emp.fname, emp.lname, emp.password FROM Employee emp WHERE id = ?";
+	private DBConnection connectionDB;
+
+	public EmployeeDAO() {
+		env = ConnectionEnvironment.PRODUCTION;
+	}
+
+	public EmployeeDAO(ConnectionEnvironment env) {
+		this.env = env;
+	}
+
+	public Employee findEmployeeById(int id) {
+		Employee employee = null;
+
+		try (Connection connection = connectionDB.getInstance(env).getConnection()) {
+			PreparedStatement prepStatement = connection.prepareStatement(findEmployeeByIdQ);
+			prepStatement.setInt(1, id);
+			ResultSet rs = prepStatement.executeQuery();
+
+			if (rs.next()) {
+				id = rs.getInt("id");
+				String fname = rs.getString("fname");
+				String lname = rs.getString("lname");
+				String password = rs.getString("password");
+				employee = new Employee(id, fname, lname, null, null, null, password);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return employee;
+	}
+	
+	public String hashPassword(String password) {
+		try {
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+			byte[] hashedPassword = md.digest(password.getBytes(StandardCharsets.UTF_8));
+			StringBuilder sb = new StringBuilder();
+
+			for (byte b : hashedPassword) {
+				sb.append(String.format("%02x", b));
+			}
+			return sb.toString();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+}
