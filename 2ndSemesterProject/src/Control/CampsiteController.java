@@ -7,14 +7,14 @@ import Database.CampsiteDAO;
 import Model.Campsite;
 
 public class CampsiteController {
-	CampsiteDAO campsiteDAO;
+	private CampsiteDAO campsiteDAO;
 	
 	public CampsiteController() {
-		
+		campsiteDAO = new CampsiteDAO();
 	}
 	
 	public List<Campsite> getAvailebleCampsites(Date startDate, Date endDate) {
-		return null;
+		return campsiteDAO.getAvailableCampsites(startDate, endDate);
 		
 	}
 }
