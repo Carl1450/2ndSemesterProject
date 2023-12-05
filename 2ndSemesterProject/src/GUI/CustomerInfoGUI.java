@@ -19,6 +19,8 @@ import java.awt.Font;
 import javax.swing.JScrollPane;
 import java.awt.FlowLayout;
 import javax.swing.BoxLayout;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class CustomerInfoGUI extends JFrame {
 
@@ -303,10 +305,36 @@ public class CustomerInfoGUI extends JFrame {
 		panel_3.setLayout(new BoxLayout(panel_3, BoxLayout.X_AXIS));
 		
 		JButton cancelButton = new JButton("Cancel");
+		cancelButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				LoginGUI loginGUI = new LoginGUI();
+				loginGUI.setVisible(true);
+				dispose();
+			}
+		});
 		cancelButton.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
 		panel_3.add(cancelButton);
 		
 		JButton confirmButton = new JButton("Confirm");
+		confirmButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				String firstName = firstnameTextField.getText();
+		        String lastName = lastnameField.getText();
+		        String phoneNumber = phoneNumberField.getText();
+		        String email = emailField.getText();
+		        String streetName = streetNameField.getText();
+		        String streetNumber = streetNumberField.getText();
+		        String zipCode = zipCodeField.getText();
+		        String city = cityField.getText();
+		        String startDate = startDateField.getText();
+		        String endDate = endDateField.getText();
+		        
+		        FinishBookingGUI finishBookingGUI = new FinishBookingGUI();
+		        finishBookingGUI.setVisible(true);
+		        dispose();
+			}
+		});
 		confirmButton.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
 		panel_3.add(confirmButton);
 	}
