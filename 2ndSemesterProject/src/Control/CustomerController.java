@@ -4,9 +4,9 @@ import Database.CustomerDAO;
 import Model.Customer;
 
 public class CustomerController {
-
+	
 	private CustomerDAO customerDAO;
-
+	
 	public CustomerController() {
 		CustomerDAO customerDAO = new CustomerDAO();
 
