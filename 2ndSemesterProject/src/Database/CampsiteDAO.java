@@ -18,139 +18,77 @@ import Model.Price;
 
 public class CampsiteDAO {
 
-	ConnectionEnvironment env;
+    ConnectionEnvironment env;
 
-	public CampsiteDAO() {
-		env = ConnectionEnvironment.PRODUCTION;
-	}
+    public CampsiteDAO() {
+        env = ConnectionEnvironment.PRODUCTION;
+    }
 
-	public CampsiteDAO(ConnectionEnvironment env) {
-		this.env = env;
-	}
+    public CampsiteDAO(ConnectionEnvironment env) {
+        this.env = env;
+    }
 
-	public List<Campsite> getAvailableCampsites(Date startDate, Date endDate) {
-		try {
-			validateDate(startDate);
-			validateDate(endDate);
-		} catch (InvalidDateException e) {
-			e.printStackTrace();
-		}
-		List<Campsite> campsiteList = new ArrayList<>();
+    public List<Campsite> getAvailableCampsites(Date startDate, Date endDate) {
+        try {
+            validateDate(startDate);
+            validateDate(endDate);
+        } catch (InvalidDateException e) {
+            e.printStackTrace();
+        }
 
-		try (Connection connection = DBConnection.getInstance(env).getConnection()) {
-			String query = "SELECT id, section, road, siteNo, type FROM Campsite WHERE NOT EXISTS ("
-					+ "SELECT 1 FROM Booking WHERE campsiteId = Campsite.id " + "AND startDate <= ? AND endDate >= ?)";
+        List<Campsite> campsiteList = new ArrayList<>();
 
-			try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-				preparedStatement.setDate(1, endDate);
-				preparedStatement.setDate(2, startDate);
+        try (Connection connection = DBConnection.getInstance(env).getConnection()) {
+            String query =
+                    "SELECT " +
+                            "c.id, c.section, c.road, c.siteNo, c.[type], " +
+                            "cab.maxpeople, cab.deposit, " +
+                            "p.fee, " +
+                            "pr.price, pr.effectiveDate " +
+                            "FROM Campsite c " +
+                            "LEFT JOIN Cabin cab ON c.id = cab.id " +
+                            "LEFT JOIN Pitch p ON c.id = p.id " +
+                            "LEFT JOIN Price pr ON c.id = pr.campsiteId " +
+                            "WHERE NOT EXISTS (" +
+                            "SELECT 1 " +
+                            "FROM Booking b " +
+                            "WHERE b.campsiteId = c.id " +
+                            "AND b.startDate <= ? " +
+                            "AND b.endDate >= ?" +
+                            ");";
 
-				try (ResultSet resultSet = preparedStatement.executeQuery()) {
-					while (resultSet.next()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setDate(1, endDate);
+                preparedStatement.setDate(2, startDate);
 
-						Campsite campsite = null;
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
 
-						int id = resultSet.getInt(1);
-						String section = resultSet.getNString(2);
-						String road = resultSet.getNString(3);
-						int siteNo = resultSet.getInt(4);
-						String type = resultSet.getNString(5);
+                        Campsite campsite = CampsiteFactory.getCampsite(resultSet);
 
-						if (type.equals("Cabin")) {
-							campsite = createCabin(connection, id, section, road, siteNo);
-						}
-						if (type.equals("Pitch")) {
-							campsite = createPitch(connection, id, section, road, siteNo);
-						}
-						campsiteList.add(campsite);
-					}
+                        campsiteList.add(campsite);
+                    }
 
-				}
-			}
-		}
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return campsiteList;
+    }
 
-		catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return campsiteList;
-	}
 
-	private Price getPrice(Connection connection, int id) {
-		Price price = null;
-		try {
-			String query = "SELECT price, effectiveDate, campsiteId FROM price WHERE id = ?";
-			PreparedStatement preparedStatement = connection.prepareStatement(query);
-			preparedStatement.setInt(1, id);
-			ResultSet resultSet = preparedStatement.executeQuery();
-			resultSet.next();
+    private void validateDate(Date date) throws InvalidDateException {
+        if (date == null) {
+            throw new InvalidDateException();
+        }
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            dateFormat.format(date);
+        } catch (IllegalArgumentException e) {
+            throw new InvalidDateException();
 
-			float priceAmount = resultSet.getFloat(1);
-			Date effectiveDate = resultSet.getDate(2);
-			price = new Price(priceAmount, effectiveDate);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return price;
-
-	}
-
-	private Cabin createCabin(Connection connection, int id, String section, String road, int siteNo) {
-
-		String cabinQuery = "SELECT maxPeople, deposit FROM Cabin WHERE id = ?";
-		try (PreparedStatement cabinPreparedStatement = connection.prepareStatement(cabinQuery)) {
-
-			cabinPreparedStatement.setInt(1, id);
-			try (ResultSet cabinResultSet = cabinPreparedStatement.executeQuery()) {
-
-				if (cabinResultSet.next()) {
-					int maxPeople = cabinResultSet.getInt(1);
-					float deposit = cabinResultSet.getFloat(2);
-
-					Price price = getPrice(connection, id);
-					return new Cabin(section, road, siteNo, price, maxPeople, deposit);
-				}
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	private Pitch createPitch(Connection connection, int id, String section, String road, int siteNo) {
-
-		String pitchQuery = "SELECT fee FROM Pitch WHERE id = ?";
-		try (PreparedStatement pitchPreparedStatement = connection.prepareStatement(pitchQuery)) {
-			pitchPreparedStatement.setInt(1, id);
-			try (ResultSet pitchResultSet = pitchPreparedStatement.executeQuery()) {
-
-				if (pitchResultSet.next()) {
-					float fee = pitchResultSet.getFloat(1);
-
-					Price price = getPrice(connection, id);
-					return new Pitch(section, road, siteNo, price, fee);
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		return null;
-
-	}
-	
-	private void validateDate(Date date) throws InvalidDateException {
-		if(date == null) {
-			throw new InvalidDateException();
-		}
-		try {
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			dateFormat.format(date);
-		}
-		catch(IllegalArgumentException e){
-			throw new InvalidDateException();
-			
-		}
-	}
+        }
+    }
 
 }
