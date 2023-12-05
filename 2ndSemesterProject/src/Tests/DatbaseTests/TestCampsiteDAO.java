@@ -32,7 +32,7 @@ public class TestCampsiteDAO {
 
         // Insert mock data for Customer and Employee
         String mockCustomerInsertQuery = "INSERT INTO Customer (id, fname, lname, email, phoneno, addressId) VALUES (1, 'Jens', 'Larsen', 'jens.larsen@email.com', '+45 12345678', 1);";
-        String mockEmployeeInsertQuery = "INSERT INTO Employee (id, fname, lname, email, phoneno, [role], cprNo, addressId) VALUES (1, 'Anne', 'Nielsen', 'anne.nielsen@email.com', '+45 87654321', 'Manager', '0101901234', 1);";
+        String mockEmployeeInsertQuery = "INSERT INTO Employee (id, fname, lname, email, phoneno, [role], cprNo, password, addressId) VALUES (1, 'Anne', 'Nielsen', 'anne.nielsen@email.com', '+45 87654321', 'Manager', '0101901234', 'password1', 1);";
 
         // Insert mock data for Campsite
         String mockCampsiteInsertQuery =
@@ -52,12 +52,29 @@ public class TestCampsiteDAO {
 
         try {
             Statement statement = connection.createStatement();
+            // Enable IDENTITY_INSERT for the tables
             statement.executeUpdate(mockCityInsertQuery);
+
+            statement.executeUpdate("SET IDENTITY_INSERT [Address] ON");
             statement.executeUpdate(mockAddressInsertQuery);
+            statement.executeUpdate("SET IDENTITY_INSERT [Address] OFF");
+
+            // Repeat for Customer, Employee, Campsite, and Booking tables
+            statement.executeUpdate("SET IDENTITY_INSERT Customer ON");
             statement.executeUpdate(mockCustomerInsertQuery);
+            statement.executeUpdate("SET IDENTITY_INSERT Customer OFF");
+
+            statement.executeUpdate("SET IDENTITY_INSERT Employee ON");
             statement.executeUpdate(mockEmployeeInsertQuery);
+            statement.executeUpdate("SET IDENTITY_INSERT Employee OFF");
+
+            statement.executeUpdate("SET IDENTITY_INSERT Campsite ON");
             statement.executeUpdate(mockCampsiteInsertQuery);
+            statement.executeUpdate("SET IDENTITY_INSERT Campsite OFF");
+
+            statement.executeUpdate("SET IDENTITY_INSERT Booking ON");
             statement.executeUpdate(mockBookingInsertQuery);
+            statement.executeUpdate("SET IDENTITY_INSERT Booking OFF");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
