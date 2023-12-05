@@ -4,8 +4,14 @@ import Model.Booking;
 
 public class BookingDAO {
 
-    public BookingDAO(ConnectionEnvironment env) {
+    ConnectionEnvironment env;
 
+    public BookingDAO() {
+        env = ConnectionEnvironment.PRODUCTION;
+    }
+
+    public BookingDAO(ConnectionEnvironment env) {
+        this.env = env;
     }
     public boolean saveBooking(Booking booking) {
         return false;
