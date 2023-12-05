@@ -12,7 +12,6 @@ public class DBConnection {
     private static final String driverClass = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
     private static final String serverAddress = "hildur.ucn.dk";
     private static final int serverPort = 1433;
-    private static final String userName = "DMA-CSD-V23_10478739";
     private static final String password = "Password1!";
 
     private ConnectionEnvironment env;
@@ -21,11 +20,11 @@ public class DBConnection {
         this.env = env;
 
         String connectionString = String.format("jdbc:sqlserver://%s:%d;databaseName=%s;user=%s;password=%s;encrypt=false",
-                serverAddress, serverPort, env.getDatabaseName(), userName, password);
+                serverAddress, serverPort, env.getDatabaseName(), env.getUserName(), password);
         try {
             connection = DriverManager.getConnection(connectionString);
         } catch (SQLException e) {
-            System.err.println("Could not connect to database " + env.getDatabaseName() + "@" + serverAddress + ":" + serverPort + " as user " + userName + " using password ******");
+            System.err.println("Could not connect to database " + env.getDatabaseName() + "@" + serverAddress + ":" + serverPort + " as user " + env.getUserName() + " using password ******");
             System.out.println("Connection string was: " + connectionString.substring(0, connectionString.length() - password.length()) + "....");
             e.printStackTrace();
         }
@@ -71,7 +70,7 @@ public class DBConnection {
                 // Reinitialize the connection
                 String connectionString = String.format(
                         "jdbc:sqlserver://%s:%d;databaseName=%s;user=%s;password=%s;encrypt=false",
-                        serverAddress, serverPort, env.getDatabaseName(), userName, password);
+                        serverAddress, serverPort, env.getDatabaseName(), env.getUserName(), password);
                 connection = DriverManager.getConnection(connectionString);
             }
         } catch (SQLException e) {
