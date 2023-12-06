@@ -11,6 +11,10 @@ import Database.EmployeeDAO;
 public class EmployeeController {
 
 	private EmployeeDAO employeeDAO;
+	
+	public EmployeeController(EmployeeDAO employeeDAO) {
+		this.employeeDAO = employeeDAO;
+	}
 
 	public Employee findEmployeeById(int id) {
 		return employeeDAO.findEmployeeById(id);
@@ -20,8 +24,8 @@ public class EmployeeController {
 		Employee employee = findEmployeeById(id);
 
 		if (employee != null) {
-			String enteredPassword = hashPassword(password);
-			if (enteredPassword.equals(employee.getPassword())) {
+			String enteredPasswordHash = hashPassword(password);
+			if (enteredPasswordHash.equals(employee.getPassword())) {
 				return true;
 			}
 		}
