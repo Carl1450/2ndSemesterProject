@@ -4,6 +4,7 @@ import Database.CampsiteDAO;
 import Database.ConnectionEnvironment;
 import Database.DBConnection;
 import Database.InvalidDateException;
+import Model.Cabin;
 import Model.Campsite;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
@@ -24,6 +25,8 @@ public class TestCampsiteDAO {
 
     @BeforeEach
     void setUp() {
+        deleteMockDataFromDatabase();
+
         Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
 
         // Insert mock data for City and Address (needed for Customer and Employee)
@@ -52,14 +55,13 @@ public class TestCampsiteDAO {
 
         try {
             Statement statement = connection.createStatement();
-            // Enable IDENTITY_INSERT for the tables
+
             statement.executeUpdate(mockCityInsertQuery);
 
             statement.executeUpdate("SET IDENTITY_INSERT [Address] ON");
             statement.executeUpdate(mockAddressInsertQuery);
             statement.executeUpdate("SET IDENTITY_INSERT [Address] OFF");
 
-            // Repeat for Customer, Employee, Campsite, and Booking tables
             statement.executeUpdate("SET IDENTITY_INSERT Customer ON");
             statement.executeUpdate(mockCustomerInsertQuery);
             statement.executeUpdate("SET IDENTITY_INSERT Customer OFF");
@@ -83,9 +85,14 @@ public class TestCampsiteDAO {
 
     @AfterEach
     void tearDown() {
+        deleteMockDataFromDatabase();
+    }
+
+    private void deleteMockDataFromDatabase() {
+        String deleteMockDataQuery = "DELETE FROM Booking; DELETE FROM Campsite; DELETE FROM Employee; DELETE FROM Customer; DELETE FROM [Address]; DELETE FROM City; DELETE FROM Reservation;";
+
         Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
 
-        String deleteMockDataQuery = "DELETE FROM Booking; DELETE FROM Campsite; DELETE FROM Employee; DELETE FROM Customer; DELETE FROM [Address]; DELETE FROM City;";
 
         try {
             Statement statement = connection.createStatement();
@@ -154,4 +161,47 @@ public class TestCampsiteDAO {
     }
 
 
+    @Test
+    public void testReserveCampsite_NoCrash() {
+        // Arrange
+
+        CampsiteDAO SUT = new CampsiteDAO();
+        Campsite campsite = new Cabin(1, null, null, 0, null, 0, 0);
+        Date startDate = Date.valueOf("2023-11-01");
+        Date endDate = Date.valueOf("2023-11-03");
+
+        Connection mockConnection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
+
+        // Act
+        boolean result = SUT.reserveCampsite(campsite, startDate, endDate, 1);
+
+        // Assert
+        assertTrue(result);
+
+    }
+
+
+    @Test
+    public void test_reserve_campsite_returns_false_when_it_cannot_reserve() {
+        // Arrange
+
+        CampsiteDAO SUT = new CampsiteDAO();
+        Campsite campsite = new Cabin(1, null, null, 0, null, 0, 0);
+        Date startDate = Date.valueOf("2023-11-01");
+        Date endDate = Date.valueOf("2023-11-03");
+
+        Connection mockConnection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
+
+        // Act
+        SUT.reserveCampsite(campsite, startDate, endDate, 1);
+
+        boolean result = SUT.reserveCampsite(campsite, startDate, endDate, 1);
+
+        // Assert
+        assertFalse(result);
+
+    }
 }
+
+
+
