@@ -26,10 +26,6 @@ public class EmployeeController {
 
 		if (employee != null) {
 			String enteredPasswordHash = hashPassword(password);
-			System.out.println(enteredPasswordHash);
-			System.out.println(password);
-			System.out.println(employee.getId());
-			System.out.println(employee.getPassword());
 			if (enteredPasswordHash.equals(employee.getPassword()) && id == employee.getId()) {
 				return true;
 			}
