@@ -11,10 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import Model.Cabin;
-import Model.Campsite;
-import Model.Pitch;
-import Model.Price;
+import Model.*;
 
 public class CampsiteDAO {
 
@@ -39,23 +36,22 @@ public class CampsiteDAO {
         List<Campsite> campsiteList = new ArrayList<>();
 
         try (Connection connection = DBConnection.getInstance(env).getConnection()) {
-            String query =
-                    "SELECT " +
-                            "c.id, c.section, c.road, c.siteNo, c.[type], " +
-                            "cab.maxpeople, cab.deposit, " +
-                            "p.fee, " +
-                            "pr.price, pr.effectiveDate " +
-                            "FROM Campsite c " +
-                            "LEFT JOIN Cabin cab ON c.id = cab.id " +
-                            "LEFT JOIN Pitch p ON c.id = p.id " +
-                            "LEFT JOIN Price pr ON c.id = pr.campsiteId " +
-                            "WHERE NOT EXISTS (" +
-                            "SELECT 1 " +
-                            "FROM Booking b " +
-                            "WHERE b.campsiteId = c.id " +
-                            "AND b.startDate <= ? " +
-                            "AND b.endDate >= ?" +
-                            ");";
+            String query = "SELECT "
+                    + "c.id, c.section, c.road, c.siteNo, c.[type], "
+                    + "cab.maxpeople, cab.deposit, "
+                    + "p.fee, "
+                    + "pr.price, pr.effectiveDate "
+                    + "FROM Campsite c "
+                    + "LEFT JOIN Cabin cab ON c.id = cab.id "
+                    + "LEFT JOIN Pitch p ON c.id = p.id "
+                    + "LEFT JOIN Price pr ON c.id = pr.campsiteId "
+                    + "WHERE NOT EXISTS ("
+                    + "SELECT 1 "
+                    + "FROM Booking b "
+                    + "WHERE b.campsiteId = c.id "
+                    + "AND b.startDate <= ? "
+                    + "AND b.endDate >= ?) "
+                    + "AND c.id NOT IN (SELECT campsiteId FROM Reservation WHERE startDate <= ? AND endDate >= ?);";
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setDate(1, endDate);
@@ -77,6 +73,24 @@ public class CampsiteDAO {
         return campsiteList;
     }
 
+
+    public boolean reserveCampsite(Campsite campsite, Date startDate, Date endDate, Employee employee) {
+        boolean result = false;
+
+        String reservationQuery = "INSERT INTO reservation(startDate, endDate, employeeId, campsiteId) VALUES (?, ?, ?, ?)";
+
+        try (PreparedStatement preparedStatement = DBConnection.getInstance().getConnection().prepareStatement(reservationQuery)) {
+            preparedStatement.setDate(1, startDate);
+            preparedStatement.setDate(2, endDate);
+            preparedStatement.setInt(3, employee.getId());
+            preparedStatement.setInt(4, campsite.getId());
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 
     private void validateDate(Date date) throws InvalidDateException {
         if (date == null) {
