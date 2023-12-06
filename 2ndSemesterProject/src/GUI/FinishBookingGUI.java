@@ -353,6 +353,7 @@ public class FinishBookingGUI extends JFrame {
 		JButton finishButton = new JButton("Finish");
 		finishButton.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
 		panel_2.add(finishButton);
+		
 
 	}
 
