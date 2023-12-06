@@ -5,6 +5,7 @@ import java.util.List;
 
 import Database.CampsiteDAO;
 import Model.Campsite;
+import Model.Employee;
 
 public class CampsiteController {
 	private CampsiteDAO campsiteDAO;
@@ -13,8 +14,12 @@ public class CampsiteController {
 		campsiteDAO = new CampsiteDAO();
 	}
 	
-	public List<Campsite> getAvailebleCampsites(Date startDate, Date endDate) {
+	public List<Campsite> getAvailableCampsites(Date startDate, Date endDate) {
 		return campsiteDAO.getAvailableCampsites(startDate, endDate);
 		
+	}
+
+	public boolean reserveCampsite(Campsite campsite, Date startDate, Date endDate, Employee employee) {
+		return campsiteDAO.reserveCampsite(campsite, startDate, endDate, employee);
 	}
 }

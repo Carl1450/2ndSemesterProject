@@ -43,7 +43,7 @@ public class TestBookingDAO {
 				+ "VALUES (1, '', '', 0, '');";
 
 		String mockPriceInsertQuery = "INSERT INTO Price (id, price, effectiveDate) " + "VALUES (1, 0, '2023-01-01');";
-
+		
 		try {
 			Statement statement = connection.createStatement();
 
@@ -100,10 +100,10 @@ public class TestBookingDAO {
 		int amountOfAdults = 2;
 		int amountOfChildren = 1;
 		Customer customer = new Customer(1, null, null, null, null);
-		Employee employee = new Employee(1, "Kurt Jensen", "Den Anden Vej", "+45 87654321", "ansat@mail.com",
-				"111198-4575", "password123");
+		Employee employee = new Employee(1, "", "", "", "",
+				"", "");
 		Price pitchPrice = new Price(500, startDate);
-		Campsite campsite = new Pitch(1, "Section 1", "Papegøjevej", 10, pitchPrice, 1000);
+		Campsite campsite = new Pitch(1, "", "", 10, pitchPrice, 1000);
 		Package packageDeal = null;
 
 		Booking mockBooking = new Booking(startDate, endDate, price, amountOfAdults, amountOfChildren, customer,
@@ -116,16 +116,47 @@ public class TestBookingDAO {
 		assertTrue(result);
 	}
 
-	 @Test void TS_1_TC_2_null_booking_is_not_persisted_in_database() { // Arrange
-	 BookingDAO SUT = new BookingDAO(ConnectionEnvironment.TESTING);
-	  
-	 Booking mockBooking = null;
-	  
-	 //Act 
-	 
-	 Boolean result = SUT.saveBooking(mockBooking);
-	  
-	 //Assert 
-	 
-	 assertFalse(result); }
+	@Test
+	void TS_1_TC_2_null_booking_is_not_persisted_in_database() { // Arrange
+		BookingDAO SUT = new BookingDAO(ConnectionEnvironment.TESTING);
+
+		Booking mockBooking = null;
+
+		// Act
+
+		Boolean result = SUT.saveBooking(mockBooking);
+
+		// Assert
+
+		assertFalse(result);
+	}
+	
+	@Test
+	void TS_1_TC_3_invalid_value_booking_is_not_persisted_in_database() {
+		// Arrange
+		BookingDAO SUT = new BookingDAO(ConnectionEnvironment.TESTING);
+
+		Date startDate = new Date(1000);
+		Date endDate = new Date(50000000);
+		float price = 5000;
+		int amountOfAdults = 2;
+		int amountOfChildren = 1;
+		Customer customer = null; //A null customer would not work in the program, nor the database
+		Employee employee = new Employee(1, "", "", "", "",
+				"", "");
+		Price pitchPrice = new Price(500, startDate);
+		Campsite campsite = new Pitch(1, "", "", 10, pitchPrice, 1000);
+		Package packageDeal = null;
+
+		Booking mockBooking = new Booking(startDate, endDate, price, amountOfAdults, amountOfChildren, customer,
+				employee, campsite, packageDeal);
+		
+		
+		// Act
+		Boolean result = SUT.saveBooking(mockBooking);
+		
+		// Assert
+		assertFalse(result);
+		
+	}
 }

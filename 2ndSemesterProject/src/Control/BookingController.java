@@ -12,15 +12,15 @@ import Model.Employee;
 
 public class BookingController {
 	private BookingDAO bookingDAO;
-	private CampsiteController campsiteCon;
+	private CampsiteController campsiteController;
 	private Booking currentBooking;
 	private CustomerController customerController;
 
 	public BookingController() {
+		customerController = new CustomerController();
+		campsiteController = new CampsiteController();
 
 		BookingDAO bookingDAO = new BookingDAO();
-		ArrayList<Date> getAvailableCampsites = new ArrayList<>();
-
 	}
 
 	public Booking startBooking(Employee employee) {
@@ -31,7 +31,7 @@ public class BookingController {
 
 	public List<Campsite> getAvailableCampsites(Date startDate, Date endDate) {
 
-		return campsiteCon.getAvailebleCampsites(startDate, endDate);
+		return campsiteController.getAvailebleCampsites(startDate, endDate);
 	}
 
 	public void addCampsiteToBooking(Campsite campsite) {
@@ -39,11 +39,10 @@ public class BookingController {
 	}
 
 	public void addCustomerToBooking(Customer customer) {
-
+		currentBooking.setCustomer(customer);
 	}
 
 	public Customer findCustomerByPhoneNumber(String phoneNumber) {
-
 		return customerController.findCustomerByPhoneNumber(phoneNumber);
 
 	}
@@ -53,13 +52,17 @@ public class BookingController {
 
 	}
 
-	public boolean saveBooking(Booking booking) {
-		return false;
+	public boolean reserveCampsite(Campsite campsite, Date startDate, Date endDate, Employee employee) {
+		return campsiteController.reserveCampsite(campsite, startDate, endDate, employee);
+	}
 
+	public boolean saveBooking(Booking booking) {
+		// TODO remember to relese/invalidate the reservation in the DB made from reserve campsite
+		return bookingDAO.saveBooking(booking);
 	}
 
 	public boolean handlePayment(float amount) {
-		return false;
+		return amount > 0;
 
 	}
 

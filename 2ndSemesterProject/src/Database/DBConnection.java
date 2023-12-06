@@ -37,6 +37,13 @@ public class DBConnection {
         return dbConnection;
     }
 
+    public static DBConnection getInstance() {
+        if (dbConnection == null) {
+            dbConnection = new DBConnection(ConnectionEnvironment.PRODUCTION);
+        }
+        return dbConnection;
+    }
+
     public void startTransaction() throws SQLException {
         connection.setAutoCommit(false);
     }
