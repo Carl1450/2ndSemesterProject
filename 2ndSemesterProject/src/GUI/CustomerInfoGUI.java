@@ -66,16 +66,16 @@ public class CustomerInfoGUI extends JFrame {
 
 		setContentPane(contentPane);
 		contentPane.setLayout(new GridLayout(0, 2, 0, 0));
-		
+
 		JPanel panel = new JPanel();
 		contentPane.add(panel);
 		GridBagLayout gbl_panel = new GridBagLayout();
-		gbl_panel.columnWidths = new int[]{61, 0, 0};
-		gbl_panel.rowHeights = new int[]{16, 0, 0, 0, 0, 0, 0, 0, 0};
-		gbl_panel.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel.columnWidths = new int[] { 61, 0, 0 };
+		gbl_panel.rowHeights = new int[] { 16, 0, 0, 0, 0, 0, 0, 0, 0 };
+		gbl_panel.columnWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
+		gbl_panel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		panel.setLayout(gbl_panel);
-		
+
 		JLabel firstnameLabel = new JLabel("Firstname:");
 		firstnameLabel.setVerticalAlignment(SwingConstants.BOTTOM);
 		GridBagConstraints gbc_firstnameLabel = new GridBagConstraints();
@@ -84,7 +84,7 @@ public class CustomerInfoGUI extends JFrame {
 		gbc_firstnameLabel.gridx = 0;
 		gbc_firstnameLabel.gridy = 0;
 		panel.add(firstnameLabel, gbc_firstnameLabel);
-		
+
 		firstnameTextField = new JTextField();
 		GridBagConstraints gbc_firstnameTextField = new GridBagConstraints();
 		gbc_firstnameTextField.insets = new Insets(0, 0, 5, 0);
@@ -93,7 +93,7 @@ public class CustomerInfoGUI extends JFrame {
 		gbc_firstnameTextField.gridy = 0;
 		panel.add(firstnameTextField, gbc_firstnameTextField);
 		firstnameTextField.setColumns(10);
-		
+
 		JLabel lastnameLabel = new JLabel("Lastname:");
 		GridBagConstraints gbc_lastnameLabel = new GridBagConstraints();
 		gbc_lastnameLabel.anchor = GridBagConstraints.WEST;
@@ -101,7 +101,7 @@ public class CustomerInfoGUI extends JFrame {
 		gbc_lastnameLabel.gridx = 0;
 		gbc_lastnameLabel.gridy = 1;
 		panel.add(lastnameLabel, gbc_lastnameLabel);
-		
+
 		lastnameField = new JTextField();
 		GridBagConstraints gbc_lastnameField = new GridBagConstraints();
 		gbc_lastnameField.insets = new Insets(0, 0, 5, 0);
@@ -110,7 +110,7 @@ public class CustomerInfoGUI extends JFrame {
 		gbc_lastnameField.gridy = 1;
 		panel.add(lastnameField, gbc_lastnameField);
 		lastnameField.setColumns(10);
-		
+
 		JLabel phoneNumberLabel = new JLabel("Phone Number:");
 		GridBagConstraints gbc_phoneNumberLabel = new GridBagConstraints();
 		gbc_phoneNumberLabel.anchor = GridBagConstraints.WEST;
@@ -118,7 +118,7 @@ public class CustomerInfoGUI extends JFrame {
 		gbc_phoneNumberLabel.gridx = 0;
 		gbc_phoneNumberLabel.gridy = 2;
 		panel.add(phoneNumberLabel, gbc_phoneNumberLabel);
-		
+
 		phoneNumberField = new JTextField();
 		GridBagConstraints gbc_phoneNumberField = new GridBagConstraints();
 		gbc_phoneNumberField.insets = new Insets(0, 0, 5, 0);
@@ -127,7 +127,7 @@ public class CustomerInfoGUI extends JFrame {
 		gbc_phoneNumberField.gridy = 2;
 		panel.add(phoneNumberField, gbc_phoneNumberField);
 		phoneNumberField.setColumns(10);
-		
+
 		JLabel emailLabel = new JLabel("Email:");
 		GridBagConstraints gbc_emailLabel = new GridBagConstraints();
 		gbc_emailLabel.anchor = GridBagConstraints.WEST;
@@ -135,7 +135,7 @@ public class CustomerInfoGUI extends JFrame {
 		gbc_emailLabel.gridx = 0;
 		gbc_emailLabel.gridy = 3;
 		panel.add(emailLabel, gbc_emailLabel);
-		
+
 		emailField = new JTextField();
 		GridBagConstraints gbc_emailField = new GridBagConstraints();
 		gbc_emailField.insets = new Insets(0, 0, 5, 0);
@@ -144,7 +144,7 @@ public class CustomerInfoGUI extends JFrame {
 		gbc_emailField.gridy = 3;
 		panel.add(emailField, gbc_emailField);
 		emailField.setColumns(10);
-		
+
 		JLabel streetNameLabel = new JLabel("Street Name:");
 		GridBagConstraints gbc_streetNameLabel = new GridBagConstraints();
 		gbc_streetNameLabel.anchor = GridBagConstraints.WEST;
@@ -152,7 +152,7 @@ public class CustomerInfoGUI extends JFrame {
 		gbc_streetNameLabel.gridx = 0;
 		gbc_streetNameLabel.gridy = 4;
 		panel.add(streetNameLabel, gbc_streetNameLabel);
-		
+
 		streetNameField = new JTextField();
 		GridBagConstraints gbc_streetNameField = new GridBagConstraints();
 		gbc_streetNameField.insets = new Insets(0, 0, 5, 0);
@@ -161,7 +161,7 @@ public class CustomerInfoGUI extends JFrame {
 		gbc_streetNameField.gridy = 4;
 		panel.add(streetNameField, gbc_streetNameField);
 		streetNameField.setColumns(10);
-		
+
 		JLabel streetNumberLabel = new JLabel("Street Number:");
 		GridBagConstraints gbc_streetNumberLabel = new GridBagConstraints();
 		gbc_streetNumberLabel.anchor = GridBagConstraints.WEST;
@@ -169,7 +169,7 @@ public class CustomerInfoGUI extends JFrame {
 		gbc_streetNumberLabel.gridx = 0;
 		gbc_streetNumberLabel.gridy = 5;
 		panel.add(streetNumberLabel, gbc_streetNumberLabel);
-		
+
 		streetNumberField = new JTextField();
 		GridBagConstraints gbc_streetNumberField = new GridBagConstraints();
 		gbc_streetNumberField.insets = new Insets(0, 0, 5, 0);
@@ -178,7 +178,7 @@ public class CustomerInfoGUI extends JFrame {
 		gbc_streetNumberField.gridy = 5;
 		panel.add(streetNumberField, gbc_streetNumberField);
 		streetNumberField.setColumns(10);
-		
+
 		JLabel zipCodeLabel = new JLabel("Zipcode:");
 		GridBagConstraints gbc_zipCodeLabel = new GridBagConstraints();
 		gbc_zipCodeLabel.anchor = GridBagConstraints.WEST;
@@ -186,7 +186,7 @@ public class CustomerInfoGUI extends JFrame {
 		gbc_zipCodeLabel.gridx = 0;
 		gbc_zipCodeLabel.gridy = 6;
 		panel.add(zipCodeLabel, gbc_zipCodeLabel);
-		
+
 		zipCodeField = new JTextField();
 		GridBagConstraints gbc_zipCodeField = new GridBagConstraints();
 		gbc_zipCodeField.insets = new Insets(0, 0, 5, 0);
@@ -195,7 +195,7 @@ public class CustomerInfoGUI extends JFrame {
 		gbc_zipCodeField.gridy = 6;
 		panel.add(zipCodeField, gbc_zipCodeField);
 		zipCodeField.setColumns(10);
-		
+
 		JLabel cityLabel = new JLabel("City:");
 		GridBagConstraints gbc_cityLabel = new GridBagConstraints();
 		gbc_cityLabel.anchor = GridBagConstraints.WEST;
@@ -203,7 +203,7 @@ public class CustomerInfoGUI extends JFrame {
 		gbc_cityLabel.gridx = 0;
 		gbc_cityLabel.gridy = 7;
 		panel.add(cityLabel, gbc_cityLabel);
-		
+
 		cityField = new JTextField();
 		GridBagConstraints gbc_cityField = new GridBagConstraints();
 		gbc_cityField.fill = GridBagConstraints.HORIZONTAL;
@@ -211,16 +211,16 @@ public class CustomerInfoGUI extends JFrame {
 		gbc_cityField.gridy = 7;
 		panel.add(cityField, gbc_cityField);
 		cityField.setColumns(10);
-		
+
 		JPanel panel_1 = new JPanel();
 		contentPane.add(panel_1);
 		GridBagLayout gbl_panel_1 = new GridBagLayout();
-		gbl_panel_1.columnWidths = new int[]{61, 0, 0};
-		gbl_panel_1.rowHeights = new int[]{16, 0, 0, 0, 0};
-		gbl_panel_1.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gbl_panel_1.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
+		gbl_panel_1.columnWidths = new int[] { 61, 0, 0 };
+		gbl_panel_1.rowHeights = new int[] { 16, 0, 0, 0, 0 };
+		gbl_panel_1.columnWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
+		gbl_panel_1.rowWeights = new double[] { 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE };
 		panel_1.setLayout(gbl_panel_1);
-		
+
 		JLabel startDateLabel = new JLabel("Start Date:");
 		GridBagConstraints gbc_startDateLabel = new GridBagConstraints();
 		gbc_startDateLabel.insets = new Insets(0, 0, 5, 5);
@@ -228,7 +228,7 @@ public class CustomerInfoGUI extends JFrame {
 		gbc_startDateLabel.gridx = 0;
 		gbc_startDateLabel.gridy = 0;
 		panel_1.add(startDateLabel, gbc_startDateLabel);
-		
+
 		startDateField = new JTextField();
 		GridBagConstraints gbc_startDateField = new GridBagConstraints();
 		gbc_startDateField.insets = new Insets(0, 0, 5, 0);
@@ -237,7 +237,7 @@ public class CustomerInfoGUI extends JFrame {
 		gbc_startDateField.gridy = 0;
 		panel_1.add(startDateField, gbc_startDateField);
 		startDateField.setColumns(10);
-		
+
 		JLabel endDateLabel = new JLabel("End Date:");
 		GridBagConstraints gbc_endDateLabel = new GridBagConstraints();
 		gbc_endDateLabel.anchor = GridBagConstraints.WEST;
@@ -245,7 +245,7 @@ public class CustomerInfoGUI extends JFrame {
 		gbc_endDateLabel.gridx = 0;
 		gbc_endDateLabel.gridy = 1;
 		panel_1.add(endDateLabel, gbc_endDateLabel);
-		
+
 		endDateField = new JTextField();
 		GridBagConstraints gbc_endDateField = new GridBagConstraints();
 		gbc_endDateField.insets = new Insets(0, 0, 5, 0);
@@ -254,7 +254,7 @@ public class CustomerInfoGUI extends JFrame {
 		gbc_endDateField.gridy = 1;
 		panel_1.add(endDateField, gbc_endDateField);
 		endDateField.setColumns(10);
-		
+
 		JButton searchButton = new JButton("Search");
 		searchButton.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
 		GridBagConstraints gbc_searchButton = new GridBagConstraints();
@@ -263,7 +263,7 @@ public class CustomerInfoGUI extends JFrame {
 		gbc_searchButton.gridx = 1;
 		gbc_searchButton.gridy = 2;
 		panel_1.add(searchButton, gbc_searchButton);
-		
+
 		JPanel panel_2 = new JPanel();
 		GridBagConstraints gbc_panel_2 = new GridBagConstraints();
 		gbc_panel_2.gridwidth = 2;
@@ -272,12 +272,12 @@ public class CustomerInfoGUI extends JFrame {
 		gbc_panel_2.gridy = 3;
 		panel_1.add(panel_2, gbc_panel_2);
 		GridBagLayout gbl_panel_2 = new GridBagLayout();
-		gbl_panel_2.columnWidths = new int[]{0, 0};
-		gbl_panel_2.rowHeights = new int[]{0, 0, 0, 0};
-		gbl_panel_2.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gbl_panel_2.rowWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
+		gbl_panel_2.columnWidths = new int[] { 0, 0 };
+		gbl_panel_2.rowHeights = new int[] { 0, 0, 0, 0 };
+		gbl_panel_2.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
+		gbl_panel_2.rowWeights = new double[] { 0.0, 1.0, 0.0, Double.MIN_VALUE };
 		panel_2.setLayout(gbl_panel_2);
-		
+
 		JLabel availableCampsitesLabel = new JLabel("Available Campsites");
 		GridBagConstraints gbc_availableCampsitesLabel = new GridBagConstraints();
 		gbc_availableCampsitesLabel.anchor = GridBagConstraints.WEST;
@@ -285,7 +285,7 @@ public class CustomerInfoGUI extends JFrame {
 		gbc_availableCampsitesLabel.gridx = 0;
 		gbc_availableCampsitesLabel.gridy = 0;
 		panel_2.add(availableCampsitesLabel, gbc_availableCampsitesLabel);
-		
+
 		JScrollPane scrollPane = new JScrollPane();
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
 		gbc_scrollPane.insets = new Insets(0, 0, 5, 0);
@@ -293,10 +293,10 @@ public class CustomerInfoGUI extends JFrame {
 		gbc_scrollPane.gridx = 0;
 		gbc_scrollPane.gridy = 1;
 		panel_2.add(scrollPane, gbc_scrollPane);
-		
+
 		JList list = new JList();
 		scrollPane.setViewportView(list);
-		
+
 		JPanel panel_3 = new JPanel();
 		GridBagConstraints gbc_panel_3 = new GridBagConstraints();
 		gbc_panel_3.anchor = GridBagConstraints.EAST;
@@ -305,49 +305,53 @@ public class CustomerInfoGUI extends JFrame {
 		gbc_panel_3.gridy = 2;
 		panel_2.add(panel_3, gbc_panel_3);
 		panel_3.setLayout(new BoxLayout(panel_3, BoxLayout.X_AXIS));
-		
+
 		JButton cancelButton = new JButton("Cancel");
 		cancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				LoginGUI loginGUI = new LoginGUI();
-				loginGUI.setVisible(true);
+				MainMenuGUI mainMenuGUI = new MainMenuGUI();
+				mainMenuGUI.setVisible(true);
 				dispose();
 			}
 		});
 		cancelButton.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
 		panel_3.add(cancelButton);
-		
+
 		JButton confirmButton = new JButton("Confirm");
 		confirmButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-		        
+
 				confirmButtonClicked();
 			}
 		});
 		confirmButton.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
 		panel_3.add(confirmButton);
 	}
-	
+
 	private void confirmButtonClicked() {
 		String firstName = firstnameTextField.getText();
-        String lastName = lastnameField.getText();
-        String phoneNumber = phoneNumberField.getText();
-        String email = emailField.getText();
-        String streetName = streetNameField.getText();
-        String streetNumber = streetNumberField.getText();
-        String zipCode = zipCodeField.getText();
-        String city = cityField.getText();
-        String startDate = startDateField.getText();
-        String endDate = endDateField.getText();
+		String lastName = lastnameField.getText();
+		String phoneNumber = phoneNumberField.getText();
+		String email = emailField.getText();
+		String streetName = streetNameField.getText();
+		String streetNumber = streetNumberField.getText();
+		String zipCode = zipCodeField.getText();
+		String city = cityField.getText();
+		String startDate = startDateField.getText();
+		String endDate = endDateField.getText();
+
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+		LocalDate startDateDate = LocalDate.parse(startDate, formatter);
+		LocalDate endDateDate = LocalDate.parse(endDate, formatter);
+
+		FinishBookingGUI finishBookingGUI = new FinishBookingGUI();
+		
+		finishBookingGUI.setCustomerInfo(firstName, lastName, phoneNumber, email, streetName, streetNumber, zipCode, city);
+        finishBookingGUI.setBookingInfo(startDateDate.toString(), endDateDate.toString());
         
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        
-        LocalDate startDateDate = LocalDate.parse(startDate, formatter);
-        LocalDate endDateDate = LocalDate.parse(endDate, formatter);
-        
-        FinishBookingGUI finishBookingGUI = new FinishBookingGUI(firstName, lastName, phoneNumber, email, streetName, streetNumber, zipCode, city, startDateDate, endDateDate);
-        finishBookingGUI.setVisible(true);
-        dispose();
+		finishBookingGUI.setVisible(true);
+		dispose();
 	}
 
 }
