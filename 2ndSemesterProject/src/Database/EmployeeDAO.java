@@ -10,7 +10,7 @@ import Model.Employee;
 public class EmployeeDAO {
 
 	ConnectionEnvironment env;
-	private String findEmployeeByIdQ = "SELECT emp.id, emp.fname, emp.lname, emp.password FROM Employee emp WHERE id = ?";
+	private String findEmployeeByIdQ = "SELECT id, fname, lname, password FROM Employee WHERE id = ?";
 	private DBConnection connectionDB;
 
 	public EmployeeDAO() {
@@ -23,8 +23,6 @@ public class EmployeeDAO {
 		connectionDB = DBConnection.getInstance(env);
 
 	}
-	
-
 		
 	
 	public Employee findEmployeeById(int id) {

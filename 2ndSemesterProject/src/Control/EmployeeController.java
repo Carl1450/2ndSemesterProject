@@ -11,9 +11,10 @@ import Database.EmployeeDAO;
 public class EmployeeController {
 
 	private EmployeeDAO employeeDAO;
+	private Employee employee;
 	
-	public EmployeeController(EmployeeDAO employeeDAO) {
-		this.employeeDAO = employeeDAO;
+	public EmployeeController() {
+		employeeDAO = new EmployeeDAO();
 	}
 
 	public Employee findEmployeeById(int id) {
@@ -21,12 +22,15 @@ public class EmployeeController {
 	}
 
 	public boolean validateLogin(int id, String password) {
-		Employee employee = findEmployeeById(id);
+		employee = findEmployeeById(id);
 
 		if (employee != null) {
 			String enteredPasswordHash = hashPassword(password);
 			System.out.println(enteredPasswordHash);
-			if (enteredPasswordHash.equals(employee.getPassword())) {
+			System.out.println(password);
+			System.out.println(employee.getId());
+			System.out.println(employee.getPassword());
+			if (enteredPasswordHash.equals(employee.getPassword()) && id == employee.getId()) {
 				return true;
 			}
 		}
