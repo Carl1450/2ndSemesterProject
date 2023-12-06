@@ -5,7 +5,7 @@ public class Employee extends Person {
 	private String cpr;
 	private int id;
 	private String password;
-
+	
 	public Employee(int id, String name, String address, String phoneNumber, String email, String cpr, String password) {
 		super(name, address, phoneNumber, email); 
 		this.setId(id);
@@ -16,6 +16,7 @@ public class Employee extends Person {
 	public String getCpr() {
 		return cpr;
 	}
+
 
 	public void setCpr(String cpr) {
 		this.cpr = cpr;

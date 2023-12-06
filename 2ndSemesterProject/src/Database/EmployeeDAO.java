@@ -5,7 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import Model.*;
+import Model.Employee;
 
 public class EmployeeDAO {
 
@@ -20,11 +20,14 @@ public class EmployeeDAO {
 	public EmployeeDAO(ConnectionEnvironment env) {
 		this.env = env;
 	}
+	
 
+		
+	
 	public Employee findEmployeeById(int id) {
 		Employee employee = null;
 
-		try (Connection connection = connectionDB.getInstance(env).getConnection()) {
+		try (Connection connection = DBConnection.getInstance(env).getConnection()) {
 			PreparedStatement prepStatement = connection.prepareStatement(findEmployeeByIdQ);
 			prepStatement.setInt(1, id);
 			ResultSet rs = prepStatement.executeQuery();
