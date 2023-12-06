@@ -338,17 +338,17 @@ public class FinishBookingGUI extends JFrame {
 		flowLayout.setAlignment(FlowLayout.RIGHT);
 		contentPane.add(panel_2, BorderLayout.SOUTH);
 
-		JButton cancelButton = new JButton("Cancel");
-		cancelButton.addActionListener(new ActionListener() {
+		JButton backButton = new JButton("Back");
+		backButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				LoginGUI loginGUI = new LoginGUI();
-				loginGUI.setVisible(true);
+				CustomerInfoGUI customerInfoGUI = new CustomerInfoGUI();
+				customerInfoGUI.setVisible(true);
 				dispose();
 			}
 		});
 
-		cancelButton.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
-		panel_2.add(cancelButton);
+		backButton.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
+		panel_2.add(backButton);
 
 		JButton finishButton = new JButton("Finish");
 		finishButton.setFont(new Font("Lucida Grande", Font.PLAIN, 10));

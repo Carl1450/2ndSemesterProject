@@ -306,16 +306,16 @@ public class CustomerInfoGUI extends JFrame {
 		panel_2.add(panel_3, gbc_panel_3);
 		panel_3.setLayout(new BoxLayout(panel_3, BoxLayout.X_AXIS));
 
-		JButton cancelButton = new JButton("Cancel");
-		cancelButton.addActionListener(new ActionListener() {
+		JButton backButton = new JButton("Back");
+		backButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				MainMenuGUI mainMenuGUI = new MainMenuGUI();
 				mainMenuGUI.setVisible(true);
 				dispose();
 			}
 		});
-		cancelButton.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
-		panel_3.add(cancelButton);
+		backButton.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
+		panel_3.add(backButton);
 
 		JButton confirmButton = new JButton("Confirm");
 		confirmButton.addActionListener(new ActionListener() {
