@@ -1,5 +1,6 @@
 package Control;
 
+import java.sql.Connection;
 import java.sql.Date;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class CampsiteController {
 		
 	}
 
-	public boolean reserveCampsite(Campsite campsite, Date startDate, Date endDate, Employee employee) {
-		return campsiteDAO.reserveCampsite(campsite, startDate, endDate, employee);
+	public boolean reserveCampsite(Campsite campsite, Date startDate, Date endDate, int employeeId) {
+		return campsiteDAO.reserveCampsite(campsite, startDate, endDate, employeeId);
 	}
 }

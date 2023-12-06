@@ -31,64 +31,100 @@ public class CampsiteDAO {
             validateDate(endDate);
         } catch (InvalidDateException e) {
             e.printStackTrace();
+            return null;
         }
 
+        return queryAvailableCampsites(startDate, endDate);
+    }
+
+    private List<Campsite> queryAvailableCampsites(Date startDate, Date endDate) {
         List<Campsite> campsiteList = new ArrayList<>();
 
-        try (Connection connection = DBConnection.getInstance(env).getConnection()) {
-            String query = "SELECT "
-                    + "c.id, c.section, c.road, c.siteNo, c.[type], "
-                    + "cab.maxpeople, cab.deposit, "
-                    + "p.fee, "
-                    + "pr.price, pr.effectiveDate "
-                    + "FROM Campsite c "
-                    + "LEFT JOIN Cabin cab ON c.id = cab.id "
-                    + "LEFT JOIN Pitch p ON c.id = p.id "
-                    + "LEFT JOIN Price pr ON c.id = pr.campsiteId "
-                    + "WHERE NOT EXISTS ("
-                    + "SELECT 1 "
-                    + "FROM Booking b "
-                    + "WHERE b.campsiteId = c.id "
-                    + "AND b.startDate <= ? "
-                    + "AND b.endDate >= ?);";
+        String query = "SELECT c.id, c.section, c.road, c.siteNo, c.[type], cab.maxpeople, cab.deposit, p.fee, pr.price, pr.effectiveDate " +
+                "FROM Campsite c " +
+                "LEFT JOIN Cabin cab ON c.id = cab.id " +
+                "LEFT JOIN Pitch p ON c.id = p.id " +
+                "LEFT JOIN Price pr ON c.id = pr.campsiteId " +
+                "WHERE NOT EXISTS (" +
+                "SELECT 1 FROM Booking b WHERE b.campsiteId = c.id AND b.startDate <= ? AND b.endDate >= ?" +
+                ") AND NOT EXISTS (" +
+                "SELECT 1 FROM Reservation r WHERE r.campsiteId = c.id AND r.startDate <= ? AND r.endDate >= ? AND NOT r.timeChanged < DATEADD(minute, -10, GETDATE())" +
+                ");";
 
-            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-                preparedStatement.setDate(1, endDate);
-                preparedStatement.setDate(2, startDate);
+        try (Connection connection = DBConnection.getInstance(env).getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setDate(1, endDate);
+            preparedStatement.setDate(2, startDate);
+            preparedStatement.setDate(3, endDate);
+            preparedStatement.setDate(4, startDate);
 
-                try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    while (resultSet.next()) {
-
-                        Campsite campsite = CampsiteFactory.getCampsite(resultSet);
-
-                        campsiteList.add(campsite);
-                    }
-
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    Campsite campsite = CampsiteFactory.getCampsite(resultSet);
+                    campsiteList.add(campsite);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return campsiteList;
     }
 
 
-    public boolean reserveCampsite(Campsite campsite, Date startDate, Date endDate, Employee employee) {
-        boolean result = false;
+    public boolean reserveCampsite(Campsite campsite, Date startDate, Date endDate, int employeeId) {
+        boolean reservationStarted = false;
 
-        String reservationQuery = "INSERT INTO reservation(startDate, endDate, employeeId, campsiteId) VALUES (?, ?, ?, ?)";
+        try (Connection connection = DBConnection.getInstance().getConnection()) {
+            connection.setAutoCommit(false);
 
-        try (PreparedStatement preparedStatement = DBConnection.getInstance().getConnection().prepareStatement(reservationQuery)) {
-            preparedStatement.setDate(1, startDate);
-            preparedStatement.setDate(2, endDate);
-            preparedStatement.setInt(3, employee.getId());
-            preparedStatement.setInt(4, campsite.getId());
-
-            preparedStatement.executeUpdate();
+            if (!checkForConflictingBooking(connection, campsite.getId(), startDate, endDate)) {
+                if (insertTentativeReservation(connection, campsite.getId(), startDate, endDate, employeeId)) {
+                    connection.commit();
+                    reservationStarted = true;
+                } else {
+                    connection.rollback();
+                }
+            } else {
+                connection.rollback();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return result;
+        return reservationStarted;
+    }
+
+
+    private boolean checkForConflictingBooking(Connection connection, int campsiteId, Date startDate, Date endDate) throws SQLException {
+        String checkQuery = "SELECT 1 FROM Booking WHERE campsiteId = ? AND NOT (startDate > ? OR endDate < ?) " +
+                "UNION " +
+                "SELECT 1 FROM Reservation WHERE campsiteId = ? AND NOT (startDate > ? OR endDate < ?) AND NOT timeChanged < DATEADD(minute, -10, GETDATE())";
+
+        try (PreparedStatement checkStmt = connection.prepareStatement(checkQuery)) {
+            checkStmt.setInt(1, campsiteId);
+            checkStmt.setDate(2, endDate);
+            checkStmt.setDate(3, startDate);
+            checkStmt.setInt(4, campsiteId);
+            checkStmt.setDate(5, endDate);
+            checkStmt.setDate(6, startDate);
+
+            try (ResultSet rs = checkStmt.executeQuery()) {
+
+                return rs.next();
+            }
+        }
+    }
+
+
+    private boolean insertTentativeReservation(Connection connection, int campsiteId, Date startDate, Date endDate, int employeeId) throws SQLException {
+        String insertQuery = "INSERT INTO Reservation (startDate, endDate, employeeId, campsiteId) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement insertStmt = connection.prepareStatement(insertQuery)) {
+            insertStmt.setDate(1, startDate);
+            insertStmt.setDate(2, endDate);
+            insertStmt.setInt(3, employeeId);
+            insertStmt.setInt(4, campsiteId);
+            return insertStmt.executeUpdate() > 0;
+        }
     }
 
     private void validateDate(Date date) throws InvalidDateException {
