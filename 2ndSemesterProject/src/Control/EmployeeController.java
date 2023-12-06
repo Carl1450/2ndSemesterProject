@@ -25,6 +25,7 @@ public class EmployeeController {
 
 		if (employee != null) {
 			String enteredPasswordHash = hashPassword(password);
+			System.out.println(enteredPasswordHash);
 			if (enteredPasswordHash.equals(employee.getPassword())) {
 				return true;
 			}
