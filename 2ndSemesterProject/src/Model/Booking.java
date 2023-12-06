@@ -32,11 +32,7 @@ public class Booking {
     public Customer getCustomer() {
     	return customer;
     }
-    
-    public void setCampsite (Campsite campsite) {
-    	this.campsite = campsite;
-    	
-    }
+
 
 	public Date getStartDate() {
 		return startDate;
@@ -68,5 +64,22 @@ public class Booking {
 	
 	public Package getPackage() {
 		return packageDeal;
+	}
+
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+
+	public void setEmployee(Employee employee) {
+		this.employee = employee;
+	}
+
+	public void setCampsite (Campsite campsite) {
+		this.campsite = campsite;
+	}
+
+	public void setPackageDeal (Package packageDeal) {
+		this.packageDeal = packageDeal;
 	}
 }
