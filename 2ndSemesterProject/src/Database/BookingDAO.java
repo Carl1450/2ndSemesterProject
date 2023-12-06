@@ -24,32 +24,40 @@ public class BookingDAO {
 		String insertCustomerQ = "INSERT INTO booking(startDate, endDate, totalPrice, amountOfAdults, amountOfChildren, customerId, employeeId, campsiteId, packageId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
 		int result = 0;
+		boolean hasPersisted = false;
 		
-		try (Connection connection = DBConnection.getInstance(env).getConnection()) {
-			PreparedStatement prepStat = connection.prepareStatement(insertCustomerQ);
+		if (booking != null) {
 
-			prepStat.setDate(1, booking.getStartDate());
-			prepStat.setDate(2, booking.getEndDate());
-			prepStat.setFloat(3, booking.getTotalPrice());
-			prepStat.setInt(4, booking.getAmountOfAdults());
-			prepStat.setInt(5, booking.getAmountOfChildren());
-			prepStat.setInt(6, booking.getCustomer().getCustomerId());
-			prepStat.setInt(7, booking.getEmployee().getId());
-			prepStat.setObject(8, booking.getCampsite().getId());
-			prepStat.setObject(9, booking.getPackage().getId());
+			try (Connection connection = DBConnection.getInstance(env).getConnection()) {
+				PreparedStatement prepStat = connection.prepareStatement(insertCustomerQ);
 
-			result = prepStat.executeUpdate();
-		}
+				prepStat.setDate(1, booking.getStartDate());
+				prepStat.setDate(2, booking.getEndDate());
+				prepStat.setFloat(3, booking.getTotalPrice());
+				prepStat.setInt(4, booking.getAmountOfAdults());
+				prepStat.setInt(5, booking.getAmountOfChildren());
+				prepStat.setInt(6, booking.getCustomer().getCustomerId());
+				prepStat.setInt(7, booking.getEmployee().getId());
+				if (booking.getCampsite() != null) {
+					prepStat.setInt(8, booking.getCampsite().getId());
+				} else
+					prepStat.setObject(8, null);
+				if (booking.getPackage() != null) {
+					prepStat.setInt(9, booking.getPackage().getId());
+				} else
+					prepStat.setObject(9, null);
 
-		catch (SQLException e) {
-			e.printStackTrace();
+				result = prepStat.executeUpdate();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			if (result == 0) {
+				return hasPersisted;
+			} else {
+				hasPersisted = true;
+				return hasPersisted;
+			}
 		}
-		
-		if(result == 0) {
-			return false;
-		}
-		else {
-			return true;
-		}
+		return hasPersisted;
 	}
 }

@@ -5,6 +5,13 @@ public class Cabin extends Campsite{
 	private int maxPeople;
 	private float deposit;
 
+	public Cabin(int id, String section, String road, int siteNumber, Price price, int maxPeople, float deposit) {
+		super(id, section, road, siteNumber, price);
+		
+		this.setDeposit(deposit);
+		this.setMaxPeople(maxPeople);
+	}
+	
 	public Cabin(String section, String road, int siteNumber, Price price, int maxPeople, float deposit) {
 		super(section, road, siteNumber, price);
 		
