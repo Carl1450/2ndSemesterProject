@@ -22,141 +22,144 @@ import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestBookingDAO {
-	@BeforeEach
-	void setUp() {
-		Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
 
-		// Insert a mock city
-		String mockCityInsertQuery = "INSERT INTO City (zipCode, city) VALUES (1000, 'Copenhagen');";
 
-		// Insert a mock address that references the mock city
-		String mockAddressInsertQuery = "INSERT INTO [Address] (id, street, streetno, zipcode) VALUES (1, 'Bredgade', 30, 1000);";
+    @BeforeEach
+    void setUp() {
+        Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
 
-		// Insert a mock customer that references the mock address
-		String mockCustomerInsertQuery = "INSERT INTO Customer (id, fname, lname, email, phoneno, addressId) VALUES "
-				+ "(1, 'Jens', 'Hansen', 'jens.hansen@example.com', '+45 12345678', 1);";
+        // Insert a mock city
+        String mockCityInsertQuery = "INSERT INTO City (zipCode, city) VALUES (1000, 'Copenhagen');";
 
-		String mockEmployeeInsertQuery = "INSERT INTO Employee (id, fname, lname, email, phoneno, role, cprno, password, addressid) "
-				+ "VALUES (1, '', '', '', '', '', '', '', 1);";
+        // Insert a mock address that references the mock city
+        String mockAddressInsertQuery = "INSERT INTO [Address] (id, street, streetno, zipcode) VALUES (1, 'Bredgade', 30, 1000);";
 
-		String mockCampsiteInsertQuery = "INSERT INTO Campsite (id, section, road, siteno, type) "
-				+ "VALUES (1, '', '', 0, '');";
+        // Insert a mock customer that references the mock address
+        String mockCustomerInsertQuery = "INSERT INTO Customer (id, fname, lname, email, phoneno, addressId) VALUES "
+                + "(1, 'Jens', 'Hansen', 'jens.hansen@example.com', '+45 12345678', 1);";
 
-		String mockPriceInsertQuery = "INSERT INTO Price (id, price, effectiveDate) " + "VALUES (1, 0, '2023-01-01');";
-		
-		try {
-			Statement statement = connection.createStatement();
+        String mockEmployeeInsertQuery = "INSERT INTO Employee (id, fname, lname, email, phoneno, role, cprno, password, addressid) "
+                + "VALUES (1, '', '', '', '', '', '', '', 1);";
 
-			statement.executeUpdate(mockCityInsertQuery);
+        String mockCampsiteInsertQuery = "INSERT INTO Campsite (id, section, road, siteno, type) "
+                + "VALUES (1, '', '', 0, '');";
 
-			statement.executeUpdate("SET IDENTITY_INSERT [Address] ON");
-			statement.executeUpdate(mockAddressInsertQuery);
-			statement.executeUpdate("SET IDENTITY_INSERT [Address] OFF");
+        String mockPriceInsertQuery = "INSERT INTO Price (id, price, effectiveDate) " + "VALUES (1, 0, '2023-01-01');";
 
-			statement.executeUpdate("SET IDENTITY_INSERT [Customer] ON");
-			statement.executeUpdate(mockCustomerInsertQuery);
-			statement.executeUpdate("SET IDENTITY_INSERT [Customer] OFF");
+        try {
+            Statement statement = connection.createStatement();
 
-			statement.executeUpdate("SET IDENTITY_INSERT [Employee] ON");
-			statement.executeUpdate(mockEmployeeInsertQuery);
-			statement.executeUpdate("SET IDENTITY_INSERT [Employee] OFF");
+            statement.executeUpdate(mockCityInsertQuery);
 
-			statement.executeUpdate("SET IDENTITY_INSERT [Campsite] ON");
-			statement.executeUpdate(mockCampsiteInsertQuery);
-			statement.executeUpdate("SET IDENTITY_INSERT [Campsite] OFF");
+            statement.executeUpdate("SET IDENTITY_INSERT [Address] ON");
+            statement.executeUpdate(mockAddressInsertQuery);
+            statement.executeUpdate("SET IDENTITY_INSERT [Address] OFF");
 
-			statement.executeUpdate("SET IDENTITY_INSERT [Price] ON");
-			statement.executeUpdate(mockPriceInsertQuery);
-			statement.executeUpdate("SET IDENTITY_INSERT [Price] OFF");
+            statement.executeUpdate("SET IDENTITY_INSERT [Customer] ON");
+            statement.executeUpdate(mockCustomerInsertQuery);
+            statement.executeUpdate("SET IDENTITY_INSERT [Customer] OFF");
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+            statement.executeUpdate("SET IDENTITY_INSERT [Employee] ON");
+            statement.executeUpdate(mockEmployeeInsertQuery);
+            statement.executeUpdate("SET IDENTITY_INSERT [Employee] OFF");
 
-	}
+            statement.executeUpdate("SET IDENTITY_INSERT [Campsite] ON");
+            statement.executeUpdate(mockCampsiteInsertQuery);
+            statement.executeUpdate("SET IDENTITY_INSERT [Campsite] OFF");
 
-	@AfterEach
-	void tearDown() {
-		Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
+            statement.executeUpdate("SET IDENTITY_INSERT [Price] ON");
+            statement.executeUpdate(mockPriceInsertQuery);
+            statement.executeUpdate("SET IDENTITY_INSERT [Price] OFF");
 
-		String deleteMockDataQuery = "DELETE FROM Price; DELETE FROM Booking; DELETE FROM Campsite; DELETE FROM Employee; DELETE FROM Customer; DELETE FROM Address; DELETE FROM City";
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-		try {
-			Statement statement = connection.createStatement();
-			statement.executeUpdate(deleteMockDataQuery);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
+    }
 
-	@Test
-	void TS_1_TC_1_valid_booking_is_persisted_in_database() {
-		// Arrange
-		BookingDAO SUT = new BookingDAO(ConnectionEnvironment.TESTING);
+    @AfterEach
+    void tearDown() {
+        Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
 
-		Date startDate = new Date(1000);
-		Date endDate = new Date(50000000);
-		float price = 5000;
-		int amountOfAdults = 2;
-		int amountOfChildren = 1;
-		Customer customer = new Customer(1, null, null, null, null);
-		Employee employee = new Employee(1, "", "", "", "",
-				"", "");
-		Price pitchPrice = new Price(500, startDate);
-		Campsite campsite = new Pitch(1, "", "", 10, pitchPrice, 1000);
-		Package packageDeal = null;
+        String deleteMockDataQuery = "DELETE FROM Price; DELETE FROM Booking; DELETE FROM Campsite; DELETE FROM Employee; DELETE FROM Customer; DELETE FROM Address; DELETE FROM City";
 
-		Booking mockBooking = new Booking(startDate, endDate, price, amountOfAdults, amountOfChildren, customer,
-				employee, campsite, packageDeal);
+        try {
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(deleteMockDataQuery);
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
-		// Act
-		Boolean result = SUT.saveBooking(mockBooking);
+    @Test
+    void TS_1_TC_1_valid_booking_is_persisted_in_database() {
+        // Arrange
+        BookingDAO SUT = new BookingDAO();
 
-		// Assert
-		assertTrue(result);
-	}
+        Date startDate = new Date(1000);
+        Date endDate = new Date(50000000);
+        float price = 5000;
+        int amountOfAdults = 2;
+        int amountOfChildren = 1;
+        Customer customer = new Customer(1, null, null, null, null);
+        Employee employee = new Employee(1, "", "", "", "",
+                "", "");
+        Price pitchPrice = new Price(500, startDate);
+        Campsite campsite = new Pitch(1, "", "", 10, pitchPrice, 1000);
+        Package packageDeal = null;
 
-	@Test
-	void TS_1_TC_2_null_booking_is_not_persisted_in_database() { // Arrange
-		BookingDAO SUT = new BookingDAO(ConnectionEnvironment.TESTING);
+        Booking mockBooking = new Booking(startDate, endDate, price, amountOfAdults, amountOfChildren, customer,
+                employee, campsite, packageDeal);
 
-		Booking mockBooking = null;
+        // Act
+        Boolean result = SUT.saveBooking(mockBooking);
 
-		// Act
+        // Assert
+        assertTrue(result);
+    }
 
-		Boolean result = SUT.saveBooking(mockBooking);
+    @Test
+    void TS_1_TC_2_null_booking_is_not_persisted_in_database() { // Arrange
+        BookingDAO SUT = new BookingDAO();
 
-		// Assert
+        Booking mockBooking = null;
 
-		assertFalse(result);
-	}
-	
-	@Test
-	void TS_1_TC_3_invalid_value_booking_is_not_persisted_in_database() {
-		// Arrange
-		BookingDAO SUT = new BookingDAO(ConnectionEnvironment.TESTING);
+        // Act
 
-		Date startDate = new Date(1000);
-		Date endDate = new Date(50000000);
-		float price = 5000;
-		int amountOfAdults = 2;
-		int amountOfChildren = 1;
-		Customer customer = null; //A null customer would not work in the program, nor the database
-		Employee employee = new Employee(1, "", "", "", "",
-				"", "");
-		Price pitchPrice = new Price(500, startDate);
-		Campsite campsite = new Pitch(1, "", "", 10, pitchPrice, 1000);
-		Package packageDeal = null;
+        Boolean result = SUT.saveBooking(mockBooking);
 
-		Booking mockBooking = new Booking(startDate, endDate, price, amountOfAdults, amountOfChildren, customer,
-				employee, campsite, packageDeal);
-		
-		
-		// Act
-		Boolean result = SUT.saveBooking(mockBooking);
-		
-		// Assert
-		assertFalse(result);
-		
-	}
+        // Assert
+
+        assertFalse(result);
+    }
+
+    @Test
+    void TS_1_TC_3_invalid_value_booking_is_not_persisted_in_database() {
+        // Arrange
+        BookingDAO SUT = new BookingDAO();
+
+        Date startDate = new Date(1000);
+        Date endDate = new Date(50000000);
+        float price = 5000;
+        int amountOfAdults = 2;
+        int amountOfChildren = 1;
+        Customer customer = null; //A null customer would not work in the program, nor the database
+        Employee employee = new Employee(1, "", "", "", "",
+                "", "");
+        Price pitchPrice = new Price(500, startDate);
+        Campsite campsite = new Pitch(1, "", "", 10, pitchPrice, 1000);
+        Package packageDeal = null;
+
+        Booking mockBooking = new Booking(startDate, endDate, price, amountOfAdults, amountOfChildren, customer,
+                employee, campsite, packageDeal);
+
+
+        // Act
+        Boolean result = SUT.saveBooking(mockBooking);
+
+        // Assert
+        assertFalse(result);
+
+    }
 }
