@@ -15,10 +15,13 @@ public class EmployeeDAO {
 
 	public EmployeeDAO() {
 		env = ConnectionEnvironment.PRODUCTION;
+		connectionDB = DBConnection.getInstance(env);
 	}
 
 	public EmployeeDAO(ConnectionEnvironment env) {
 		this.env = env;
+		connectionDB = DBConnection.getInstance(env);
+
 	}
 	
 
