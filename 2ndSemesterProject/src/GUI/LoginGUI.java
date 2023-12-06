@@ -21,6 +21,8 @@ import java.awt.FlowLayout;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JPasswordField;
 
@@ -128,6 +130,7 @@ public class LoginGUI extends JFrame {
 		gbc_employeePasswordTextField.gridx = 1;
 		gbc_employeePasswordTextField.gridy = 4;
 		panel_1.add(employeePasswordTextField, gbc_employeePasswordTextField);
+		enterKey();
 
 		JPanel panel_2 = new JPanel();
 		contentPane.add(panel_2, BorderLayout.SOUTH);
@@ -173,6 +176,25 @@ public class LoginGUI extends JFrame {
 			employeePasswordTextField.setText("");
 			JOptionPane.showMessageDialog(this, "Invalid Employee ID", "Error", JOptionPane.ERROR_MESSAGE);
 		}
+	}
+	public void enterKey() {
+		employeePasswordTextField.addKeyListener(new KeyListener() {
+
+			@Override
+			public void keyTyped(KeyEvent e) {
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+					loginButtonClicked();
+				}
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+			}
+	});
 	}
 
 }
