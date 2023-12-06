@@ -50,8 +50,7 @@ public class CampsiteDAO {
                     + "FROM Booking b "
                     + "WHERE b.campsiteId = c.id "
                     + "AND b.startDate <= ? "
-                    + "AND b.endDate >= ?) "
-                    + "AND c.id NOT IN (SELECT campsiteId FROM Reservation WHERE startDate <= ? AND endDate >= ?);";
+                    + "AND b.endDate >= ?);";
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setDate(1, endDate);
