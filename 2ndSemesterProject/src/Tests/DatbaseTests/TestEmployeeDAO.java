@@ -20,12 +20,15 @@ class TestEmployeeDAO {
 	void setUp() {
 		Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
 
-		String mockEmployeeInsertQuery = "INSERT INTO employee (password ) VALUES ('password1');";
-
+		String mockEmployeeInsertQuery = "INSERT INTO Employee (id, fname, lname, email, phoneno, role, cprno, password, addressid) "
+				+ "VALUES (2,'kurt', 'Den' ,'ansat@mail.com', '+45 22258181','admin', 11198-4575, 'password1','1');";
 		try {
 			Statement statement = connection.createStatement();
+			statement.executeUpdate("SET IDENTITY_INSERT [Employee] ON");
 			statement.executeUpdate(mockEmployeeInsertQuery);
-		} catch (SQLException e) {
+			statement.executeUpdate("SET IDENTITY_INSERT [Employee] OFF");
+			} catch (SQLException e) {
+			e.printStackTrace();
 			throw new RuntimeException("Error setting up mock data", e);
 		}
 	}
