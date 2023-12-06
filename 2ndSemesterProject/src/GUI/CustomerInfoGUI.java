@@ -20,6 +20,8 @@ import javax.swing.JScrollPane;
 import java.awt.FlowLayout;
 import javax.swing.BoxLayout;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.awt.event.ActionEvent;
 
 public class CustomerInfoGUI extends JFrame {
@@ -318,25 +320,34 @@ public class CustomerInfoGUI extends JFrame {
 		JButton confirmButton = new JButton("Confirm");
 		confirmButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				String firstName = firstnameTextField.getText();
-		        String lastName = lastnameField.getText();
-		        String phoneNumber = phoneNumberField.getText();
-		        String email = emailField.getText();
-		        String streetName = streetNameField.getText();
-		        String streetNumber = streetNumberField.getText();
-		        String zipCode = zipCodeField.getText();
-		        String city = cityField.getText();
-		        String startDate = startDateField.getText();
-		        String endDate = endDateField.getText();
 		        
-		        FinishBookingGUI finishBookingGUI = new FinishBookingGUI();
-		        finishBookingGUI.setVisible(true);
-		        dispose();
+				confirmButtonClicked();
 			}
 		});
 		confirmButton.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
 		panel_3.add(confirmButton);
+	}
+	
+	private void confirmButtonClicked() {
+		String firstName = firstnameTextField.getText();
+        String lastName = lastnameField.getText();
+        String phoneNumber = phoneNumberField.getText();
+        String email = emailField.getText();
+        String streetName = streetNameField.getText();
+        String streetNumber = streetNumberField.getText();
+        String zipCode = zipCodeField.getText();
+        String city = cityField.getText();
+        String startDate = startDateField.getText();
+        String endDate = endDateField.getText();
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        
+        LocalDate startDateDate = LocalDate.parse(startDate, formatter);
+        LocalDate endDateDate = LocalDate.parse(endDate, formatter);
+        
+        FinishBookingGUI finishBookingGUI = new FinishBookingGUI(firstName, lastName, phoneNumber, email, streetName, streetNumber, zipCode, city, startDateDate, endDateDate);
+        finishBookingGUI.setVisible(true);
+        dispose();
 	}
 
 }

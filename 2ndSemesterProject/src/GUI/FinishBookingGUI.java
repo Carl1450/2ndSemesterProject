@@ -14,12 +14,19 @@ import javax.swing.JButton;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionListener;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.awt.event.ActionEvent;
 
 public class FinishBookingGUI extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
+
+	public FinishBookingGUI(String firstName, String lastName, String phoneNumber, String email, String streetName,
+			String streetNumber, String zipCode, String city, LocalDate startDateDate, LocalDate endDateDate) {
+
+	}
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -32,7 +39,7 @@ public class FinishBookingGUI extends JFrame {
 				}
 			}
 		});
-	}	
+	}
 
 	/**
 	 * Create the frame.
@@ -112,7 +119,7 @@ public class FinishBookingGUI extends JFrame {
 		gbc_insertFirstnameLabel.insets = new Insets(0, 0, 5, 0);
 		gbc_insertFirstnameLabel.gridx = 1;
 		gbc_insertFirstnameLabel.gridy = 0;
-		//insertFirstnameLabel.setText(firstName);
+		// insertFirstnameLabel.setText(firstName);
 		panel_3.add(insertFirstnameLabel, gbc_insertFirstnameLabel);
 
 		JLabel lastnameLabel = new JLabel("Lastname:");
@@ -319,9 +326,7 @@ public class FinishBookingGUI extends JFrame {
 				dispose();
 			}
 		});
-		
-		
-		
+
 		cancelButton.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
 		panel_2.add(cancelButton);
 
@@ -331,5 +336,8 @@ public class FinishBookingGUI extends JFrame {
 
 	}
 
-}
+	private void setNameLabel(String firstName) {
+		insertFirstnameLabel.setText(firstName);
+	}
 
+}
