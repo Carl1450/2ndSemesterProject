@@ -122,6 +122,7 @@ public class FinishBookingGUI extends JFrame {
 
 		insertFirstnameLabel = new JLabel("");
 		GridBagConstraints gbc_insertFirstnameLabel = new GridBagConstraints();
+		gbc_insertFirstnameLabel.anchor = GridBagConstraints.WEST;
 		gbc_insertFirstnameLabel.insets = new Insets(0, 0, 5, 0);
 		gbc_insertFirstnameLabel.gridx = 1;
 		gbc_insertFirstnameLabel.gridy = 0;
@@ -138,6 +139,7 @@ public class FinishBookingGUI extends JFrame {
 
 		insertLastnameLabel = new JLabel("");
 		GridBagConstraints gbc_insertLastnameLabel = new GridBagConstraints();
+		gbc_insertLastnameLabel.anchor = GridBagConstraints.WEST;
 		gbc_insertLastnameLabel.insets = new Insets(0, 0, 5, 0);
 		gbc_insertLastnameLabel.gridx = 1;
 		gbc_insertLastnameLabel.gridy = 1;
@@ -154,6 +156,7 @@ public class FinishBookingGUI extends JFrame {
 
 		insertPhoneNumberLabel = new JLabel("");
 		GridBagConstraints gbc_insertPhoneNumberLabel = new GridBagConstraints();
+		gbc_insertPhoneNumberLabel.anchor = GridBagConstraints.WEST;
 		gbc_insertPhoneNumberLabel.insets = new Insets(0, 0, 5, 0);
 		gbc_insertPhoneNumberLabel.gridx = 1;
 		gbc_insertPhoneNumberLabel.gridy = 2;
@@ -169,6 +172,7 @@ public class FinishBookingGUI extends JFrame {
 
 		insertEmailLabel = new JLabel("");
 		GridBagConstraints gbc_insertEmailLabel = new GridBagConstraints();
+		gbc_insertEmailLabel.anchor = GridBagConstraints.WEST;
 		gbc_insertEmailLabel.insets = new Insets(0, 0, 5, 0);
 		gbc_insertEmailLabel.gridx = 1;
 		gbc_insertEmailLabel.gridy = 3;
@@ -184,6 +188,7 @@ public class FinishBookingGUI extends JFrame {
 
 		insertStreetNameLabel = new JLabel("");
 		GridBagConstraints gbc_insertStreetNameLabel = new GridBagConstraints();
+		gbc_insertStreetNameLabel.anchor = GridBagConstraints.WEST;
 		gbc_insertStreetNameLabel.insets = new Insets(0, 0, 5, 0);
 		gbc_insertStreetNameLabel.gridx = 1;
 		gbc_insertStreetNameLabel.gridy = 4;
@@ -199,6 +204,7 @@ public class FinishBookingGUI extends JFrame {
 
 		insertStreetNumberLabel = new JLabel("");
 		GridBagConstraints gbc_insertStreetNumberLabel = new GridBagConstraints();
+		gbc_insertStreetNumberLabel.anchor = GridBagConstraints.WEST;
 		gbc_insertStreetNumberLabel.insets = new Insets(0, 0, 5, 0);
 		gbc_insertStreetNumberLabel.gridx = 1;
 		gbc_insertStreetNumberLabel.gridy = 5;
@@ -214,6 +220,7 @@ public class FinishBookingGUI extends JFrame {
 
 		insertZipcodeLabel = new JLabel("");
 		GridBagConstraints gbc_insertZipcodeLabel = new GridBagConstraints();
+		gbc_insertZipcodeLabel.anchor = GridBagConstraints.WEST;
 		gbc_insertZipcodeLabel.insets = new Insets(0, 0, 5, 0);
 		gbc_insertZipcodeLabel.gridx = 1;
 		gbc_insertZipcodeLabel.gridy = 6;
@@ -229,6 +236,7 @@ public class FinishBookingGUI extends JFrame {
 
 		insertCityLabel = new JLabel("");
 		GridBagConstraints gbc_insertCityLabel = new GridBagConstraints();
+		gbc_insertCityLabel.anchor = GridBagConstraints.WEST;
 		gbc_insertCityLabel.gridx = 1;
 		gbc_insertCityLabel.gridy = 7;
 		panel_3.add(insertCityLabel, gbc_insertCityLabel);
@@ -256,6 +264,7 @@ public class FinishBookingGUI extends JFrame {
 
 		insertStartDateLabel = new JLabel("");
 		GridBagConstraints gbc_insertStartDateLabel = new GridBagConstraints();
+		gbc_insertStartDateLabel.fill = GridBagConstraints.HORIZONTAL;
 		gbc_insertStartDateLabel.insets = new Insets(0, 0, 5, 0);
 		gbc_insertStartDateLabel.gridx = 1;
 		gbc_insertStartDateLabel.gridy = 0;
@@ -271,6 +280,7 @@ public class FinishBookingGUI extends JFrame {
 
 		insertEndDateLabel = new JLabel("");
 		GridBagConstraints gbc_insertEndDateLabel = new GridBagConstraints();
+		gbc_insertEndDateLabel.fill = GridBagConstraints.HORIZONTAL;
 		gbc_insertEndDateLabel.insets = new Insets(0, 0, 5, 0);
 		gbc_insertEndDateLabel.gridx = 1;
 		gbc_insertEndDateLabel.gridy = 1;
@@ -286,6 +296,7 @@ public class FinishBookingGUI extends JFrame {
 
 		insertCampsiteLabel = new JLabel("");
 		GridBagConstraints gbc_insertCampsiteLabel = new GridBagConstraints();
+		gbc_insertCampsiteLabel.anchor = GridBagConstraints.WEST;
 		gbc_insertCampsiteLabel.insets = new Insets(0, 0, 5, 0);
 		gbc_insertCampsiteLabel.gridx = 1;
 		gbc_insertCampsiteLabel.gridy = 2;
@@ -301,6 +312,7 @@ public class FinishBookingGUI extends JFrame {
 
 		insertPriceLabel = new JLabel("");
 		GridBagConstraints gbc_insertPriceLabel = new GridBagConstraints();
+		gbc_insertPriceLabel.anchor = GridBagConstraints.WEST;
 		gbc_insertPriceLabel.insets = new Insets(0, 0, 5, 0);
 		gbc_insertPriceLabel.gridx = 1;
 		gbc_insertPriceLabel.gridy = 3;
@@ -316,6 +328,7 @@ public class FinishBookingGUI extends JFrame {
 
 		insertEmployeeLabel = new JLabel("");
 		GridBagConstraints gbc_insertEmployeeLabel = new GridBagConstraints();
+		gbc_insertEmployeeLabel.anchor = GridBagConstraints.WEST;
 		gbc_insertEmployeeLabel.gridx = 1;
 		gbc_insertEmployeeLabel.gridy = 4;
 		panel_4.add(insertEmployeeLabel, gbc_insertEmployeeLabel);
@@ -325,21 +338,22 @@ public class FinishBookingGUI extends JFrame {
 		flowLayout.setAlignment(FlowLayout.RIGHT);
 		contentPane.add(panel_2, BorderLayout.SOUTH);
 
-		JButton cancelButton = new JButton("Cancel");
-		cancelButton.addActionListener(new ActionListener() {
+		JButton backButton = new JButton("Back");
+		backButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				LoginGUI loginGUI = new LoginGUI();
-				loginGUI.setVisible(true);
+				CustomerInfoGUI customerInfoGUI = new CustomerInfoGUI();
+				customerInfoGUI.setVisible(true);
 				dispose();
 			}
 		});
 
-		cancelButton.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
-		panel_2.add(cancelButton);
+		backButton.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
+		panel_2.add(backButton);
 
 		JButton finishButton = new JButton("Finish");
 		finishButton.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
 		panel_2.add(finishButton);
+		
 
 	}
 
@@ -358,25 +372,6 @@ public class FinishBookingGUI extends JFrame {
 	public void setBookingInfo(String startDate, String endDate) {
 		insertStartDateLabel.setText(startDate);
 		insertEndDateLabel.setText(endDate);
-	}
-
-	// private void setFirstNameLabel(String firstName, String lastName, String
-	// email, String streetName, String streetNumber,
-	// String zipCode, String city, LocalDate startDateDate, LocalDate endDateDate)
-	// {
-	// insertFirstnameLabel.setText(firstName);
-	// insertLastnameLabel.setText(lastName);
-	// insertEmailLabel.setText(email);
-	// insertStreetNameLabel.setText(streetName);
-	// insertStreetNumberLabel.setText(streetNumber);
-	// insertZipcodeLabel.setText(zipCode);
-	// insertCityLabel.setText(city);
-	// insertStartDateLabel.setText(startDateDate);
-
-	// }
-
-	private void setLastNameLabel(String lastName) {
-		insertLastnameLabel.setText(lastName);
 	}
 
 }

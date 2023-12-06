@@ -8,8 +8,9 @@ public class Employee extends Person {
 	
 	public Employee(int id, String name, String address, String phoneNumber, String email, String cpr, String password) {
 		super(name, address, phoneNumber, email); 
-		this.setId(id);
-		this.setCpr(cpr);
+		this.id = id;
+		this.cpr = cpr;
+		this.password = password;
 	}
 
 	public String getCpr() {
