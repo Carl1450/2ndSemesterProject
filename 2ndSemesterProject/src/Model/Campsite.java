@@ -16,6 +16,13 @@ public abstract class Campsite {
 		this.id = id;
 	}
 
+	public Campsite(String section, String road, int siteNumber, Price price) {
+		this.setPrice(price);
+		this.setSection(section);
+		this.setRoad(road);
+		this.setSiteNumber(siteNumber);
+	}
+	
 	public String getSection() {
 		return section;
 	}

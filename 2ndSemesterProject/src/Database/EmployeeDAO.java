@@ -5,7 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import Model.*;
+import Model.Employee;
 
 public class EmployeeDAO {
 
@@ -23,7 +23,10 @@ public class EmployeeDAO {
 		connectionDB = DBConnection.getInstance(env);
 
 	}
+	
 
+		
+	
 	public Employee findEmployeeById(int id) {
 		Employee employee = null;
 
