@@ -24,7 +24,7 @@ public class EmployeeDAO {
 	public Employee findEmployeeById(int id) {
 		Employee employee = null;
 
-		try (Connection connection = connectionDB.getInstance(env).getConnection()) {
+		try (Connection connection = DBConnection.getInstance(env).getConnection()) {
 			PreparedStatement prepStatement = connection.prepareStatement(findEmployeeByIdQ);
 			prepStatement.setInt(1, id);
 			ResultSet rs = prepStatement.executeQuery();

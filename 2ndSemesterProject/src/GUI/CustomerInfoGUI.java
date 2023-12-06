@@ -19,6 +19,10 @@ import java.awt.Font;
 import javax.swing.JScrollPane;
 import java.awt.FlowLayout;
 import javax.swing.BoxLayout;
+import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.awt.event.ActionEvent;
 
 public class CustomerInfoGUI extends JFrame {
 
@@ -303,12 +307,47 @@ public class CustomerInfoGUI extends JFrame {
 		panel_3.setLayout(new BoxLayout(panel_3, BoxLayout.X_AXIS));
 		
 		JButton cancelButton = new JButton("Cancel");
+		cancelButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				LoginGUI loginGUI = new LoginGUI();
+				loginGUI.setVisible(true);
+				dispose();
+			}
+		});
 		cancelButton.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
 		panel_3.add(cancelButton);
 		
 		JButton confirmButton = new JButton("Confirm");
+		confirmButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+		        
+				confirmButtonClicked();
+			}
+		});
 		confirmButton.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
 		panel_3.add(confirmButton);
+	}
+	
+	private void confirmButtonClicked() {
+		String firstName = firstnameTextField.getText();
+        String lastName = lastnameField.getText();
+        String phoneNumber = phoneNumberField.getText();
+        String email = emailField.getText();
+        String streetName = streetNameField.getText();
+        String streetNumber = streetNumberField.getText();
+        String zipCode = zipCodeField.getText();
+        String city = cityField.getText();
+        String startDate = startDateField.getText();
+        String endDate = endDateField.getText();
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        
+        LocalDate startDateDate = LocalDate.parse(startDate, formatter);
+        LocalDate endDateDate = LocalDate.parse(endDate, formatter);
+        
+        FinishBookingGUI finishBookingGUI = new FinishBookingGUI(firstName, lastName, phoneNumber, email, streetName, streetNumber, zipCode, city, startDateDate, endDateDate);
+        finishBookingGUI.setVisible(true);
+        dispose();
 	}
 
 }
