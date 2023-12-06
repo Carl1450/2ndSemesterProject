@@ -10,7 +10,6 @@ public class Employee extends Person {
 		super(name, address, phoneNumber, email); 
 		this.setId(id);
 		this.setCpr(cpr);
-		
 	}
 
 	public String getCpr() {

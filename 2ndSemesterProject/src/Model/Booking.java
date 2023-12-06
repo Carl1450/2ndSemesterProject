@@ -26,6 +26,9 @@ public class Booking {
 		this.packageDeal = packageDeal;
 	}
 	
+	public Booking() {
+	}
+	
     public Customer getCustomer() {
     	return customer;
     }
