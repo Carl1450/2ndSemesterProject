@@ -65,7 +65,8 @@ public class BookingDAO {
     private boolean hasBookingConflict(Connection connection, Booking booking) throws SQLException {
         String conflictCheckQuery = "SELECT 1 FROM Booking WHERE campsiteId = ? AND NOT (startDate > ? OR endDate < ?) " +
                 "UNION " +
-                "SELECT 1 FROM Reservation WHERE campsiteId = ? AND NOT (startDate > ? OR endDate < ?) AND timeChanged > DATEADD(minute, -10, GETDATE());";
+                "SELECT 1 FROM Reservation WHERE campsiteId = ? AND NOT (startDate > ? OR endDate < ?) " +
+                "AND (employeeId <> ? OR timeChanged <= DATEADD(minute, -10, GETDATE()));";
 
         try (PreparedStatement conflictCheckStmt = connection.prepareStatement(conflictCheckQuery)) {
             conflictCheckStmt.setInt(1, booking.getCampsite().getId());
@@ -75,11 +76,13 @@ public class BookingDAO {
             conflictCheckStmt.setInt(4, booking.getCampsite().getId());
             conflictCheckStmt.setDate(5, booking.getEndDate());
             conflictCheckStmt.setDate(6, booking.getStartDate());
+            conflictCheckStmt.setInt(7, booking.getEmployee().getId()); // Employee ID check
 
             ResultSet rs = conflictCheckStmt.executeQuery();
             return rs.next(); // true if conflict exists, false otherwise
         }
     }
+
 
     private boolean insertBooking(Connection connection, Booking booking) throws SQLException {
         String insertBookingQuery = "INSERT INTO booking(startDate, endDate, totalPrice, amountOfAdults, amountOfChildren, customerId, employeeId, campsiteId, packageId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
