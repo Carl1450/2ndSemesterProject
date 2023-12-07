@@ -9,7 +9,7 @@ import Model.*;
 public class CampsiteTableModel extends AbstractTableModel {
 
 	private List<Campsite> data;
-	private static final String[] COL_NAMES = { "Type", /* "Section", "Road", */ "Site Number", "Price" };
+	private static final String[] COL_NAMES = { "Type", "Section", "Road", "Site Number", "Price" };
 
 	public CampsiteTableModel(List<Campsite> campsites) {
 		super();
@@ -52,18 +52,22 @@ public class CampsiteTableModel extends AbstractTableModel {
 				}
 				break;
 
-			/*
-			 * case 1: String section = c.getSection(); res = section; break;
-			 * 
-			 * case 2: String road = c.getRoad(); res = road; break;
-			 */
-
 			case 1:
+				String section = c.getSection();
+				res = (section != null) ? String.valueOf(section) : "N/A";
+				break;
+
+			case 2:
+				String road = c.getRoad();
+				res = (road != null) ? String.valueOf(road) : "N/A";
+				break;
+
+			case 3:
 				int siteNumber = c.getSiteNumber();
 				res = (siteNumber != 0) ? String.valueOf(siteNumber) : "N/A";
 				break;
 
-			case 2:
+			case 4:
 				Price price = c.getPrice();
 				res = (price != null) ? String.valueOf(price) : "N/A";
 				break;
