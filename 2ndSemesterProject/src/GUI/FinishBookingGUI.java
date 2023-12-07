@@ -8,6 +8,9 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import Control.BookingController;
+
 import java.awt.BorderLayout;
 import javax.swing.JLabel;
 import java.awt.GridBagLayout;
@@ -41,24 +44,12 @@ public class FinishBookingGUI extends JFrame {
 	private JLabel insertEmployeeLabel;
 
 	private Employee employee;
-	private Price price;
+	private BookingController bookingController;
+	
 
-	/*public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					FinishBookingGUI frame = new FinishBookingGUI(null);
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}*/
-
-	public FinishBookingGUI(Employee employee, Price price) {
+	public FinishBookingGUI(Employee employee, BookingController bookingController) {
 		this.employee = employee;
-		this.price = price;
+		this.bookingController = bookingController;
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
@@ -86,6 +77,7 @@ public class FinishBookingGUI extends JFrame {
 		panel.add(panel_5, gbc_panel_5);
 
 		JLabel customerInfoLabel = new JLabel("Customer Information");
+		customerInfoLabel.setFont(new Font("Lucida Grande", Font.BOLD, 16));
 		panel_5.add(customerInfoLabel);
 
 		JPanel panel_6 = new JPanel();
@@ -96,6 +88,7 @@ public class FinishBookingGUI extends JFrame {
 		panel.add(panel_6, gbc_panel_6);
 
 		JLabel bookingInfoLabel = new JLabel("Booking Information");
+		bookingInfoLabel.setFont(new Font("Lucida Grande", Font.BOLD, 16));
 		panel_6.add(bookingInfoLabel);
 
 		JPanel panel_1 = new JPanel();
@@ -350,7 +343,7 @@ public class FinishBookingGUI extends JFrame {
 		JButton backButton = new JButton("Back");
 		backButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				CustomerInfoGUI customerInfoGUI = new CustomerInfoGUI(employee);
+				BookingInfoGUI customerInfoGUI = new BookingInfoGUI(employee);
 				customerInfoGUI.setVisible(true);
 				dispose();
 			}
@@ -378,10 +371,10 @@ public class FinishBookingGUI extends JFrame {
 		insertCityLabel.setText(city);
 	}
 
-	public void setBookingInfo(String startDate, String endDate, String price) {
+	public void setBookingInfo(String startDate, String endDate) {
 		insertStartDateLabel.setText(startDate);
 		insertEndDateLabel.setText(endDate);
-		insertPriceLabel.setText(price);
+		
 	}
 
 }
