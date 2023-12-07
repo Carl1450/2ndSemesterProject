@@ -9,6 +9,7 @@ import javax.swing.border.EmptyBorder;
 import Control.BookingController;
 import Model.Campsite;
 import Model.Employee;
+import Model.Price;
 
 import java.awt.BorderLayout;
 import javax.swing.JLabel;
@@ -48,7 +49,7 @@ public class CustomerInfoGUI extends JFrame {
     private List<Campsite> campsites;
     private JTable campsiteTable;
     private BookingController bookingController; 
-
+    private Price price;
     private Employee employee;
 
 
@@ -343,8 +344,9 @@ public class CustomerInfoGUI extends JFrame {
     private void searchButtonClicked() {
         String startDate = startDateField.getText();
         String endDate = endDateField.getText();
-
+        
         campsites = bookingController.getAvailableCampsites(startDate, endDate);
+        System.out.println(campsites.size());
         CampsiteTableModel campsiteTableModel = new CampsiteTableModel(campsites);
         campsiteTableModel.setData(campsites);
         campsiteTable.setModel(campsiteTableModel);
@@ -366,11 +368,12 @@ public class CustomerInfoGUI extends JFrame {
 
         LocalDate startDateDate = LocalDate.parse(startDate, formatter);
         LocalDate endDateDate = LocalDate.parse(endDate, formatter);
+        float price = Float.parseFloat(price.);
 
-        FinishBookingGUI finishBookingGUI = new FinishBookingGUI(this.employee);
+        FinishBookingGUI finishBookingGUI = new FinishBookingGUI(this.employee, );
 
         finishBookingGUI.setCustomerInfo(firstName, lastName, phoneNumber, email, streetName, streetNumber, zipCode, city);
-        finishBookingGUI.setBookingInfo(startDateDate.toString(), endDateDate.toString());
+        finishBookingGUI.setBookingInfo(startDateDate.toString(), endDateDate.toString(), String.valueOf(price));
 
         finishBookingGUI.setVisible(true);
         dispose();

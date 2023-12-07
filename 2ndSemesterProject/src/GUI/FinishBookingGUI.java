@@ -1,6 +1,7 @@
 package GUI;
 
 import Model.Employee;
+import Model.Price;
 
 import java.awt.EventQueue;
 
@@ -40,8 +41,9 @@ public class FinishBookingGUI extends JFrame {
 	private JLabel insertEmployeeLabel;
 
 	private Employee employee;
+	private Price price;
 
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -52,10 +54,11 @@ public class FinishBookingGUI extends JFrame {
 				}
 			}
 		});
-	}
+	}*/
 
-	public FinishBookingGUI(Employee employee) {
+	public FinishBookingGUI(Employee employee, Price price) {
 		this.employee = employee;
+		this.price = price;
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
@@ -375,9 +378,10 @@ public class FinishBookingGUI extends JFrame {
 		insertCityLabel.setText(city);
 	}
 
-	public void setBookingInfo(String startDate, String endDate) {
+	public void setBookingInfo(String startDate, String endDate, String price) {
 		insertStartDateLabel.setText(startDate);
 		insertEndDateLabel.setText(endDate);
+		insertPriceLabel.setText(price);
 	}
 
 }
