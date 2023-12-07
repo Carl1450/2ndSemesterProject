@@ -33,9 +33,17 @@ public class TestCustomerDAO {
 
         try {
             Statement statement = connection.createStatement();
+
             statement.executeUpdate(mockCityInsertQuery);
+
+            statement.executeUpdate("SET IDENTITY_INSERT [Address] ON");
             statement.executeUpdate(mockAddressInsertQuery);
+            statement.executeUpdate("SET IDENTITY_INSERT [Address] OFF");
+
+            statement.executeUpdate("SET IDENTITY_INSERT Customer ON");
             statement.executeUpdate(mockCustomerInsertQuery);
+            statement.executeUpdate("SET IDENTITY_INSERT Customer ON");
+
         } catch (SQLException e) {
             throw new RuntimeException("Error setting up mock data", e);
         }
