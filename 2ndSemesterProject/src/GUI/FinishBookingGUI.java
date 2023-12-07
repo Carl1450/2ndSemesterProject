@@ -1,5 +1,7 @@
 package GUI;
 
+import Model.Employee;
+
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -37,11 +39,13 @@ public class FinishBookingGUI extends JFrame {
 	private JLabel insertPriceLabel;
 	private JLabel insertEmployeeLabel;
 
+	private Employee employee;
+
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					FinishBookingGUI frame = new FinishBookingGUI();
+					FinishBookingGUI frame = new FinishBookingGUI(null);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -50,7 +54,9 @@ public class FinishBookingGUI extends JFrame {
 		});
 	}
 
-	public FinishBookingGUI() {
+	public FinishBookingGUI(Employee employee) {
+		this.employee = employee;
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -341,7 +347,7 @@ public class FinishBookingGUI extends JFrame {
 		JButton backButton = new JButton("Back");
 		backButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				CustomerInfoGUI customerInfoGUI = new CustomerInfoGUI();
+				CustomerInfoGUI customerInfoGUI = new CustomerInfoGUI(employee);
 				customerInfoGUI.setVisible(true);
 				dispose();
 			}

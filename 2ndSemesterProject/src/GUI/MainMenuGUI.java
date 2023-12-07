@@ -1,5 +1,7 @@
 package GUI;
 
+import Model.Employee;
+
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -21,6 +23,8 @@ public class MainMenuGUI extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 
+	private Employee employee;
+
 	/**
 	 * Launch the application.
 	 */
@@ -28,7 +32,7 @@ public class MainMenuGUI extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MainMenuGUI frame = new MainMenuGUI();
+					MainMenuGUI frame = new MainMenuGUI(null);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -40,7 +44,9 @@ public class MainMenuGUI extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public MainMenuGUI() {
+	public MainMenuGUI(Employee employee) {
+		this.employee = employee;
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -61,7 +67,7 @@ public class MainMenuGUI extends JFrame {
 		JButton bookingButton = new JButton("Booking");
 		bookingButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				CustomerInfoGUI customerInfoGUI = new CustomerInfoGUI();
+				CustomerInfoGUI customerInfoGUI = new CustomerInfoGUI(employee);
 				customerInfoGUI.setVisible(true);
 				dispose();
 			}

@@ -2,6 +2,7 @@ package GUI;
 
 import Control.EmployeeController;
 import Database.EmployeeDAO;
+import Model.Employee;
 
 import java.awt.EventQueue;
 
@@ -158,11 +159,10 @@ public class LoginGUI extends JFrame {
 	public void loginButtonClicked() {
 		String employeeId = employeeIdTextField.getText();
 		String employeePassword = new String(employeePasswordTextField.getPassword());
-
+		Employee employee = employeeController.findEmployeeById(Integer.parseInt(employeeId));
 		try {
-			int employeeIdInt = Integer.parseInt(employeeId);
-			if (employeeController.validateLogin(employeeIdInt, employeePassword) == true) {
-				MainMenuGUI mainMenuGUI = new MainMenuGUI();
+			if (employeeController.validateLogin(employee.getId(), employeePassword) == true) {
+				MainMenuGUI mainMenuGUI = new MainMenuGUI(employee);
 				mainMenuGUI.setVisible(true);
 				dispose();
 			} else {
