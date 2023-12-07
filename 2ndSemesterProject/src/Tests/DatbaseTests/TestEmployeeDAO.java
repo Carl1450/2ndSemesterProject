@@ -63,10 +63,9 @@ class TestEmployeeDAO {
 	void TS_4_TC_1_find_Employee_by_id_with_invalid_id() {
 		// Arrange
 		EmployeeDAO SUT = new EmployeeDAO(ConnectionEnvironment.TESTING);
-		String id = "";
-		int idInt = Integer.parseInt(id);
+		int id = 2;
 
-		Employee result = SUT.findEmployeeById(idInt);
+		Employee result = SUT.findEmployeeById(id);
 
 		// Assert
 		assertNull(result);
@@ -76,11 +75,10 @@ class TestEmployeeDAO {
 	void TS_4_TC_1_find_Employee_by_id_with_id_null() {
 		// Arrange
 		EmployeeDAO SUT = new EmployeeDAO(ConnectionEnvironment.TESTING);
-		String id = null;
-		int idInt = Integer.parseInt(id);
+		int id = 0;
 
 		// Act
-		Employee result = SUT.findEmployeeById(idInt);
+		Employee result = SUT.findEmployeeById(id);
 
 		// Assert
 		assertNull(result);
