@@ -25,6 +25,8 @@ import javax.swing.SwingConstants;
 import javax.swing.JButton;
 import java.awt.GridLayout;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.JScrollPane;
 import java.awt.FlowLayout;
@@ -34,6 +36,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
@@ -355,9 +358,7 @@ public class BookingInfoGUI extends JFrame {
 		phoneNumberField.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				// System.out.println("Alive");
 				if (e.getKeyCode() == 10) {
-					System.out.println("Good heavens!");
 					fillCustomerInfo(phoneNumberField.getText());
 				}
 			}
@@ -378,10 +379,6 @@ public class BookingInfoGUI extends JFrame {
 		bookingController.startBooking();
 	}
 
-	private Customer findCustomer(String phoneNumber) {
-		return bookingController.findCustomerByPhoneNumber(phoneNumber);
-	}
-
 	private void tableModel() {
 		campsiteTableModel = new CampsiteTableModel(campsites);
 		campsiteTableModel.setData(campsites);
@@ -392,9 +389,23 @@ public class BookingInfoGUI extends JFrame {
 		String startDate = startDateField.getText();
 		String endDate = endDateField.getText();
 
-		campsites = bookingController.getAvailableCampsites(startDate, endDate);
+		if (isDate(startDate) && isDate(endDate)) {
+			campsites = bookingController.getAvailableCampsites(startDate,
+					endDate);
+			tableModel();
+		} else {
+			JOptionPane.showMessageDialog(contentPane,
+					"You have entered an invalid date.\n Format is YYYY-MM-DD");
+		}
+	}
 
-		tableModel();
+	private boolean isDate(String dateString) {
+		try {
+			LocalDate date = LocalDate.parse(dateString);
+			return true;
+		} catch (DateTimeParseException e) {
+			return false;
+		}
 	}
 
 	private void confirmButtonClicked() {
@@ -408,8 +419,6 @@ public class BookingInfoGUI extends JFrame {
 		String city = cityField.getText();
 		String startDate = startDateField.getText();
 		String endDate = endDateField.getText();
-		System.out.println(findCustomer(phoneNumberField.getText()));
-
 		int rowIndex = campsiteTable.getSelectedRow();
 		Campsite currentCampsite = campsiteTableModel.getCampsite(rowIndex);
 		bookingController.addCampsiteToBooking(currentCampsite, startDate,
