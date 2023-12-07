@@ -29,12 +29,12 @@ class TestEmployeeDAO {
 		try {
 			Statement statement = connection.createStatement();
 			statement.executeUpdate(mockCityInsertQuery);
-//			statement.executeUpdate("SET IDENTITY_INSERT [Address] ON");
+			statement.executeUpdate("SET IDENTITY_INSERT [Address] ON");
 			statement.executeUpdate(mockAddressInsertQuery);
-//			statement.executeUpdate("SET IDENTITY_INSERT [Address] OFF");
-//			statement.executeUpdate("SET IDENTITY_INSERT [Employee] ON");
+			statement.executeUpdate("SET IDENTITY_INSERT [Address] OFF");
+			statement.executeUpdate("SET IDENTITY_INSERT [Employee] ON");
 			statement.executeUpdate(mockEmployeeInsertQuery);
-//			statement.executeUpdate("SET IDENTITY_INSERT [Employee] OFF");
+			statement.executeUpdate("SET IDENTITY_INSERT [Employee] OFF");
 
 		} catch (SQLException e) {
 			e.printStackTrace();
