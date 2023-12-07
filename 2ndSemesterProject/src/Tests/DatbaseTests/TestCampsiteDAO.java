@@ -41,9 +41,9 @@ public class TestCampsiteDAO {
         // Insert mock data for Campsite
         String mockCampsiteInsertQuery =
                 "INSERT INTO Campsite (id, section, road, siteNo, [type]) VALUES " +
-                        "(1, 'Nord', 'Egevej', 101, 'Standard'), " +
-                        "(2, 'Syd', 'Bøgevej', 102, 'Deluxe'), " +
-                        "(3, 'Vest', 'Ahornvej', 103, 'Standard');";
+                        "(1, 'Nord', 'Egevej', 101, 'Pitch'), " +
+                        "(2, 'Syd', 'Bøgevej', 102, 'Pitch'), " +
+                        "(3, 'Vest', 'Ahornvej', 103, 'Cabin');";
 
         // Insert mock data for Booking
         String mockBookingInsertQuery =
