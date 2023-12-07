@@ -102,7 +102,6 @@ public class TestBookingController {
     public void testReserveAndSaveBookingForSameEmployee() {
         // Arrange
         Employee employee = new Employee(1, "", "", "", "", "", "");
-        Campsite mockCabin = new Pitch(null, null, 0, null, 0);
         Date startDate = Date.valueOf("2023-07-01");
         Date endDate = Date.valueOf("2023-07-07");
         float price = 5000;
@@ -119,18 +118,14 @@ public class TestBookingController {
         BookingController SUT = new BookingController(employee);
 
         // Act
-        SUT.startBooking();
-        Booking currentBooking = SUT.getCurrentBooking();
-        currentBooking = mockBooking;
+        SUT.setCurrentBooking(mockBooking);
 
-        boolean reservationResult = SUT.reserveCampsite(mockCabin, startDate, endDate);
+        boolean reservationResult = SUT.reserveCampsite(campsite, startDate, endDate);
 
-        boolean bookingResult = SUT.saveBooking(currentBooking);
+        boolean bookingResult = SUT.saveBooking();
 
         // Assertion
-        assertTrue(reservationResult, "Reservation should be successful");
-        assertTrue(bookingResult, "Booking should be successfully saved");
+        assertTrue(reservationResult);
+        assertTrue(bookingResult);
     }
-
-
 }

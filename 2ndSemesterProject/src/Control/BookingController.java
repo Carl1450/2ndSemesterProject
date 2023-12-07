@@ -59,8 +59,8 @@ public class BookingController {
 
     }
 
-    public boolean saveBooking(Booking booking) {
-        return bookingDAO.saveBooking(booking);
+    public boolean saveBooking() {
+        return bookingDAO.saveBooking(currentBooking);
     }
 
 
@@ -84,5 +84,9 @@ public class BookingController {
     public Booking getCurrentBooking() {
         return currentBooking;
 
+    }
+
+    public void setCurrentBooking(Booking booking) {
+        this.currentBooking = booking;
     }
 }
