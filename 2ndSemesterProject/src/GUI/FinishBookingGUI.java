@@ -1,5 +1,8 @@
 package GUI;
 
+import Model.Booking;
+import Model.Campsite;
+import Model.Customer;
 import Model.Employee;
 import Model.Price;
 
@@ -45,11 +48,8 @@ public class FinishBookingGUI extends JFrame {
 
 	private Employee employee;
 	private BookingController bookingController;
-	
 
 	public FinishBookingGUI(Employee employee, BookingController bookingController) {
-		this.employee = employee;
-		this.bookingController = bookingController;
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
@@ -128,7 +128,6 @@ public class FinishBookingGUI extends JFrame {
 		gbc_insertFirstnameLabel.insets = new Insets(0, 0, 5, 0);
 		gbc_insertFirstnameLabel.gridx = 1;
 		gbc_insertFirstnameLabel.gridy = 0;
-		// insertFirstnameLabel.setText(firstName);
 		panel_3.add(insertFirstnameLabel, gbc_insertFirstnameLabel);
 
 		JLabel lastnameLabel = new JLabel("Lastname:");
@@ -353,28 +352,56 @@ public class FinishBookingGUI extends JFrame {
 		panel_2.add(backButton);
 
 		JButton finishButton = new JButton("Finish");
+		finishButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				finishButtonClicked();
+			}
+		});
 		finishButton.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
 		panel_2.add(finishButton);
-		
+
+		init(employee, bookingController);
 
 	}
 
-	public void setCustomerInfo(String firstName, String lastName, String phoneNumber, String email, String streetName,
-			String streetNumber, String zipCode, String city) {
-		insertFirstnameLabel.setText(firstName);
-		insertLastnameLabel.setText(lastName);
-		insertPhoneNumberLabel.setText(phoneNumber);
-		insertEmailLabel.setText(email);
-		insertStreetNameLabel.setText(streetName);
-		insertStreetNumberLabel.setText(streetNumber);
-		insertZipcodeLabel.setText(zipCode);
-		insertCityLabel.setText(city);
+	private void init(Employee employee, BookingController bookingController) {
+		this.employee = employee;
+		this.bookingController = bookingController;
+
+		setCustomerInfo();
+		setBookingInfo();
 	}
 
-	public void setBookingInfo(String startDate, String endDate) {
-		insertStartDateLabel.setText(startDate);
-		insertEndDateLabel.setText(endDate);
-		
+	private void setCustomerInfo() {
+		Customer customer = bookingController.getCurrentBooking().getCustomer();
+		insertFirstnameLabel.setText(customer.getName());
+		insertLastnameLabel.setText("LAstNAMe");
+		insertPhoneNumberLabel.setText(customer.getPhoneNumber());
+		insertEmailLabel.setText(customer.getEmail());
+		insertStreetNameLabel.setText(customer.getAddress());
+		insertStreetNumberLabel.setText("");
+		insertZipcodeLabel.setText("");
+		insertCityLabel.setText("");
+	}
+
+	private void setBookingInfo() {
+		Booking booking = bookingController.getCurrentBooking();
+		Employee employee = booking.getEmployee();
+		Campsite campsite = booking.getCampsite();
+		insertStartDateLabel.setText(String.valueOf(booking.getStartDate()));
+		insertEndDateLabel.setText(String.valueOf(booking.getEndDate()));
+		insertEmployeeLabel.setText(employee.getName());
+		insertPriceLabel.setText(Float.toString(booking.getTotalPrice()));
+		insertCampsiteLabel.setText(campsite.getSection() + ", " + campsite.getRoad() + " " + campsite.getSiteNumber());
+
+	}
+
+	private void finishButtonClicked() {
+		bookingController.saveBooking();
+
+		MainMenuGUI mainMenuGUI = new MainMenuGUI(employee);
+		mainMenuGUI.setVisible(true);
+		dispose();
 	}
 
 }

@@ -55,6 +55,8 @@ public class BookingController {
     	Date endDateFormatted = Date.valueOf(endDate);
         if (reserveCampsite(campsite, startDateFormatted, endDateFormatted)) {
             currentBooking.setCampsite(campsite);
+            currentBooking.setStartDate(startDateFormatted);
+            currentBooking.setEndDate(endDateFormatted);
         }
     }
 

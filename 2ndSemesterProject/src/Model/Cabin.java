@@ -11,13 +11,6 @@ public class Cabin extends Campsite{
 		this.setDeposit(deposit);
 		this.setMaxPeople(maxPeople);
 	}
-	
-	public Cabin(String section, String road, int siteNumber, Price price, int maxPeople, float deposit) {
-		super(section, road, siteNumber, price);
-		
-		this.setDeposit(deposit);
-		this.setMaxPeople(maxPeople);
-	}
 
 	public int getMaxPeople() {
 		return maxPeople;

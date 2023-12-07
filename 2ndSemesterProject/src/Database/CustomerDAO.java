@@ -39,6 +39,7 @@ public class CustomerDAO {
 			rs = prepStat.executeQuery();
 
 			if (rs.next()) {
+				int id = rs.getInt("id");
 				String fname = rs.getString("fname");
 				String lname = rs.getString("lname");
 				String street = rs.getString("street");
@@ -49,7 +50,7 @@ public class CustomerDAO {
 				String name = fname + " " + lname;
 				String address = street + " " + streetno + " " + city + " " + zipcode;
 				
-				customer = new Customer(name, address, phoneNumber, email);
+				customer = new Customer(id, name, address, phoneNumber, email);
 			}
 
 		} catch (SQLException e) {

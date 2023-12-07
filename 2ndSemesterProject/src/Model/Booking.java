@@ -26,9 +26,6 @@ public class Booking {
 		this.packageDeal = packageDeal;
 	}
 	
-	public Booking() {
-	}
-
 	public Booking(Employee employee) {
 		this.employee = employee;
 	}
@@ -85,5 +82,14 @@ public class Booking {
 
 	public void setPackageDeal (Package packageDeal) {
 		this.packageDeal = packageDeal;
+	}
+	
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+		
 	}
 }
