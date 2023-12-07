@@ -48,8 +48,8 @@ public class CampsiteDAO {
                 "WHERE NOT EXISTS (" +
                 "SELECT 1 FROM Booking b WHERE b.campsiteId = c.id AND b.startDate <= ? AND b.endDate >= ?" +
                 ") AND NOT EXISTS (" +
-                "SELECT 1 FROM Reservation r WHERE r.campsiteId = c.id AND r.startDate <= ? AND r.endDate >= ? AND NOT r.timeChanged < DATEADD(minute, -10, GETDATE())" +
-                ");";
+                "SELECT 1 FROM Reservation r WHERE r.campsiteId = c.id AND (r.startDate <= ? AND r.endDate >= ?) AND NOT (r.timeChanged < DATEADD(minute, -10, GETDATE()))" +
+                ")";
 
         try (Connection connection = DBConnection.getInstance(env).getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -78,7 +78,7 @@ public class CampsiteDAO {
         try (Connection connection = DBConnection.getInstance().getConnection()) {
             connection.setAutoCommit(false);
 
-            if (!checkForConflictingBooking(connection, campsite.getId(), startDate, endDate)) {
+            if (!checkForConflictingBooking(connection, campsite.getId(), startDate, endDate, employee)) {
                 if (insertTentativeReservation(connection, campsite.getId(), startDate, endDate, employee.getId())) {
                     connection.commit();
                     reservationStarted = true;
@@ -95,10 +95,10 @@ public class CampsiteDAO {
     }
 
 
-    private boolean checkForConflictingBooking(Connection connection, int campsiteId, Date startDate, Date endDate) throws SQLException {
+    private boolean checkForConflictingBooking(Connection connection, int campsiteId, Date startDate, Date endDate, Employee employee) throws SQLException {
         String checkQuery = "SELECT 1 FROM Booking WHERE campsiteId = ? AND NOT (startDate > ? OR endDate < ?) " +
-                "UNION " +
-                "SELECT 1 FROM Reservation WHERE campsiteId = ? AND NOT (startDate > ? OR endDate < ?) AND NOT timeChanged < DATEADD(minute, -10, GETDATE())";
+                "UNION SELECT 1 FROM reservation WHERE campsiteId = ? AND (startdate >= ? OR endDate <= ?) " +
+                "AND timechanged >= DATEADD(minute, -10, GETDATE()) AND employeeid <> ?;";
 
         try (PreparedStatement checkStmt = connection.prepareStatement(checkQuery)) {
             checkStmt.setInt(1, campsiteId);
@@ -107,6 +107,7 @@ public class CampsiteDAO {
             checkStmt.setInt(4, campsiteId);
             checkStmt.setDate(5, endDate);
             checkStmt.setDate(6, startDate);
+            checkStmt.setInt(7, employee.getId());
 
             try (ResultSet rs = checkStmt.executeQuery()) {
 
