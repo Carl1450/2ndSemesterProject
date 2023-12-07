@@ -5,6 +5,10 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import Control.BookingController;
+import Model.Campsite;
+
 import java.awt.BorderLayout;
 import javax.swing.JLabel;
 import java.awt.GridBagLayout;
@@ -22,7 +26,9 @@ import javax.swing.BoxLayout;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.awt.event.ActionEvent;
+import javax.swing.JTable;
 
 public class CustomerInfoGUI extends JFrame {
 
@@ -38,27 +44,18 @@ public class CustomerInfoGUI extends JFrame {
 	private JTextField cityField;
 	private JTextField startDateField;
 	private JTextField endDateField;
+	private List<Campsite> campsites;
+	private JTable campsiteTable;
+	private BookingController bookingController;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					CustomerInfoGUI frame = new CustomerInfoGUI();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the frame.
 	 */
 	public CustomerInfoGUI() {
+		
+		this.bookingController = new BookingController();
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -256,6 +253,11 @@ public class CustomerInfoGUI extends JFrame {
 		endDateField.setColumns(10);
 
 		JButton searchButton = new JButton("Search");
+		searchButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				searchButtonClicked();
+			}
+		});
 		searchButton.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
 		GridBagConstraints gbc_searchButton = new GridBagConstraints();
 		gbc_searchButton.insets = new Insets(0, 0, 5, 0);
@@ -293,9 +295,9 @@ public class CustomerInfoGUI extends JFrame {
 		gbc_scrollPane.gridx = 0;
 		gbc_scrollPane.gridy = 1;
 		panel_2.add(scrollPane, gbc_scrollPane);
-
-		JList list = new JList();
-		scrollPane.setViewportView(list);
+		
+		campsiteTable = new JTable();
+		scrollPane.setViewportView(campsiteTable);
 
 		JPanel panel_3 = new JPanel();
 		GridBagConstraints gbc_panel_3 = new GridBagConstraints();
@@ -326,6 +328,23 @@ public class CustomerInfoGUI extends JFrame {
 		});
 		confirmButton.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
 		panel_3.add(confirmButton);
+		
+	}
+	
+	private void tableModel() {
+		CampsiteTableModel ctm = new CampsiteTableModel(campsites);
+		ctm.setData(campsites);
+		campsiteTable.setModel(ctm);
+	}
+	
+	private void searchButtonClicked() {
+		String startDate = startDateField.getText();
+		String endDate = endDateField.getText();
+		
+		campsites = bookingController.getAvailableCampsites(startDate, endDate);
+		CampsiteTableModel campsiteTableModel = new CampsiteTableModel(campsites);
+	    campsiteTableModel.setData(campsites);
+	    campsiteTable.setModel(campsiteTableModel);
 	}
 
 	private void confirmButtonClicked() {
