@@ -401,10 +401,11 @@ public class BookingInfoGUI extends JFrame {
 
 	private boolean isDate(String dateString) {
 		try {
+			//Check if date can be parsed
 			LocalDate date = LocalDate.parse(dateString);
-			return true;
+			return true; //Parsed successfully
 		} catch (DateTimeParseException e) {
-			return false;
+			return false; //Failed to parse, dateString is not a valid date
 		}
 	}
 
