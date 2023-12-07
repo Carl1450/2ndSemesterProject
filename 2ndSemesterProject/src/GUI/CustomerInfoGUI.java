@@ -47,7 +47,7 @@ public class CustomerInfoGUI extends JFrame {
     private JTextField endDateField;
     private List<Campsite> campsites;
     private JTable campsiteTable;
-    private BookingController bookingController;
+    private BookingController bookingController; 
 
     private Employee employee;
 
