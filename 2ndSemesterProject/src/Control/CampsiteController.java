@@ -20,7 +20,7 @@ public class CampsiteController {
 		
 	}
 
-	public boolean reserveCampsite(Campsite campsite, Date startDate, Date endDate, int employeeId) {
-		return campsiteDAO.reserveCampsite(campsite, startDate, endDate, employeeId);
+	public boolean reserveCampsite(Campsite campsite, Date startDate, Date endDate, Employee employee) {
+		return campsiteDAO.reserveCampsite(campsite, startDate, endDate, employee);
 	}
 }

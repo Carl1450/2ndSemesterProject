@@ -28,6 +28,10 @@ public class Booking {
 	
 	public Booking() {
 	}
+
+	public Booking(Employee employee) {
+		this.employee = employee;
+	}
 	
     public Customer getCustomer() {
     	return customer;

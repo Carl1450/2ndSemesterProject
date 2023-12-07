@@ -6,6 +6,7 @@ import Database.DBConnection;
 import Database.InvalidDateException;
 import Model.Cabin;
 import Model.Campsite;
+import Model.Employee;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -170,10 +171,13 @@ public class TestCampsiteDAO {
         Date startDate = Date.valueOf("2023-11-01");
         Date endDate = Date.valueOf("2023-11-03");
 
+        Employee mockEmployee = new Employee(1, null, null, null, null, null, null);
+
+
         Connection mockConnection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
 
         // Act
-        boolean result = SUT.reserveCampsite(campsite, startDate, endDate, 1);
+        boolean result = SUT.reserveCampsite(campsite, startDate, endDate, mockEmployee);
 
         // Assert
         assertTrue(result);
@@ -190,12 +194,14 @@ public class TestCampsiteDAO {
         Date startDate = Date.valueOf("2023-11-01");
         Date endDate = Date.valueOf("2023-11-03");
 
+        Employee mockEmployee = new Employee(1, null, null, null, null, null, null);
+
         Connection mockConnection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
 
         // Act
-        SUT.reserveCampsite(campsite, startDate, endDate, 1);
+        SUT.reserveCampsite(campsite, startDate, endDate, mockEmployee);
 
-        boolean result = SUT.reserveCampsite(campsite, startDate, endDate, 1);
+        boolean result = SUT.reserveCampsite(campsite, startDate, endDate, mockEmployee);
 
         // Assert
         assertFalse(result);

@@ -21,16 +21,20 @@ public class BookingController {
 
     private Connection bookingConnection;
 
-    public BookingController() {
+    private Employee currentEmployee;
+
+    public BookingController(Employee employee) {
         customerController = new CustomerController();
         campsiteController = new CampsiteController();
 
         bookingDAO = new BookingDAO();
 
+        currentEmployee = employee;
+
     }
 
-    public Booking startBooking(Employee employee) {
-        currentBooking = new Booking();
+    public Booking startBooking() {
+        currentBooking = new Booking(currentEmployee);
         return currentBooking;
     }
 
@@ -50,62 +54,13 @@ public class BookingController {
         }
     }
 
-    private boolean reserveCampsite(Campsite campsite, Date startDate, Date endDate) {
-        boolean reservationSuccess = false;
+    public boolean reserveCampsite(Campsite campsite, Date startDate, Date endDate) {
+        return campsiteController.reserveCampsite(campsite, startDate, endDate, currentEmployee);
 
-        try {
-            bookingConnection = DBConnection.getInstance().getConnection();
-            bookingConnection.setAutoCommit(false);
-
-            reservationSuccess = campsiteController.reserveCampsite(campsite, startDate, endDate, currentBooking.getEmployee().getId());
-
-            if (!reservationSuccess) {
-                bookingConnection.rollback();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            if (bookingConnection != null) {
-                try {
-                    bookingConnection.rollback();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        }
-        return reservationSuccess;
     }
 
     public boolean saveBooking(Booking booking) {
-        boolean bookingSuccess = false;
-        try {
-            if (bookingConnection != null && !bookingConnection.getAutoCommit()) {
-                bookingSuccess = bookingDAO.saveBooking(booking);
-                if (bookingSuccess) {
-                    bookingConnection.commit();
-                } else {
-                    bookingConnection.rollback();
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            if (bookingConnection != null) {
-                try {
-                    bookingConnection.rollback();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
-            bookingSuccess = false;
-        } finally {
-            if (bookingConnection != null) {
-                try {
-                    bookingConnection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return bookingSuccess;
+        return bookingDAO.saveBooking(booking);
     }
 
 

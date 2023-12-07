@@ -72,14 +72,14 @@ public class CampsiteDAO {
     }
 
 
-    public boolean reserveCampsite(Campsite campsite, Date startDate, Date endDate, int employeeId) {
+    public boolean reserveCampsite(Campsite campsite, Date startDate, Date endDate, Employee employee) {
         boolean reservationStarted = false;
 
         try (Connection connection = DBConnection.getInstance().getConnection()) {
             connection.setAutoCommit(false);
 
             if (!checkForConflictingBooking(connection, campsite.getId(), startDate, endDate)) {
-                if (insertTentativeReservation(connection, campsite.getId(), startDate, endDate, employeeId)) {
+                if (insertTentativeReservation(connection, campsite.getId(), startDate, endDate, employee.getId())) {
                     connection.commit();
                     reservationStarted = true;
                 } else {
