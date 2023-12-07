@@ -8,7 +8,7 @@ public class CustomerController {
 	private CustomerDAO customerDAO;
 
 	public CustomerController() {
-		CustomerDAO customerDAO = new CustomerDAO();
+		this.customerDAO = new CustomerDAO();
 
 	}
 

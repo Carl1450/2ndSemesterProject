@@ -67,7 +67,7 @@ public class MainMenuGUI extends JFrame {
 		JButton bookingButton = new JButton("Booking");
 		bookingButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				CustomerInfoGUI customerInfoGUI = new CustomerInfoGUI(employee);
+				BookingInfoGUI customerInfoGUI = new BookingInfoGUI(employee);
 				customerInfoGUI.setVisible(true);
 				dispose();
 			}

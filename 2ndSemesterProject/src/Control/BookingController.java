@@ -45,11 +45,15 @@ public class BookingController {
     }
 
     public List<Campsite> getAvailableCampsites(String startDate, String endDate) {
-        return campsiteController.getAvailableCampsites(Date.valueOf(startDate), Date.valueOf(endDate));
+    	Date startDateFormatted = Date.valueOf(startDate);
+    	Date endDateFormatted = Date.valueOf(endDate);
+        return campsiteController.getAvailableCampsites(startDateFormatted, endDateFormatted);
     }
 
-    public void addCampsiteToBooking(Campsite campsite, Date startDate, Date endDate) {
-        if (reserveCampsite(campsite, startDate, endDate)) {
+    public void addCampsiteToBooking(Campsite campsite, String startDate, String endDate) {
+    	Date startDateFormatted = Date.valueOf(startDate);
+    	Date endDateFormatted = Date.valueOf(endDate);
+        if (reserveCampsite(campsite, startDateFormatted, endDateFormatted)) {
             currentBooking.setCampsite(campsite);
         }
     }
