@@ -1,6 +1,6 @@
 package Tests.DatbaseTests;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.sql.Connection;
@@ -13,10 +13,11 @@ import org.junit.jupiter.api.Test;
 
 import Database.ConnectionEnvironment;
 import Database.DBConnection;
+import Database.EmployeeDAO;
+import Model.Employee;
 
 class TestEmployeeDAO {
 
-	
 	@BeforeEach
 	void setUp() {
 		Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
@@ -28,93 +29,76 @@ class TestEmployeeDAO {
 		try {
 			Statement statement = connection.createStatement();
 			statement.executeUpdate(mockCityInsertQuery);
-			statement.executeUpdate("SET IDENTITY_INSERT [Address] ON");
+//			statement.executeUpdate("SET IDENTITY_INSERT [Address] ON");
 			statement.executeUpdate(mockAddressInsertQuery);
-			statement.executeUpdate("SET IDENTITY_INSERT [Address] OFF");
-			statement.executeUpdate("SET IDENTITY_INSERT [Employee] ON");
+//			statement.executeUpdate("SET IDENTITY_INSERT [Address] OFF");
+//			statement.executeUpdate("SET IDENTITY_INSERT [Employee] ON");
 			statement.executeUpdate(mockEmployeeInsertQuery);
-			statement.executeUpdate("SET IDENTITY_INSERT [Employee] OFF");
+//			statement.executeUpdate("SET IDENTITY_INSERT [Employee] OFF");
 
-			} catch (SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new RuntimeException("Error setting up mock data", e);
 		}
-		
+
 	}
 
-	
-
 	@Test
-	void TS_4_TC_1_find_Employee_by_password_with_valid_number() {
+	void TS_4_TC_1_find_Employee_by_id_with_valid_id() {
 		// Arrange
-		TestEmployeeDAO SUT = new TestEmployeeDAO();
-		String Password = "password1";
-		
+		EmployeeDAO SUT = new EmployeeDAO(ConnectionEnvironment.TESTING);
+		String id = "1";
+		int idInt = Integer.parseInt(id);
+
 		// Act
-		boolean result = SUT.findEmployeeByPassword(Password);
-		
-			 Password = String.valueOf(Password);
-			
+		Employee result = SUT.findEmployeeById(idInt);
+
+		id = String.valueOf(id);
+
 		// Assert
 		assertNotNull(result);
 	}
 
 	@Test
-	void TS_4_TC_1_find_Employee_by_password_with_invalid_number() {
+	void TS_4_TC_1_find_Employee_by_id_with_invalid_id() {
 		// Arrange
-		TestEmployeeDAO SUT = new TestEmployeeDAO();
-		String Password =""; 
-		
-		 boolean result = SUT.findEmployeeByPassword(Password);
- 
-		// Assert
-		assertFalse(result) ;
-	}
+		EmployeeDAO SUT = new EmployeeDAO(ConnectionEnvironment.TESTING);
+		String id = "";
+		int idInt = Integer.parseInt(id);
 
-	private boolean findEmployeeByPassword(String Password) {
-		// TODO Auto-generated method stub
-		return false;
+		Employee result = SUT.findEmployeeById(idInt);
+
+		// Assert
+		assertNull(result);
 	}
 
 	@Test
-	void TS_4_TC_1_find_Employee_by_password_with_number_null() {
+	void TS_4_TC_1_find_Employee_by_id_with_id_null() {
 		// Arrange
-		TestEmployeeDAO SUT = new TestEmployeeDAO();
-		String Password = null;
+		EmployeeDAO SUT = new EmployeeDAO(ConnectionEnvironment.TESTING);
+		String id = null;
+		int idInt = Integer.parseInt(id);
 
 		// Act
-		boolean result = SUT.findEmployeeByPassword(Password);
-		
+		Employee result = SUT.findEmployeeById(idInt);
+
 		// Assert
-		assertFalse(result);
+		assertNull(result);
 	}
 
 	@AfterEach
-	void tearDown1() {
+	void tearDown() {
 		Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
 
-		String deleteMockDataQuery = " DELETE FROM Employee;  DELETE FROM Address; DELETE FROM City";
+		// Delete in reverse order of creation
+		String deleteMockDataQuery = "DELETE FROM Employee WHERE id = 1; " + "DELETE FROM [Address] WHERE id = 1; "
+								+ "DELETE FROM [City] WHERE zipcode = 1000; ";
 
 		try {
 			Statement statement = connection.createStatement();
 			statement.executeUpdate(deleteMockDataQuery);
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}
-	}
-	@AfterEach
-	void tearDown() {
-		Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
-
-		// Delete in reverse order of creation
-		String deleteMockDataQuery = "DELETE FROM password WHERE password = 1; "
-				+ "DELETE FROM [password] WHERE password = 1; ";
-
-		try {
-			Statement statement = connection.createStatement();
-			statement.executeUpdate(deleteMockDataQuery);
-		} catch (SQLException e) {
-			
 		}
 	}
 }
