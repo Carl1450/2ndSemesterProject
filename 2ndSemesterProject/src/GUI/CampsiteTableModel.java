@@ -6,22 +6,22 @@ import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 import Model.*;
 
-public class CampsiteTableModel extends AbstractTableModel{
-	
+public class CampsiteTableModel extends AbstractTableModel {
+
 	private List<Campsite> data;
-	private static final String[] COL_NAMES = {"Type", "Section", "Road", "Site Number", "Price"};
-	
+	private static final String[] COL_NAMES = { "Type", /* "Section", "Road", */ "Site Number", "Price" };
+
 	public CampsiteTableModel(List<Campsite> campsites) {
 		super();
-		
-		if(campsites != null) {
+
+		if (campsites != null) {
 			this.data = campsites;
-		}
-		else {
+		} else {
 			this.data = new ArrayList<>();
+			System.out.println("Warning: Campsites list was null. Initializing with an empty list.");
 		}
 	}
-	
+
 	@Override
 	public String getColumnName(int col) {
 		return COL_NAMES[col];
@@ -41,43 +41,50 @@ public class CampsiteTableModel extends AbstractTableModel{
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		Campsite c = data.get(rowIndex);
 		String res = "";
-		switch(columnIndex) {
-		case 0:
-			//Type stuff
-			break;
-			
-		case 1:
-			//Section stuff
-			break;
-			
-		case 2:
-			//Road stuff
-			break;
-			
-		case 3:
-			//Site Number stuff
-			break;
-			
-		case 4:
-			//price
-			break;
-			
-		default:
-			res = "Unknown";
+		if (c != null) {
+			switch (columnIndex) {
+			case 0:
+				if (c instanceof Cabin) {
+					res = "Cabin";
+				}
+				if (c instanceof Pitch) {
+					res = "Pitch";
+				}
+				break;
+
+			/*
+			 * case 1: String section = c.getSection(); res = section; break;
+			 * 
+			 * case 2: String road = c.getRoad(); res = road; break;
+			 */
+
+			case 1:
+				int siteNumber = c.getSiteNumber();
+				res = (siteNumber != 0) ? String.valueOf(siteNumber) : "N/A";
+				break;
+
+			case 2:
+				Price price = c.getPrice();
+				res = (price != null) ? String.valueOf(price) : "N/A";
+				break;
+
+			default:
+				res = "Unknown";
+			}
+		} else {
+			res = "N/A";
 		}
-		
 		return res;
-		
+
 	}
-	
+
 	public Campsite getCampsite(int index) {
 		return data.get(index);
 	}
-	
+
 	public void setData(List<Campsite> data) {
 		this.data = data;
 		super.fireTableDataChanged();
 	}
-	
 
 }
