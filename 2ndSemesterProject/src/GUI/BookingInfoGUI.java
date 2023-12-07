@@ -10,6 +10,7 @@ import javax.swing.event.ListSelectionListener;
 
 import Control.BookingController;
 import Model.Campsite;
+import Model.Customer;
 import Model.Employee;
 import Model.Price;
 
@@ -29,6 +30,8 @@ import javax.swing.JScrollPane;
 import java.awt.FlowLayout;
 import javax.swing.BoxLayout;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -53,6 +56,7 @@ public class BookingInfoGUI extends JFrame {
 	private JTable campsiteTable;
 	private BookingController bookingController;
 	private Employee employee;
+	private Customer customer;
 
 	private CampsiteTableModel campsiteTableModel;
 
@@ -86,10 +90,11 @@ public class BookingInfoGUI extends JFrame {
 		JPanel panel = new JPanel();
 		contentPane.add(panel);
 		GridBagLayout gbl_panel = new GridBagLayout();
-		gbl_panel.columnWidths = new int[] { 61, 0, 0 };
-		gbl_panel.rowHeights = new int[] { 16, 0, 0, 0, 0, 0, 0, 0, 0 };
-		gbl_panel.columnWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
-		gbl_panel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		gbl_panel.columnWidths = new int[]{61, 0, 0};
+		gbl_panel.rowHeights = new int[]{16, 0, 0, 0, 0, 0, 0, 0, 0};
+		gbl_panel.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+				0.0, Double.MIN_VALUE};
 		panel.setLayout(gbl_panel);
 
 		JLabel firstnameLabel = new JLabel("Firstname:");
@@ -231,10 +236,11 @@ public class BookingInfoGUI extends JFrame {
 		JPanel panel_1 = new JPanel();
 		contentPane.add(panel_1);
 		GridBagLayout gbl_panel_1 = new GridBagLayout();
-		gbl_panel_1.columnWidths = new int[] { 61, 0, 0 };
-		gbl_panel_1.rowHeights = new int[] { 16, 0, 0, 0, 0 };
-		gbl_panel_1.columnWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
-		gbl_panel_1.rowWeights = new double[] { 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE };
+		gbl_panel_1.columnWidths = new int[]{61, 0, 0};
+		gbl_panel_1.rowHeights = new int[]{16, 0, 0, 0, 0};
+		gbl_panel_1.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+		gbl_panel_1.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0,
+				Double.MIN_VALUE};
 		panel_1.setLayout(gbl_panel_1);
 
 		JLabel startDateLabel = new JLabel("Start Date:");
@@ -293,10 +299,10 @@ public class BookingInfoGUI extends JFrame {
 		gbc_panel_2.gridy = 3;
 		panel_1.add(panel_2, gbc_panel_2);
 		GridBagLayout gbl_panel_2 = new GridBagLayout();
-		gbl_panel_2.columnWidths = new int[] { 0, 0 };
-		gbl_panel_2.rowHeights = new int[] { 0, 0, 0, 0 };
-		gbl_panel_2.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
-		gbl_panel_2.rowWeights = new double[] { 0.0, 1.0, 0.0, Double.MIN_VALUE };
+		gbl_panel_2.columnWidths = new int[]{0, 0};
+		gbl_panel_2.rowHeights = new int[]{0, 0, 0, 0};
+		gbl_panel_2.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+		gbl_panel_2.rowWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
 		panel_2.setLayout(gbl_panel_2);
 
 		JLabel availableCampsitesLabel = new JLabel("Available Campsites");
@@ -346,12 +352,34 @@ public class BookingInfoGUI extends JFrame {
 		confirmButton.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
 		panel_3.add(confirmButton);
 
+		phoneNumberField.addKeyListener(new KeyListener() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// System.out.println("Alive");
+				if (e.getKeyCode() == 10) {
+					System.out.println("Good heavens!");
+					fillCustomerInfo(phoneNumberField.getText());
+				}
+			}
+
+			@Override
+			public void keyTyped(KeyEvent e) {
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+			}
+		});
 	}
 
 	private void init(Employee employee) {
 		this.employee = employee;
 		this.bookingController = new BookingController(this.employee);
 		bookingController.startBooking();
+	}
+
+	private Customer findCustomer(String phoneNumber) {
+		return bookingController.findCustomerByPhoneNumber(phoneNumber);
 	}
 
 	private void tableModel() {
@@ -380,15 +408,15 @@ public class BookingInfoGUI extends JFrame {
 		String city = cityField.getText();
 		String startDate = startDateField.getText();
 		String endDate = endDateField.getText();
+		System.out.println(findCustomer(phoneNumberField.getText()));
 
-		bookingController.findCustomerByPhoneNumber(phoneNumber);
-		
 		int rowIndex = campsiteTable.getSelectedRow();
 		Campsite currentCampsite = campsiteTableModel.getCampsite(rowIndex);
-		bookingController.addCampsiteToBooking(currentCampsite, startDate, endDate);
-		
+		bookingController.addCampsiteToBooking(currentCampsite, startDate,
+				endDate);
 
-		FinishBookingGUI finishBookingGUI = new FinishBookingGUI(this.employee, this.bookingController);
+		FinishBookingGUI finishBookingGUI = new FinishBookingGUI(this.employee,
+				this.bookingController);
 
 		finishBookingGUI.setVisible(true);
 		dispose();
@@ -398,6 +426,33 @@ public class BookingInfoGUI extends JFrame {
 		MainMenuGUI mainMenuGUI = new MainMenuGUI(employee);
 		mainMenuGUI.setVisible(true);
 		dispose();
+	}
+
+	private void fillCustomerInfo(String phoneNumber) {
+		customer = bookingController.findCustomerByPhoneNumber(phoneNumber);
+		if (customer != null) {
+			String[] address = customer.getAddress().split(" ");
+			streetNameField.setText(address[0]);
+			streetNumberField.setText(address[1]);
+			cityField.setText(address[2]);
+			zipCodeField.setText(address[3]);
+
+			emailField.setText(customer.getEmail());
+
+			String[] name = customer.getName().split(" ");
+			firstnameTextField.setText(name[0]);
+			lastnameField.setText(name[1]);
+		} else {
+			streetNameField.setText("");
+			streetNumberField.setText("");
+			cityField.setText("");
+			zipCodeField.setText("");
+
+			emailField.setText("");
+
+			firstnameTextField.setText("");
+			lastnameField.setText("");
+		}
 	}
 
 }
