@@ -30,14 +30,12 @@ import java.awt.event.ActionEvent;
 public class FinishBookingGUI extends JFrame {
 
 	private JLabel insertFirstnameLabel;
-	private JLabel insertLastnameLabel;
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JLabel insertPhoneNumberLabel;
 	private JLabel insertEmailLabel;
 	private JLabel insertStreetNameLabel;
-	private JLabel insertStreetNumberLabel;
 	private JLabel insertZipcodeLabel;
 	private JLabel insertCityLabel;
 	private JLabel insertStartDateLabel;
@@ -109,12 +107,12 @@ public class FinishBookingGUI extends JFrame {
 		panel_1.add(panel_3, gbc_panel_3);
 		GridBagLayout gbl_panel_3 = new GridBagLayout();
 		gbl_panel_3.columnWidths = new int[] { 102, 0, 0 };
-		gbl_panel_3.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		gbl_panel_3.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0 };
 		gbl_panel_3.columnWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
-		gbl_panel_3.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		gbl_panel_3.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		panel_3.setLayout(gbl_panel_3);
 
-		JLabel firstnameLabel = new JLabel("Firstname:");
+		JLabel firstnameLabel = new JLabel("First name:");
 		GridBagConstraints gbc_firstnameLabel = new GridBagConstraints();
 		gbc_firstnameLabel.anchor = GridBagConstraints.WEST;
 		gbc_firstnameLabel.insets = new Insets(0, 0, 5, 5);
@@ -129,22 +127,6 @@ public class FinishBookingGUI extends JFrame {
 		gbc_insertFirstnameLabel.gridx = 1;
 		gbc_insertFirstnameLabel.gridy = 0;
 		panel_3.add(insertFirstnameLabel, gbc_insertFirstnameLabel);
-
-		JLabel lastnameLabel = new JLabel("Lastname:");
-		GridBagConstraints gbc_lastnameLabel = new GridBagConstraints();
-		gbc_lastnameLabel.anchor = GridBagConstraints.WEST;
-		gbc_lastnameLabel.insets = new Insets(0, 0, 5, 5);
-		gbc_lastnameLabel.gridx = 0;
-		gbc_lastnameLabel.gridy = 1;
-		panel_3.add(lastnameLabel, gbc_lastnameLabel);
-
-		insertLastnameLabel = new JLabel("");
-		GridBagConstraints gbc_insertLastnameLabel = new GridBagConstraints();
-		gbc_insertLastnameLabel.anchor = GridBagConstraints.WEST;
-		gbc_insertLastnameLabel.insets = new Insets(0, 0, 5, 0);
-		gbc_insertLastnameLabel.gridx = 1;
-		gbc_insertLastnameLabel.gridy = 1;
-		panel_3.add(insertLastnameLabel, gbc_insertLastnameLabel);
 		// setLastNameLabel();
 
 		JLabel phoneNumberLabel = new JLabel("Phone Number:");
@@ -152,7 +134,7 @@ public class FinishBookingGUI extends JFrame {
 		gbc_phoneNumberLabel.anchor = GridBagConstraints.WEST;
 		gbc_phoneNumberLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_phoneNumberLabel.gridx = 0;
-		gbc_phoneNumberLabel.gridy = 2;
+		gbc_phoneNumberLabel.gridy = 1;
 		panel_3.add(phoneNumberLabel, gbc_phoneNumberLabel);
 
 		insertPhoneNumberLabel = new JLabel("");
@@ -160,7 +142,7 @@ public class FinishBookingGUI extends JFrame {
 		gbc_insertPhoneNumberLabel.anchor = GridBagConstraints.WEST;
 		gbc_insertPhoneNumberLabel.insets = new Insets(0, 0, 5, 0);
 		gbc_insertPhoneNumberLabel.gridx = 1;
-		gbc_insertPhoneNumberLabel.gridy = 2;
+		gbc_insertPhoneNumberLabel.gridy = 1;
 		panel_3.add(insertPhoneNumberLabel, gbc_insertPhoneNumberLabel);
 
 		JLabel emailLabel = new JLabel("Email:");
@@ -168,7 +150,7 @@ public class FinishBookingGUI extends JFrame {
 		gbc_emailLabel.anchor = GridBagConstraints.WEST;
 		gbc_emailLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_emailLabel.gridx = 0;
-		gbc_emailLabel.gridy = 3;
+		gbc_emailLabel.gridy = 2;
 		panel_3.add(emailLabel, gbc_emailLabel);
 
 		insertEmailLabel = new JLabel("");
@@ -176,7 +158,7 @@ public class FinishBookingGUI extends JFrame {
 		gbc_insertEmailLabel.anchor = GridBagConstraints.WEST;
 		gbc_insertEmailLabel.insets = new Insets(0, 0, 5, 0);
 		gbc_insertEmailLabel.gridx = 1;
-		gbc_insertEmailLabel.gridy = 3;
+		gbc_insertEmailLabel.gridy = 2;
 		panel_3.add(insertEmailLabel, gbc_insertEmailLabel);
 
 		JLabel streetNameLabel = new JLabel("Street Name:");
@@ -184,7 +166,7 @@ public class FinishBookingGUI extends JFrame {
 		gbc_streetNameLabel.anchor = GridBagConstraints.WEST;
 		gbc_streetNameLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_streetNameLabel.gridx = 0;
-		gbc_streetNameLabel.gridy = 4;
+		gbc_streetNameLabel.gridy = 3;
 		panel_3.add(streetNameLabel, gbc_streetNameLabel);
 
 		insertStreetNameLabel = new JLabel("");
@@ -192,31 +174,15 @@ public class FinishBookingGUI extends JFrame {
 		gbc_insertStreetNameLabel.anchor = GridBagConstraints.WEST;
 		gbc_insertStreetNameLabel.insets = new Insets(0, 0, 5, 0);
 		gbc_insertStreetNameLabel.gridx = 1;
-		gbc_insertStreetNameLabel.gridy = 4;
+		gbc_insertStreetNameLabel.gridy = 3;
 		panel_3.add(insertStreetNameLabel, gbc_insertStreetNameLabel);
-
-		JLabel streetNumberLabel = new JLabel("Street Number:");
-		GridBagConstraints gbc_streetNumberLabel = new GridBagConstraints();
-		gbc_streetNumberLabel.anchor = GridBagConstraints.WEST;
-		gbc_streetNumberLabel.insets = new Insets(0, 0, 5, 5);
-		gbc_streetNumberLabel.gridx = 0;
-		gbc_streetNumberLabel.gridy = 5;
-		panel_3.add(streetNumberLabel, gbc_streetNumberLabel);
-
-		insertStreetNumberLabel = new JLabel("");
-		GridBagConstraints gbc_insertStreetNumberLabel = new GridBagConstraints();
-		gbc_insertStreetNumberLabel.anchor = GridBagConstraints.WEST;
-		gbc_insertStreetNumberLabel.insets = new Insets(0, 0, 5, 0);
-		gbc_insertStreetNumberLabel.gridx = 1;
-		gbc_insertStreetNumberLabel.gridy = 5;
-		panel_3.add(insertStreetNumberLabel, gbc_insertStreetNumberLabel);
 
 		JLabel zipCodeLabel = new JLabel("Zipcode:");
 		GridBagConstraints gbc_zipCodeLabel = new GridBagConstraints();
 		gbc_zipCodeLabel.anchor = GridBagConstraints.WEST;
 		gbc_zipCodeLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_zipCodeLabel.gridx = 0;
-		gbc_zipCodeLabel.gridy = 6;
+		gbc_zipCodeLabel.gridy = 4;
 		panel_3.add(zipCodeLabel, gbc_zipCodeLabel);
 
 		insertZipcodeLabel = new JLabel("");
@@ -224,7 +190,7 @@ public class FinishBookingGUI extends JFrame {
 		gbc_insertZipcodeLabel.anchor = GridBagConstraints.WEST;
 		gbc_insertZipcodeLabel.insets = new Insets(0, 0, 5, 0);
 		gbc_insertZipcodeLabel.gridx = 1;
-		gbc_insertZipcodeLabel.gridy = 6;
+		gbc_insertZipcodeLabel.gridy = 4;
 		panel_3.add(insertZipcodeLabel, gbc_insertZipcodeLabel);
 
 		JLabel cityLabel = new JLabel("City:");
@@ -232,14 +198,14 @@ public class FinishBookingGUI extends JFrame {
 		gbc_cityLabel.anchor = GridBagConstraints.WEST;
 		gbc_cityLabel.insets = new Insets(0, 0, 0, 5);
 		gbc_cityLabel.gridx = 0;
-		gbc_cityLabel.gridy = 7;
+		gbc_cityLabel.gridy = 5;
 		panel_3.add(cityLabel, gbc_cityLabel);
 
 		insertCityLabel = new JLabel("");
 		GridBagConstraints gbc_insertCityLabel = new GridBagConstraints();
 		gbc_insertCityLabel.anchor = GridBagConstraints.WEST;
 		gbc_insertCityLabel.gridx = 1;
-		gbc_insertCityLabel.gridy = 7;
+		gbc_insertCityLabel.gridy = 5;
 		panel_3.add(insertCityLabel, gbc_insertCityLabel);
 
 		JPanel panel_4 = new JPanel();
@@ -375,13 +341,12 @@ public class FinishBookingGUI extends JFrame {
 	private void setCustomerInfo() {
 		Customer customer = bookingController.getCurrentBooking().getCustomer();
 		insertFirstnameLabel.setText(customer.getName());
-		insertLastnameLabel.setText("LAstNAMe");
 		insertPhoneNumberLabel.setText(customer.getPhoneNumber());
 		insertEmailLabel.setText(customer.getEmail());
-		insertStreetNameLabel.setText(customer.getAddress());
-		insertStreetNumberLabel.setText("");
-		insertZipcodeLabel.setText("");
-		insertCityLabel.setText("");
+		String[] address = customer.getAddress().split(" ");
+		insertStreetNameLabel.setText(address[0] + " " + address[1]);
+		insertZipcodeLabel.setText(address[3]);
+		insertCityLabel.setText(address[2]);
 	}
 
 	private void setBookingInfo() {

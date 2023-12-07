@@ -69,7 +69,7 @@ public class CampsiteTableModel extends AbstractTableModel {
 
 			case 4:
 				Price price = c.getPrice();
-				res = (price != null) ? String.valueOf(price) : "N/A";
+				res = (price != null) ? String.valueOf(price.getPrice()) : "N/A";
 				break;
 
 			default:
