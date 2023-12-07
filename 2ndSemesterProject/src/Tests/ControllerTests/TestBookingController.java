@@ -31,7 +31,7 @@ public class TestBookingController {
 
         // Insert mock data for Customer and Employee
         String mockCustomerInsertQuery = "INSERT INTO Customer (id, fname, lname, email, phoneno, addressId) VALUES (1, 'Jens', 'Larsen', 'jens.larsen@email.com', '+45 12345678', 1);";
-        String mockEmployeeInsertQuery = "INSERT INTO Employee (id, fname, lname, email, phoneno, [role], cprNo, password, addressId) VALUES (1, 'Anne', 'Nielsen', 'anne.nielsen@email.com', '+45 87654321', 'Manager', '0101901234', 'password1', 1);";
+        String mockEmployeeInsertQuery = "INSERT INTO Employee (id, fname, lname, email, phoneno, [role], cprNo, password, addressId) VALUES (1, 'Anne', 'Nielsen', 'anne.nielsen@email.com', '+45 87654321', 'Manager', '0101901234', 'password1', 1), (2, 'Bo', 'Nielsen', 'anne.nielsen@email.com', '+45 87654321', 'Manager', '0101901235', 'password2', 1);";
 
         // Insert mock data for Campsite
         String mockCampsiteInsertQuery =
@@ -127,5 +127,122 @@ public class TestBookingController {
         // Assertion
         assertTrue(reservationResult);
         assertTrue(bookingResult);
+    }
+
+    @Test
+    public void testReserveAndSaveTwoDifferentCampsitesForSameEmployee() {
+        // Arrange
+        Employee employee = new Employee(1, "", "", "", "", "", "");
+        Date startDate = Date.valueOf("2023-07-01");
+        Date endDate = Date.valueOf("2023-07-07");
+        float price = 5000;
+        int amountOfAdults = 2;
+        int amountOfChildren = 1;
+        Customer customer = new Customer(1, "", "", "", "");
+        Price pitchPrice = new Price(500, startDate);
+
+        // Two different campsites
+        Campsite campsite1 = new Pitch(1, "", "", 10, pitchPrice, 1000);
+        Campsite campsite2 = new Pitch(2, "", "", 11, pitchPrice, 1000);
+
+        // Two different bookings
+        Booking booking1 = new Booking(startDate, endDate, price, amountOfAdults, amountOfChildren, customer, employee, campsite1, null);
+        Booking booking2 = new Booking(startDate, endDate, price, amountOfAdults, amountOfChildren, customer, employee, campsite2, null);
+
+        BookingController SUT = new BookingController(employee);
+
+        // Act & Assert
+        // For the first campsite
+        SUT.setCurrentBooking(booking1);
+        boolean reservationResult1 = SUT.reserveCampsite(campsite1, startDate, endDate);
+        boolean bookingResult1 = SUT.saveBooking();
+        assertTrue(reservationResult1, "First reservation should be successful");
+        assertTrue(bookingResult1, "First booking should be successfully saved");
+
+        // For the second campsite
+        SUT.setCurrentBooking(booking2);
+        boolean reservationResult2 = SUT.reserveCampsite(campsite2, startDate, endDate);
+        boolean bookingResult2 = SUT.saveBooking();
+        assertTrue(reservationResult2, "Second reservation should be successful");
+        assertTrue(bookingResult2, "Second booking should be successfully saved");
+    }
+
+    @Test
+    public void testConcurrentReservationAndBooking() {
+        // Arrange
+        Employee employee1 = new Employee(1, "", "", "", "", "", "");
+        Employee employee2 = new Employee(2, "", "", "", "", "", "");
+        Date startDate = Date.valueOf("2023-07-01");
+        Date endDate = Date.valueOf("2023-07-07");
+        float price = 5000;
+        int amountOfAdults = 2;
+        int amountOfChildren = 1;
+        Customer customer = new Customer(1, "", "", "", "");
+        Price pitchPrice = new Price(500, startDate);
+
+        Campsite campsite = new Pitch(1, "", "", 10, pitchPrice, 1000);
+
+        Booking booking1 = new Booking(startDate, endDate, price, amountOfAdults, amountOfChildren, customer, employee1, campsite, null);
+        Booking booking2 = new Booking(startDate, endDate, price, amountOfAdults, amountOfChildren, customer, employee2, campsite, null);
+
+        BookingController bookingController1 = new BookingController(employee1);
+        BookingController bookingController2 = new BookingController(employee2);
+
+        // Act
+        boolean reservationResult1 = bookingController1.reserveCampsite(campsite, startDate, endDate);
+        boolean reservationResult2 = bookingController2.reserveCampsite(campsite, startDate, endDate);
+
+        bookingController1.setCurrentBooking(booking1);
+        boolean bookingResult1 = bookingController1.saveBooking();
+
+        bookingController2.setCurrentBooking(booking2);
+        boolean bookingResult2 = bookingController2.saveBooking();
+
+
+        // Assert
+        assertTrue(reservationResult1);
+        assertFalse(reservationResult2);
+        assertTrue(bookingResult1);
+        assertFalse(bookingResult2);
+    }
+
+    @Test
+    public void testNonOverlappingReservationAndBooking() {
+        // Arrange
+        Employee employee1 = new Employee(1, "", "", "", "", "", "");
+        Employee employee2 = new Employee(2, "", "", "", "", "", "");
+        Date startDate1 = Date.valueOf("2023-07-01");
+        Date endDate1 = Date.valueOf("2023-07-07");
+        Date startDate2 = Date.valueOf("2023-07-08"); // Start immediately after endDate1
+        Date endDate2 = Date.valueOf("2023-07-14");
+        float price = 5000;
+        int amountOfAdults = 2;
+        int amountOfChildren = 1;
+        Customer customer = new Customer(1, "", "", "", "");
+        Price pitchPrice = new Price(500, startDate1);
+
+        Campsite campsite = new Pitch(1, "", "", 10, pitchPrice, 1000);
+
+        Booking booking1 = new Booking(startDate1, endDate1, price, amountOfAdults, amountOfChildren, customer, employee1, campsite, null);
+        Booking booking2 = new Booking(startDate2, endDate2, price, amountOfAdults, amountOfChildren, customer, employee2, campsite, null);
+
+        BookingController bookingController1 = new BookingController(employee1);
+        BookingController bookingController2 = new BookingController(employee2);
+
+        // Act
+        bookingController1.setCurrentBooking(booking1);
+        boolean reservationResult1 = bookingController1.reserveCampsite(campsite, startDate1, endDate1);
+        boolean bookingResult1 = bookingController1.saveBooking();
+
+        bookingController2.setCurrentBooking(booking2);
+        boolean reservationResult2 = bookingController2.reserveCampsite(campsite, startDate2, endDate2);
+        boolean bookingResult2 = bookingController2.saveBooking();
+
+        // Assert
+        assertTrue(reservationResult1);
+        assertTrue(bookingResult1);
+
+        assertTrue(reservationResult2);
+        assertTrue(bookingResult2);
     }
 }
