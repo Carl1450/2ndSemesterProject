@@ -54,6 +54,8 @@ public class BookingInfoGUI extends JFrame {
 	private BookingController bookingController;
 	private Employee employee;
 
+	private CampsiteTableModel campsiteTableModel;
+
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -353,7 +355,7 @@ public class BookingInfoGUI extends JFrame {
 	}
 
 	private void tableModel() {
-		CampsiteTableModel campsiteTableModel = new CampsiteTableModel(campsites);
+		campsiteTableModel = new CampsiteTableModel(campsites);
 		campsiteTableModel.setData(campsites);
 		campsiteTable.setModel(campsiteTableModel);
 	}
@@ -382,7 +384,6 @@ public class BookingInfoGUI extends JFrame {
 		bookingController.findCustomerByPhoneNumber(phoneNumber);
 		
 		int rowIndex = campsiteTable.getSelectedRow();
-		CampsiteTableModel campsiteTableModel = (CampsiteTableModel) campsiteTable.getModel();
 		Campsite currentCampsite = campsiteTableModel.getCampsite(rowIndex);
 		bookingController.addCampsiteToBooking(currentCampsite, startDate, endDate);
 		
