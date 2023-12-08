@@ -162,4 +162,35 @@ public class TestBookingDAO {
         assertFalse(result);
 
     }
+
+    @Test
+    void TS_1_TC_4_conflicting_booking_is_not_persisted_in_database() {
+        // Arrange
+        BookingDAO SUT = new BookingDAO();
+
+        Date startDate = new Date(1000);
+        Date endDate = new Date(50000000);
+        float price = 5000;
+        int amountOfAdults = 2;
+        int amountOfChildren = 1;
+        Customer customer = new Customer(1, null, null, null, null);
+        Employee employee = new Employee(1, "", "", "", "",
+                "", "");
+        Price pitchPrice = new Price(500, startDate);
+        Campsite campsite = new Pitch(1, "", "", 10, pitchPrice, 1000);
+        Package packageDeal = null;
+
+        Booking mockBooking1 = new Booking(startDate, endDate, price, amountOfAdults, amountOfChildren, customer,
+                employee, campsite, packageDeal);
+
+        Booking mockBooking2 = new Booking(startDate, endDate, price, amountOfAdults, amountOfChildren, customer,
+                employee, campsite, packageDeal);
+        // Act
+        Boolean result1 = SUT.saveBooking(mockBooking1);
+        Boolean result2 = SUT.saveBooking(mockBooking2);
+
+        // Assert
+        assertTrue(result1);
+        assertFalse(result2);
+    }
 }
