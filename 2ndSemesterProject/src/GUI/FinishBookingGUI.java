@@ -311,9 +311,7 @@ public class FinishBookingGUI extends JFrame {
 		JButton backButton = new JButton("Back");
 		backButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				BookingInfoGUI customerInfoGUI = new BookingInfoGUI(employee);
-				customerInfoGUI.setVisible(true);
-				dispose();
+				backButtonClicked();
 			}
 		});
 
@@ -339,6 +337,13 @@ public class FinishBookingGUI extends JFrame {
 
 		setCustomerInfo();
 		setBookingInfo();
+	}
+
+	private void backButtonClicked() {
+		bookingController.cancelRerservationOfCampsite();
+		BookingInfoGUI customerInfoGUI = new BookingInfoGUI(employee);
+		customerInfoGUI.setVisible(true);
+		dispose();
 	}
 
 	private void setCustomerInfo() {
