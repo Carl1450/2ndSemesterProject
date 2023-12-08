@@ -64,7 +64,7 @@ public class BookingDAO {
 
     private boolean hasBookingConflict(Connection connection, Booking booking) throws SQLException {
         String conflictCheckQuery = "SELECT 1 FROM Booking WHERE campsiteId = ? AND NOT (startDate > ? OR endDate < ?) " +
-                "UNION SELECT 1 FROM reservation WHERE campsiteId = ? AND (startdate >= ? OR endDate <= ?) " +
+                "UNION SELECT 1 FROM reservation WHERE campsiteId = ? AND NOT (startdate >= ? OR endDate <= ?) " +
                 "AND timechanged >= DATEADD(minute, -10, GETDATE()) AND employeeid <> ?;";
 
         try (PreparedStatement conflictCheckStmt = connection.prepareStatement(conflictCheckQuery)) {

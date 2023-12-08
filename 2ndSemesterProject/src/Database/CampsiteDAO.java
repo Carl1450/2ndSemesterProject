@@ -96,8 +96,8 @@ public class CampsiteDAO {
 
 
     private boolean checkForConflictingBooking(Connection connection, int campsiteId, Date startDate, Date endDate, Employee employee) throws SQLException {
-        String checkQuery = "SELECT 1 FROM Booking WHERE campsiteId = ? AND NOT (startDate > ? OR endDate < ?) " +
-                "UNION SELECT 1 FROM reservation WHERE campsiteId = ? AND (startdate >= ? OR endDate <= ?) " +
+        String checkQuery = "SELECT 1 FROM Booking WHERE campsiteId = ? AND NOT (startDate >= ? OR endDate <= ?) " +
+                "UNION SELECT 1 FROM reservation WHERE campsiteId = ? AND NOT (startdate >= ? OR endDate <= ?) " +
                 "AND timechanged >= DATEADD(minute, -10, GETDATE()) AND employeeid <> ?;";
 
         try (PreparedStatement checkStmt = connection.prepareStatement(checkQuery)) {
