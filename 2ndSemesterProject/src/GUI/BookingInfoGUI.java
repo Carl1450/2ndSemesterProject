@@ -45,6 +45,7 @@ import java.util.List;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
 import javax.swing.JComboBox;
+import javax.swing.JCheckBox;
 
 public class BookingInfoGUI extends JFrame {
 
@@ -105,9 +106,9 @@ public class BookingInfoGUI extends JFrame {
 		contentPane.add(panel);
 		GridBagLayout gbl_panel = new GridBagLayout();
 		gbl_panel.columnWidths = new int[] { 61, 250, 0 };
-		gbl_panel.rowHeights = new int[] { 16, 0, 0, 0, 0, 0, 0, 0, 0 };
+		gbl_panel.rowHeights = new int[] { 16, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		gbl_panel.columnWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
-		gbl_panel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		gbl_panel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		panel.setLayout(gbl_panel);
 
 		JLabel firstnameLabel = new JLabel("Firstname:");
@@ -241,13 +242,14 @@ public class BookingInfoGUI extends JFrame {
 		JLabel cityLabel = new JLabel("City:");
 		GridBagConstraints gbc_cityLabel = new GridBagConstraints();
 		gbc_cityLabel.anchor = GridBagConstraints.WEST;
-		gbc_cityLabel.insets = new Insets(0, 0, 0, 5);
+		gbc_cityLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_cityLabel.gridx = 0;
 		gbc_cityLabel.gridy = 7;
 		panel.add(cityLabel, gbc_cityLabel);
 
 		cityField = new JTextField();
 		GridBagConstraints gbc_cityField = new GridBagConstraints();
+		gbc_cityField.insets = new Insets(0, 0, 5, 0);
 		gbc_cityField.fill = GridBagConstraints.HORIZONTAL;
 		gbc_cityField.gridx = 1;
 		gbc_cityField.gridy = 7;
@@ -490,6 +492,10 @@ public class BookingInfoGUI extends JFrame {
 			tableModel();
 		} else {
 			JOptionPane.showMessageDialog(contentPane, "You have entered an invalid date.\n Format is YYYY-MM-DD");
+		}
+		
+		if(campsites.isEmpty()) {
+			JOptionPane.showMessageDialog(contentPane, "No available campsites in this period");
 		}
 	}
 

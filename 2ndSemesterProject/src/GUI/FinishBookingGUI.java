@@ -50,7 +50,10 @@ public class FinishBookingGUI extends JFrame {
 	public FinishBookingGUI(Employee employee, BookingController bookingController) {
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		
+		setSize(750, 600);
+		setLocationRelativeTo(null);
+		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
