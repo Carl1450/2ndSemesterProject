@@ -5,7 +5,6 @@ import Model.Employee;
 import Model.Pitch;
 import Model.Price;
 import Model.Campsite;
-import Model.Package;
 import Database.BookingDAO;
 import Database.ConnectionEnvironment;
 import Database.DBConnection;
@@ -41,10 +40,10 @@ public class TestBookingDAO {
         String mockEmployeeInsertQuery = "INSERT INTO Employee (id, fname, lname, email, phoneno, role, cprno, password, addressid) "
                 + "VALUES (1, '', '', '', '', '', '', '', 1);";
 
-        String mockCampsiteInsertQuery = "INSERT INTO Campsite (id, section, road, siteno, type) "
-                + "VALUES (1, '', '', 0, '');";
+        String mockCampsiteInsertQuery = "INSERT INTO Campsite (section, road, siteno, type) "
+                + "VALUES ('', '', 1, '');";
 
-        String mockPriceInsertQuery = "INSERT INTO Price (id, price, effectiveDate) " + "VALUES (1, 0, '2023-01-01');";
+        String mockPriceInsertQuery = "INSERT INTO Price (id, price, effectiveDate, campsiteSiteNo) " + "VALUES (1, 0, '2023-01-01', 1);";
 
         try {
             Statement statement = connection.createStatement();
@@ -63,9 +62,7 @@ public class TestBookingDAO {
             statement.executeUpdate(mockEmployeeInsertQuery);
             statement.executeUpdate("SET IDENTITY_INSERT [Employee] OFF");
 
-            statement.executeUpdate("SET IDENTITY_INSERT [Campsite] ON");
             statement.executeUpdate(mockCampsiteInsertQuery);
-            statement.executeUpdate("SET IDENTITY_INSERT [Campsite] OFF");
 
             statement.executeUpdate("SET IDENTITY_INSERT [Price] ON");
             statement.executeUpdate(mockPriceInsertQuery);
@@ -106,7 +103,7 @@ public class TestBookingDAO {
         Employee employee = new Employee(1, "", "", "", "",
                 "", "");
         Price pitchPrice = new Price(500, startDate);
-        Campsite campsite = new Pitch(1, "", "", 10, pitchPrice, 1000);
+        Campsite campsite = new Pitch(1, "", "", pitchPrice, 1000);
         Package packageDeal = null;
 
         Booking mockBooking = new Booking(startDate, endDate, price, amountOfAdults, amountOfChildren, customer,
@@ -118,7 +115,6 @@ public class TestBookingDAO {
         // Assert
         assertTrue(result);
     }
-
 
 
     @Test
@@ -135,7 +131,7 @@ public class TestBookingDAO {
         Employee employee = new Employee(1, "", "", "", "",
                 "", "");
         Price pitchPrice = new Price(500, startDate);
-        Campsite campsite = new Pitch(1, "", "", 10, pitchPrice, 1000);
+        Campsite campsite = new Pitch(1, "", "", pitchPrice, 1000);
         Package packageDeal = null;
 
         Booking mockBooking = new Booking(startDate, endDate, price, amountOfAdults, amountOfChildren, customer,
@@ -164,7 +160,7 @@ public class TestBookingDAO {
         Employee employee = new Employee(1, "", "", "", "",
                 "", "");
         Price pitchPrice = new Price(500, startDate);
-        Campsite campsite = new Pitch(1, "", "", 10, pitchPrice, 1000);
+        Campsite campsite = new Pitch(1, "", "", pitchPrice, 1000);
         Package packageDeal = null;
 
         Booking mockBooking1 = new Booking(startDate, endDate, price, amountOfAdults, amountOfChildren, customer,

@@ -31,19 +31,17 @@ public class TestCampsiteFactory {
             connection.setAutoCommit(false); // Start transaction
 
             // Define your insert queries
-            String mockCampsiteInsertQuery = "INSERT INTO Campsite (id, section, road, siteNo, [type]) VALUES (1, 'Nord', 'Egevej', 101, 'Pitch'), (2, 'Vest', 'Ahornvej', 102, 'Cabin');";
-            String mockPitchInsertQuery = "INSERT INTO Pitch (id, fee) VALUES (1, 100);";
-            String mockCabinInsertQuery = "INSERT INTO Cabin (id, maxpeople, deposit) VALUES (2, 10, 1000);";
+            String mockCampsiteInsertQuery = "INSERT INTO Campsite (section, road, siteNo, [type]) VALUES ('Nord', 'Egevej', 1, 'Pitch'), ('Vest', 'Ahornvej', 2, 'Cabin');";
+            String mockPitchInsertQuery = "INSERT INTO Pitch (siteNo, fee) VALUES (1, 100);";
+            String mockCabinInsertQuery = "INSERT INTO Cabin (siteNo, maxpeople, deposit) VALUES (2, 10, 1000);";
 
-            String mockPriceInsertQuery = "INSERT INTO Price (id, price, effectiveDate, campsiteId) VALUES (1, 50, '2023-01-01', 1), (2, 50, '2023-01-01', 2);";
+            String mockPriceInsertQuery = "INSERT INTO Price (id, price, effectiveDate, campsiteSiteNo) VALUES (1, 50, '2023-01-01', 1), (2, 50, '2023-01-01', 2);";
 
             // Execute each insert query
             try (Statement statement = connection.createStatement()) {
 
 
-                statement.executeUpdate("SET IDENTITY_INSERT Campsite ON");
                 statement.executeUpdate(mockCampsiteInsertQuery);
-                statement.executeUpdate("SET IDENTITY_INSERT Campsite OFF");
 
                 statement.executeUpdate(mockCabinInsertQuery);
 
@@ -118,11 +116,11 @@ public class TestCampsiteFactory {
     @Test
     void test_campsiteFactory_returns_expected_object() {
         // Arrange
-        String selectCampsitesQuery = "SELECT c.id, c.section, c.road, c.siteNo, c.[type], cab.maxpeople, cab.deposit, p.fee, pr.price, pr.effectiveDate " +
+        String selectCampsitesQuery = "SELECT c.siteNo, c.section, c.road, c.siteNo, c.[type], cab.maxpeople, cab.deposit, p.fee, pr.price, pr.effectiveDate " +
                 "FROM Campsite c " +
-                "LEFT JOIN Cabin cab ON c.id = cab.id " +
-                "LEFT JOIN Pitch p ON c.id = p.id " +
-                "LEFT JOIN Price pr ON c.id = pr.campsiteId ";
+                "LEFT JOIN Cabin cab ON c.siteNo = cab.siteNo " +
+                "LEFT JOIN Pitch p ON c.siteNo = p.siteNo " +
+                "LEFT JOIN Price pr ON c.siteNo = pr.campsiteSiteNo ";
 
         Pitch pitchResult = null;
         Cabin cabinResult = null;
@@ -143,19 +141,17 @@ public class TestCampsiteFactory {
         }
 
         // Assertions for pitchResult
-        assertEquals(1, pitchResult.getId(), "Pitch ID was incorrect");
+        assertEquals(1, pitchResult.getSiteNumber(), "Pitch SiteNumber was incorrect");
         assertEquals("Egevej", pitchResult.getRoad(), "Pitch road was incorrect");
         assertEquals(50, pitchResult.getPrice().getPrice(), "Pitch price was incorrect");
         assertEquals("Nord", pitchResult.getSection(), "Pitch section was incorrect");
-        assertEquals(101, pitchResult.getSiteNumber(), "Pitch site number was incorrect");
         assertEquals(100, pitchResult.getFee(), "Pitch fee was incorrect");
 
         // Assertions for cabinResult
-        assertEquals(2, cabinResult.getId(), "Cabin ID was incorrect");
+        assertEquals(2, cabinResult.getSiteNumber(), "Cabin SiteNumber was incorrect");
         assertEquals("Ahornvej", cabinResult.getRoad(), "Cabin road was incorrect");
         assertEquals(50, cabinResult.getPrice().getPrice(), "Cabin price was incorrect");
         assertEquals("Vest", cabinResult.getSection(), "Cabin section was incorrect");
-        assertEquals(102, cabinResult.getSiteNumber(), "Cabin site number was incorrect");
         assertEquals(1000, cabinResult.getDeposit(), "Cabin deposit was incorrect");
         assertEquals(10, cabinResult.getMaxPeople(), "Cabin max people was incorrect");
 

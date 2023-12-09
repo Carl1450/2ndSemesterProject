@@ -40,10 +40,9 @@ public class CampsiteFactory {
         Campsite cabin = null;
 
         try {
-        	int id = resultSet.getInt("id");
+            int siteNo = resultSet.getInt("siteNo");
             String section = resultSet.getNString("section");
             String road = resultSet.getNString("road");
-            int siteNo = resultSet.getInt("siteNo");
 
             float priceAmount = resultSet.getFloat("price");
             Date effectiveDate = resultSet.getDate("effectiveDate");
@@ -51,7 +50,7 @@ public class CampsiteFactory {
             int maxPeople = resultSet.getInt("maxPeople");
             float deposit = resultSet.getFloat("deposit");
 
-            cabin = new Cabin(id, section, road, siteNo, new Price(priceAmount, effectiveDate), maxPeople, deposit);
+            cabin = new Cabin(siteNo, section, road, new Price(priceAmount, effectiveDate), maxPeople, deposit);
 
 
         } catch (SQLException e) {
@@ -65,17 +64,16 @@ public class CampsiteFactory {
         Campsite pitch = null;
 
         try {
-        	int id = resultSet.getInt("id");
+            int siteNo = resultSet.getInt("siteNo");
             String section = resultSet.getNString("section");
             String road = resultSet.getNString("road");
-            int siteNo = resultSet.getInt("siteNo");
 
             float priceAmount = resultSet.getFloat("price");
             Date effectiveDate = resultSet.getDate("effectiveDate");
 
             float fee = resultSet.getFloat("fee");
 
-            pitch = new Pitch(id, section, road, siteNo, new Price(priceAmount, effectiveDate), fee);
+            pitch = new Pitch(siteNo, section, road, new Price(priceAmount, effectiveDate), fee);
 
 
         } catch (SQLException e) {

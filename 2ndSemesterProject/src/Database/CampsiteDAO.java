@@ -32,15 +32,15 @@ public class CampsiteDAO {
     private List<Campsite> queryAvailableCampsites(Date startDate, Date endDate) {
         List<Campsite> campsiteList = new ArrayList<>();
 
-        String query = "SELECT c.id, c.section, c.road, c.siteNo, c.[type], cab.maxpeople, cab.deposit, p.fee, pr.price, pr.effectiveDate " +
+        String query = "SELECT c.siteNo, c.section, c.road, c.[type], cab.maxpeople, cab.deposit, p.fee, pr.price, pr.effectiveDate " +
                 "FROM Campsite c " +
-                "LEFT JOIN Cabin cab ON c.id = cab.id " +
-                "LEFT JOIN Pitch p ON c.id = p.id " +
-                "LEFT JOIN Price pr ON c.id = pr.campsiteId " +
+                "LEFT JOIN Cabin cab ON c.siteNo = cab.siteNo " +
+                "LEFT JOIN Pitch p ON c.siteNo = p.siteNo " +
+                "LEFT JOIN Price pr ON c.siteNo = pr.campsiteSiteNo " +
                 "WHERE NOT EXISTS (" +
-                "SELECT 1 FROM Booking b WHERE b.campsiteId = c.id AND b.startDate <= ? AND b.endDate >= ?" +
+                "SELECT 1 FROM Booking b WHERE b.campsiteSiteNo = c.siteNo AND b.startDate <= ? AND b.endDate >= ?" +
                 ") AND NOT EXISTS (" +
-                "SELECT 1 FROM Reservation r WHERE r.campsiteId = c.id AND (r.startDate <= ? AND r.endDate >= ?) AND NOT (r.timeChanged < DATEADD(minute, -10, GETDATE()))" +
+                "SELECT 1 FROM Reservation r WHERE r.campsiteSiteNo = c.siteNo AND (r.startDate <= ? AND r.endDate >= ?) AND NOT (r.timeChanged < DATEADD(minute, -10, GETDATE()))" +
                 ")";
 
         try (Connection connection = DBConnection.getInstance(env).getConnection();
@@ -70,8 +70,8 @@ public class CampsiteDAO {
         try (Connection connection = DBConnection.getInstance().getConnection()) {
             connection.setAutoCommit(false);
 
-            if (!checkForConflictingBooking(connection, campsite.getId(), startDate, endDate, employee)) {
-                if (insertTentativeReservation(connection, campsite.getId(), startDate, endDate, employee.getId())) {
+            if (!checkForConflictingBooking(connection, campsite.getSiteNumber(), startDate, endDate, employee)) {
+                if (insertTentativeReservation(connection, campsite.getSiteNumber(), startDate, endDate, employee.getId())) {
                     connection.commit();
                     reservationStarted = true;
                 } else {
@@ -87,16 +87,16 @@ public class CampsiteDAO {
     }
 
 
-    private boolean checkForConflictingBooking(Connection connection, int campsiteId, Date startDate, Date endDate, Employee employee) throws SQLException {
-        String checkQuery = "SELECT 1 FROM Booking WHERE campsiteId = ? AND NOT (startDate >= ? OR endDate <= ?) " +
-                "UNION SELECT 1 FROM reservation WHERE campsiteId = ? AND NOT (startdate >= ? OR endDate <= ?) " +
+    private boolean checkForConflictingBooking(Connection connection, int campsiteSiteNo, Date startDate, Date endDate, Employee employee) throws SQLException {
+        String checkQuery = "SELECT 1 FROM Booking WHERE campsiteSiteNo = ? AND NOT (startDate >= ? OR endDate <= ?) " +
+                "UNION SELECT 1 FROM reservation WHERE campsiteSiteNo = ? AND NOT (startdate >= ? OR endDate <= ?) " +
                 "AND timechanged >= DATEADD(minute, -10, GETDATE()) AND employeeid <> ?;";
 
         try (PreparedStatement checkStmt = connection.prepareStatement(checkQuery)) {
-            checkStmt.setInt(1, campsiteId);
+            checkStmt.setInt(1, campsiteSiteNo);
             checkStmt.setDate(2, endDate);
             checkStmt.setDate(3, startDate);
-            checkStmt.setInt(4, campsiteId);
+            checkStmt.setInt(4, campsiteSiteNo);
             checkStmt.setDate(5, endDate);
             checkStmt.setDate(6, startDate);
             checkStmt.setInt(7, employee.getId());
@@ -109,13 +109,13 @@ public class CampsiteDAO {
     }
 
 
-    private boolean insertTentativeReservation(Connection connection, int campsiteId, Date startDate, Date endDate, int employeeId) throws SQLException {
-        String insertQuery = "INSERT INTO Reservation (startDate, endDate, employeeId, campsiteId) VALUES (?, ?, ?, ?)";
+    private boolean insertTentativeReservation(Connection connection, int campsiteSiteNo, Date startDate, Date endDate, int employeeId) throws SQLException {
+        String insertQuery = "INSERT INTO Reservation (startDate, endDate, employeeId, campsiteSiteNo) VALUES (?, ?, ?, ?)";
         try (PreparedStatement insertStmt = connection.prepareStatement(insertQuery)) {
             insertStmt.setDate(1, startDate);
             insertStmt.setDate(2, endDate);
             insertStmt.setInt(3, employeeId);
-            insertStmt.setInt(4, campsiteId);
+            insertStmt.setInt(4, campsiteSiteNo);
             return insertStmt.executeUpdate() > 0;
         }
     }

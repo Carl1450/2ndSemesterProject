@@ -63,15 +63,15 @@ public class BookingDAO {
 
 
     private boolean hasBookingConflict(Connection connection, Booking booking) throws SQLException {
-        String conflictCheckQuery = "SELECT 1 FROM Booking WHERE campsiteId = ? AND NOT (startDate > ? OR endDate < ?) " +
-                "UNION SELECT 1 FROM reservation WHERE campsiteId = ? AND NOT (startdate >= ? OR endDate <= ?) " +
+        String conflictCheckQuery = "SELECT 1 FROM Booking WHERE campsiteSiteNo = ? AND NOT (startDate > ? OR endDate < ?) " +
+                "UNION SELECT 1 FROM reservation WHERE campsiteSiteNo = ? AND NOT (startdate >= ? OR endDate <= ?) " +
                 "AND timechanged >= DATEADD(minute, -10, GETDATE()) AND employeeid <> ?;";
 
         try (PreparedStatement conflictCheckStmt = connection.prepareStatement(conflictCheckQuery)) {
-            conflictCheckStmt.setInt(1, booking.getCampsite().getId());
+            conflictCheckStmt.setInt(1, booking.getCampsite().getSiteNumber());
             conflictCheckStmt.setDate(2, booking.getEndDate());
             conflictCheckStmt.setDate(3, booking.getStartDate());
-            conflictCheckStmt.setInt(4, booking.getCampsite().getId());
+            conflictCheckStmt.setInt(4, booking.getCampsite().getSiteNumber());
             conflictCheckStmt.setDate(5, booking.getEndDate());
             conflictCheckStmt.setDate(6, booking.getStartDate());
             conflictCheckStmt.setInt(7, booking.getEmployee().getId()); 
@@ -83,7 +83,7 @@ public class BookingDAO {
 
 
     private boolean insertBooking(Connection connection, Booking booking) throws SQLException {
-        String insertBookingQuery = "INSERT INTO booking(startDate, endDate, totalPrice, amountOfAdults, amountOfChildren, customerId, employeeId, campsiteId, packageId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        String insertBookingQuery = "INSERT INTO booking(startDate, endDate, totalPrice, amountOfAdults, amountOfChildren, customerId, employeeId, campsiteSiteNo) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 
         try (PreparedStatement prepStat = connection.prepareStatement(insertBookingQuery)) {
             // Set parameters for booking insert
@@ -94,8 +94,7 @@ public class BookingDAO {
             prepStat.setInt(5, booking.getAmountOfChildren());
             prepStat.setInt(6, booking.getCustomer().getCustomerId());
             prepStat.setInt(7, booking.getEmployee().getId());
-            prepStat.setObject(8, booking.getCampsite() != null ? booking.getCampsite().getId() : null);
-            prepStat.setObject(9, booking.getPackage() != null ? booking.getPackage().getId() : null);
+            prepStat.setObject(8,booking.getCampsite().getSiteNumber());
 
             int result = prepStat.executeUpdate();
             return (result > 0); // true if insert is successful

@@ -1,11 +1,9 @@
 package Tests.ControllerTests;
 
 import Control.BookingController;
-import Database.BookingDAO;
 import Database.ConnectionEnvironment;
 import Database.DBConnection;
 import Model.*;
-import Model.Package;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -36,14 +34,14 @@ public class TestBookingController {
 
         // Insert mock data for Campsite
         String mockCampsiteInsertQuery =
-                "INSERT INTO Campsite (id, section, road, siteNo, [type]) VALUES " +
-                        "(1, 'Nord', 'Egevej', 101, 'Standard'), " +
-                        "(2, 'Syd', 'Bøgevej', 102, 'Deluxe'), " +
-                        "(3, 'Vest', 'Ahornvej', 103, 'Standard');";
+                "INSERT INTO Campsite (section, road, siteNo, [type]) VALUES " +
+                        "('Nord', 'Egevej', 1, 'Cabin'), " +
+                        "('Syd', 'Bøgevej', 2, 'Pitch'), " +
+                        "('Vest', 'Ahornvej', 3, 'Cabin');";
 
         // Insert mock data for Booking
         String mockBookingInsertQuery =
-                "INSERT INTO Booking (id, startDate, endDate, totalPrice, amountOfAdults, amountOfChildren, customerId, employeeId, campsiteId, packageId) VALUES " +
+                "INSERT INTO Booking (id, startDate, endDate, totalPrice, amountOfAdults, amountOfChildren, customerId, employeeId, campsiteSiteNo, packageId) VALUES " +
                         "(1, '2023-01-01', '2023-01-07', 500.0, 2, 1, 1, 1, 1, NULL), " +
                         "(2, '2023-02-01', '2023-02-07', 550.0, 2, 0, 1, 1, 2, NULL), " +
                         "(3, '2023-03-01', '2023-03-07', 600.0, 1, 1, 1, 1, 3, NULL), " +
@@ -67,9 +65,7 @@ public class TestBookingController {
             statement.executeUpdate(mockEmployeeInsertQuery);
             statement.executeUpdate("SET IDENTITY_INSERT Employee OFF");
 
-            statement.executeUpdate("SET IDENTITY_INSERT Campsite ON");
             statement.executeUpdate(mockCampsiteInsertQuery);
-            statement.executeUpdate("SET IDENTITY_INSERT Campsite OFF");
 
             statement.executeUpdate("SET IDENTITY_INSERT Booking ON");
             statement.executeUpdate(mockBookingInsertQuery);
@@ -110,7 +106,7 @@ public class TestBookingController {
         int amountOfChildren = 1;
         Customer customer = new Customer(1, "", "", "", "");
         Price pitchPrice = new Price(500, startDate);
-        Campsite campsite = new Pitch(1, "", "", 10, pitchPrice, 1000);
+        Campsite campsite = new Pitch(1, "", "", pitchPrice, 1000);
         Package packageDeal = null;
 
         Booking mockBooking = new Booking(startDate, endDate, price, amountOfAdults, amountOfChildren, customer,
@@ -143,8 +139,8 @@ public class TestBookingController {
         Price pitchPrice = new Price(500, startDate);
 
         // Two different campsites
-        Campsite campsite1 = new Pitch(1, "", "", 10, pitchPrice, 1000);
-        Campsite campsite2 = new Pitch(2, "", "", 11, pitchPrice, 1000);
+        Campsite campsite1 = new Pitch(1, "", "", pitchPrice, 1000);
+        Campsite campsite2 = new Pitch(2, "", "", pitchPrice, 1000);
 
         // Two different bookings
         Booking booking1 = new Booking(startDate, endDate, price, amountOfAdults, amountOfChildren, customer, employee, campsite1, null);
@@ -181,7 +177,7 @@ public class TestBookingController {
         Customer customer = new Customer(1, "", "", "", "");
         Price pitchPrice = new Price(500, startDate);
 
-        Campsite campsite = new Pitch(1, "", "", 10, pitchPrice, 1000);
+        Campsite campsite = new Pitch(1, "", "", pitchPrice, 1000);
 
         Booking booking1 = new Booking(startDate, endDate, price, amountOfAdults, amountOfChildren, customer, employee1, campsite, null);
         Booking booking2 = new Booking(startDate, endDate, price, amountOfAdults, amountOfChildren, customer, employee2, campsite, null);
@@ -222,7 +218,7 @@ public class TestBookingController {
         Customer customer = new Customer(1, "", "", "", "");
         Price pitchPrice = new Price(500, startDate1);
 
-        Campsite campsite = new Pitch(1, "", "", 10, pitchPrice, 1000);
+        Campsite campsite = new Pitch(1, "", "", pitchPrice, 1000);
 
         Booking booking1 = new Booking(startDate1, endDate1, price, amountOfAdults, amountOfChildren, customer, employee1, campsite, null);
         Booking booking2 = new Booking(startDate2, endDate2, price, amountOfAdults, amountOfChildren, customer, employee2, campsite, null);

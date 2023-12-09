@@ -39,8 +39,8 @@ public class TestCampsiteDAO {
             String mockAddressInsertQuery = "INSERT INTO [Address] (id, street, streetno, zipcode) VALUES (1, 'Bredgade', 30, 1000);";
             String mockCustomerInsertQuery = "INSERT INTO Customer (id, fname, lname, email, phoneno, addressId) VALUES (1, 'Jens', 'Larsen', 'jens.larsen@email.com', '+45 12345678', 1);";
             String mockEmployeeInsertQuery = "INSERT INTO Employee (id, fname, lname, email, phoneno, [role], cprNo, password, addressId) VALUES (1, 'Anne', 'Nielsen', 'anne.nielsen@email.com', '+45 87654321', 'Manager', '0101901234', 'password1', 1), (2, 'Anne', 'Nielsen', 'anne.nielsen@email.com', '+45 87654321', 'Manager', '0101901234', 'password2', 1);";
-            String mockCampsiteInsertQuery = "INSERT INTO Campsite (id, section, road, siteNo, [type]) VALUES (1, 'Nord', 'Egevej', 101, 'Pitch'), (2, 'Syd', 'Bøgevej', 102, 'Pitch'), (3, 'Vest', 'Ahornvej', 103, 'Cabin');";
-            String mockBookingInsertQuery = "INSERT INTO Booking (id, startDate, endDate, totalPrice, amountOfAdults, amountOfChildren, customerId, employeeId, campsiteId, packageId) VALUES (1, '2023-01-01', '2023-01-07', 500.0, 2, 1, 1, 1, 1, NULL), (2, '2023-02-01', '2023-02-07', 550.0, 2, 0, 1, 1, 2, NULL), (3, '2023-03-01', '2023-03-07', 600.0, 1, 1, 1, 1, 3, NULL), (4, '2023-04-01', '2023-04-07', 650.0, 3, 1, 1, 1, 1, NULL), (5, '2023-05-01', '2023-05-07', 700.0, 2, 2, 1, 1, 2, NULL);";
+            String mockCampsiteInsertQuery = "INSERT INTO Campsite (section, road, siteNo, [type]) VALUES ('Nord', 'Egevej', 1, 'Pitch'), ('Syd', 'Bøgevej', 2, 'Pitch'), ('Vest', 'Ahornvej', 3, 'Cabin');";
+            String mockBookingInsertQuery = "INSERT INTO Booking (id, startDate, endDate, totalPrice, amountOfAdults, amountOfChildren, customerId, employeeId, campsiteSiteNo) VALUES (1, '2023-01-01', '2023-01-07', 500.0, 2, 1, 1, 1, 1), (2, '2023-02-01', '2023-02-07', 550.0, 2, 0, 1, 1, 2), (3, '2023-03-01', '2023-03-07', 600.0, 1, 1, 1, 1, 3), (4, '2023-04-01', '2023-04-07', 650.0, 3, 1, 1, 1, 1), (5, '2023-05-01', '2023-05-07', 700.0, 2, 2, 1, 1, 2);";
 
             // Execute each insert query
             try (Statement statement = connection.createStatement()) {
@@ -54,9 +54,7 @@ public class TestCampsiteDAO {
                 statement.executeUpdate("SET IDENTITY_INSERT Employee ON");
                 statement.executeUpdate(mockEmployeeInsertQuery);
                 statement.executeUpdate("SET IDENTITY_INSERT Employee OFF");
-                statement.executeUpdate("SET IDENTITY_INSERT Campsite ON");
                 statement.executeUpdate(mockCampsiteInsertQuery);
-                statement.executeUpdate("SET IDENTITY_INSERT Campsite OFF");
                 statement.executeUpdate("SET IDENTITY_INSERT Booking ON");
                 statement.executeUpdate(mockBookingInsertQuery);
                 statement.executeUpdate("SET IDENTITY_INSERT Booking OFF");
@@ -172,7 +170,7 @@ public class TestCampsiteDAO {
         // Arrange
 
         CampsiteDAO SUT = new CampsiteDAO();
-        Campsite campsite = new Cabin(1, null, null, 0, null, 0, 0);
+        Campsite campsite = new Cabin(1, null, null, null, 0, 0);
         Date startDate = Date.valueOf("2023-11-01");
         Date endDate = Date.valueOf("2023-11-03");
 
@@ -195,7 +193,7 @@ public class TestCampsiteDAO {
         // Arrange
         CampsiteDAO mockCampsiteDAO = new CampsiteDAO(ConnectionEnvironment.TESTING);
         CampsiteDAO SUT = new CampsiteDAO(ConnectionEnvironment.TESTING);
-        Campsite campsite = new Cabin(1, null, null, 0, null, 0, 0);
+        Campsite campsite = new Cabin(1, null, null, null, 0, 0);
         Date startDate = Date.valueOf("2023-11-01");
         Date endDate = Date.valueOf("2023-11-03");
 
