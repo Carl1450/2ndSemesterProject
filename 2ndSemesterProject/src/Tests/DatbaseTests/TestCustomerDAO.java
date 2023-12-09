@@ -18,55 +18,50 @@ public class TestCustomerDAO {
 
     @BeforeEach
     void setUp() {
-        Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
+        deleteMockData();
+        insertMockData();
+    }
 
-        // Insert a mock city
-        String mockCityInsertQuery = "INSERT INTO City (zipCode, city) VALUES (1000, 'Copenhagen');";
+    private void insertMockData() {
+        try (Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
+             Statement statement = connection.createStatement()) {
 
-        // Insert a mock address that references the mock city
-        String mockAddressInsertQuery = "INSERT INTO [Address] (id, street, streetno, zipcode) VALUES (1, 'Bredgade', 30, 1000);";
-
-        // Insert a mock customer that references the mock address
-        String mockCustomerInsertQuery =
-                "INSERT INTO Customer (id, fname, lname, email, phoneno, addressId) VALUES " +
-                        "(1, 'Jens', 'Hansen', 'jens.hansen@example.com', '+45 12345678', 1);";
-
-        try {
-            Statement statement = connection.createStatement();
-
-            statement.executeUpdate(mockCityInsertQuery);
+            // Insert a mock city
+            statement.executeUpdate("INSERT INTO City (zipCode, city) VALUES (1000, 'Copenhagen');");
 
             statement.executeUpdate("SET IDENTITY_INSERT [Address] ON");
-            statement.executeUpdate(mockAddressInsertQuery);
+            statement.executeUpdate("INSERT INTO [Address] (id, street, streetno, zipcode) VALUES (1, 'Bredgade', 30, 1000);");
             statement.executeUpdate("SET IDENTITY_INSERT [Address] OFF");
 
-            statement.executeUpdate("SET IDENTITY_INSERT Customer ON");
-            statement.executeUpdate(mockCustomerInsertQuery);
-            statement.executeUpdate("SET IDENTITY_INSERT Customer ON");
 
+            statement.executeUpdate("SET IDENTITY_INSERT Customer ON");
+            statement.executeUpdate("INSERT INTO Customer (id, fname, lname, email, phoneno, addressId) " +
+                    "VALUES (1, 'Jens', 'Hansen', 'jens.hansen@example.com', '+45 12345678', 1);");
+            statement.executeUpdate("SET IDENTITY_INSERT Customer OFF");
         } catch (SQLException e) {
             throw new RuntimeException("Error setting up mock data", e);
         }
     }
 
+
+
     @AfterEach
     void tearDown() {
-        Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
+       deleteMockData();
+    }
 
-        // Delete in reverse order of creation
-        String deleteMockDataQuery =
-                "DELETE FROM Customer WHERE id = 1; " +
-                        "DELETE FROM [Address] WHERE id = 1; " +
-                        "DELETE FROM City WHERE zipCode = 1000;";
+    private void deleteMockData() {
+        try (Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
+             Statement statement = connection.createStatement()) {
 
-        try {
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(deleteMockDataQuery);
+            // Delete all mock data
+            statement.executeUpdate("DELETE FROM Customer;");
+            statement.executeUpdate("DELETE FROM [Address];");
+            statement.executeUpdate("DELETE FROM City;");
         } catch (SQLException e) {
             throw new RuntimeException("Error cleaning up mock data", e);
         }
     }
-
 
     @Test
     void TS_2_TC_1_find_customer_by_phone_number_with_valid_number() {
