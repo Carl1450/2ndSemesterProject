@@ -30,6 +30,10 @@ public class CampsiteController {
 		return campsiteDAO.reserveCampsite(campsite, startDate, endDate, employee);
 	}
 
+	public boolean cancelReservationOfCampsite(Campsite campsite, Date startDate, Date endDate, Employee employee) {
+		return campsiteDAO.cancelReservationOfCampsite(campsite, startDate, endDate, employee);
+	}
+
 	private boolean validateDates(Date startDate, Date endDate) {
 		boolean validDates = true;
 		if (endDate.before(startDate)) {

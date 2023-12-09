@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Database.BookingDAO;
+import Database.CampsiteFactory;
 import Database.DBConnection;
 import Model.Booking;
 import Model.Campsite;
@@ -66,9 +67,24 @@ public class BookingController {
 
     }
 
-    public boolean cancelRerservationOfCampsite() {
+    public boolean cancelReservationOfCampsite() {
 
-        return true;
+        boolean successfullCancel;
+
+        Campsite campsite = currentBooking.getCampsite();
+        Date startDate = currentBooking.getStartDate();
+        Date endDate = currentBooking.getEndDate();
+
+        if (campsite == null || startDate == null || endDate == null || currentEmployee == null) {
+            successfullCancel = false;
+        } else {
+            successfullCancel = campsiteController.cancelReservationOfCampsite(campsite, startDate, endDate, currentEmployee);
+        }
+
+
+        return successfullCancel;
+
+
     }
 
     public boolean saveBooking() {

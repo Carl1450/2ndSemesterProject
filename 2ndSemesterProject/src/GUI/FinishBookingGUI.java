@@ -337,7 +337,7 @@ public class FinishBookingGUI extends JFrame {
 	}
 
 	private void backButtonClicked() {
-		bookingController.cancelRerservationOfCampsite();
+		bookingController.cancelReservationOfCampsite();
 		BookingInfoGUI customerInfoGUI = new BookingInfoGUI(employee);
 		customerInfoGUI.setVisible(true);
 		dispose();

@@ -86,6 +86,45 @@ public class CampsiteDAO {
         return reservationStarted;
     }
 
+    public boolean cancelReservationOfCampsite(Campsite campsite, Date startDate, Date endDate, Employee employee) {
+        String cancelReservationQuery = "DELETE FROM Reservation WHERE campsiteSiteNo = ? AND employeeId = ? AND startDate = ? AND endDate = ? AND timechanged >= DATEADD(minute, -10, GETDATE());";
+
+        int successfulCancel = 0;
+
+        Connection connection = DBConnection.getInstance().getConnection();
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(cancelReservationQuery)) {
+            connection.setAutoCommit(false);
+
+            preparedStatement.setInt(1, campsite.getSiteNumber());
+            preparedStatement.setInt(2, employee.getId());
+            preparedStatement.setDate(3, startDate);
+            preparedStatement.setDate(4, endDate);
+
+            successfulCancel = preparedStatement.executeUpdate();
+            connection.commit();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new RuntimeException("Error rolling back transaction", ex);
+            }
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException("Error closing connection", e);
+            }
+        }
+
+        return successfulCancel > 0;
+    }
+
+
 
     private boolean checkForConflictingBooking(Connection connection, int campsiteSiteNo, Date startDate, Date endDate, Employee employee) throws SQLException {
         String checkQuery = "SELECT 1 FROM Booking WHERE campsiteSiteNo = ? AND NOT (startDate >= ? OR endDate <= ?) " +

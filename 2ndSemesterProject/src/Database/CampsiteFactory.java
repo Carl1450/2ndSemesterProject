@@ -27,7 +27,6 @@ public class CampsiteFactory {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
         }
 
 
