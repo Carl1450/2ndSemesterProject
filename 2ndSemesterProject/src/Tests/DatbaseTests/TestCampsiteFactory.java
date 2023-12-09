@@ -155,4 +155,37 @@ public class TestCampsiteFactory {
 
     }
 
+
+    @Test
+    void test_campsiteFactory_returns_null_when_no_campsite_are_given() {
+        // Arrange
+        String selectCampsitesQuery = "SELECT c.siteNo, c.section, c.road, c.siteNo, c.[type], cab.maxpeople, cab.deposit, p.fee, pr.price, pr.effectiveDate " +
+                "FROM Campsite c " +
+                "LEFT JOIN Cabin cab ON c.siteNo = cab.siteNo " +
+                "LEFT JOIN Pitch p ON c.siteNo = p.siteNo " +
+                "LEFT JOIN Price pr ON c.siteNo = pr.campsiteSiteNo " +
+                "WHERE c.siteNo = -1";
+
+
+        Object campsiteResult = new Object();
+
+        // Act
+        try {
+            Statement statement = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection().createStatement();
+            ResultSet resultSet = statement.executeQuery(selectCampsitesQuery);
+
+            resultSet.next();
+            campsiteResult = CampsiteFactory.getCampsite(resultSet);
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Assert
+        assertNull(campsiteResult);
+
+
+    }
+
 }

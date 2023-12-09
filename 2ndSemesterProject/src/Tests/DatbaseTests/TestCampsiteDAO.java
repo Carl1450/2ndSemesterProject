@@ -89,14 +89,7 @@ public class TestCampsiteDAO {
         try {
             connection.setAutoCommit(false);
 
-            String[] deleteQueries = {
-                    "DELETE FROM Booking",
-                    "DELETE FROM Reservation",
-                    "DELETE FROM Campsite",
-                    "DELETE FROM Employee",
-                    "DELETE FROM Customer",
-                    "DELETE FROM [Address]",
-                    "DELETE FROM City"
+            String[] deleteQueries = {"DELETE FROM Booking", "DELETE FROM Reservation", "DELETE FROM Campsite", "DELETE FROM Employee", "DELETE FROM Customer", "DELETE FROM [Address]", "DELETE FROM City"
 
             };
 
@@ -199,6 +192,56 @@ public class TestCampsiteDAO {
 
         // Assert
         assertFalse(result);
+
+    }
+
+    @Test
+    public void test_cancel_reservation_works() {
+        // Arrange
+        CampsiteDAO mockCampsiteDAO = new CampsiteDAO(ConnectionEnvironment.TESTING);
+        CampsiteDAO SUT = new CampsiteDAO(ConnectionEnvironment.TESTING);
+        Campsite campsite = new Cabin(1, null, null, null, 0, 0);
+        Date startDate = Date.valueOf("2023-11-01");
+        Date endDate = Date.valueOf("2023-11-03");
+
+        Employee mockEmployee1 = new Employee(1, null, null, null, null, null, null);
+        Employee mockEmployee2 = new Employee(2, null, null, null, null, null, null);
+
+        // Act
+        boolean firstReservationSuccess = mockCampsiteDAO.reserveCampsite(campsite, startDate, endDate, mockEmployee1);
+
+        boolean secondReservationSuccess = SUT.reserveCampsite(campsite, startDate, endDate, mockEmployee2);
+
+        boolean cancellationSuccess = mockCampsiteDAO.cancelReservationOfCampsite(campsite, startDate, endDate, mockEmployee1);
+
+        boolean thirdReservationSuccess = SUT.reserveCampsite(campsite, startDate, endDate, mockEmployee2);
+
+        // Assert
+        assertTrue(firstReservationSuccess);
+        assertFalse(secondReservationSuccess);
+        assertTrue(cancellationSuccess);
+        assertTrue(thirdReservationSuccess);
+
+    }
+
+    @Test
+    public void test_cancel_reservation_returns_false_when_nothing_is_cancelled() {
+        // Arrange
+        CampsiteDAO SUT = new CampsiteDAO(ConnectionEnvironment.TESTING);
+        Campsite campsite = new Cabin(1, null, null, null, 0, 0);
+        Date startDate = Date.valueOf("2023-11-01");
+        Date endDate = Date.valueOf("2023-11-03");
+
+        Employee mockEmployee = new Employee(1, null, null, null, null, null, null);
+
+        // Act
+
+
+        boolean cancellationSuccess = SUT.cancelReservationOfCampsite(campsite, startDate, endDate, mockEmployee);
+
+
+        // Assert
+        assertFalse(cancellationSuccess);
 
     }
 }
