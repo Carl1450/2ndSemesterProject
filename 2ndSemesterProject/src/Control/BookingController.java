@@ -45,14 +45,14 @@ public class BookingController {
     }
 
     public List<Campsite> getAvailableCampsites(String startDate, String endDate) {
-    	Date startDateFormatted = Date.valueOf(startDate);
-    	Date endDateFormatted = Date.valueOf(endDate);
+        Date startDateFormatted = Date.valueOf(startDate);
+        Date endDateFormatted = Date.valueOf(endDate);
         return campsiteController.getAvailableCampsites(startDateFormatted, endDateFormatted);
     }
 
     public void addCampsiteToBooking(Campsite campsite, String startDate, String endDate) {
-    	Date startDateFormatted = Date.valueOf(startDate);
-    	Date endDateFormatted = Date.valueOf(endDate);
+        Date startDateFormatted = Date.valueOf(startDate);
+        Date endDateFormatted = Date.valueOf(endDate);
         if (reserveCampsite(campsite, startDateFormatted, endDateFormatted)) {
             currentBooking.setCampsite(campsite);
             currentBooking.setTotalPrice(campsite.getPrice().getPrice());
@@ -77,6 +77,8 @@ public class BookingController {
         if (validateBooking(currentBooking)) {
             success = bookingDAO.saveBooking(currentBooking);
         }
+
+
         return success;
     }
 
@@ -85,7 +87,36 @@ public class BookingController {
 
         if (booking == null) {
             validBooking = false;
+        } else {
+            if (booking.getEndDate() == null || booking.getStartDate() == null || booking.getEndDate().before(booking.getStartDate())) {
+                return false;
+            }
+
+            if (booking.getTotalPrice() <= 0) {
+                validBooking = false;
+            }
+
+            if (booking.getCustomer() == null) {
+                validBooking = false;
+            }
+
+            if (booking.getEmployee() == null) {
+                validBooking = false;
+            }
+
+            if (booking.getCampsite() == null) {
+                validBooking = false;
+            }
+
+            if (booking.getAmountOfAdults() < 1) {
+                validBooking = false;
+            }
+
+            if (booking.getAmountOfChildren() < 0) {
+                validBooking = false;
+            }
         }
+
 
         return validBooking;
     }

@@ -12,9 +12,8 @@ public class Booking {
     private Customer customer;
     private Employee employee;
     private Campsite campsite;
-    private Package packageDeal;
 
-    public Booking(Date startDate, Date endDate, float totalPrice, int amountOfAdults, int amountOfChildren, Customer customer, Employee employee, Campsite campsite, Package packageDeal) {
+    public Booking(Date startDate, Date endDate, float totalPrice, int amountOfAdults, int amountOfChildren, Customer customer, Employee employee, Campsite campsite) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.totalPrice = totalPrice;
@@ -23,7 +22,6 @@ public class Booking {
         this.customer = customer;
         this.employee = employee;
         this.campsite = campsite;
-        this.packageDeal = packageDeal;
     }
 
     public Booking(Employee employee) {
@@ -47,9 +45,9 @@ public class Booking {
         return totalPrice;
     }
 
-	public void setTotalPrice(float totalPrice) {
-		this.totalPrice = totalPrice;
-	}
+    public void setTotalPrice(float totalPrice) {
+        this.totalPrice = totalPrice;
+    }
 
     public int getAmountOfAdults() {
         return amountOfAdults;
@@ -67,10 +65,6 @@ public class Booking {
         return campsite;
     }
 
-    public Package getPackage() {
-        return packageDeal;
-    }
-
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
@@ -84,9 +78,6 @@ public class Booking {
         this.campsite = campsite;
     }
 
-    public void setPackageDeal(Package packageDeal) {
-        this.packageDeal = packageDeal;
-    }
 
     public void setStartDate(Date startDate) {
         this.startDate = startDate;

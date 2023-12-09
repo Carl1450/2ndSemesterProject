@@ -8,18 +8,15 @@ import Model.Price;
 
 import java.awt.EventQueue;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import Control.BookingController;
 
 import java.awt.BorderLayout;
-import javax.swing.JLabel;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import javax.swing.JButton;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionListener;
@@ -370,11 +367,23 @@ public class FinishBookingGUI extends JFrame {
 	}
 
 	private void finishButtonClicked() {
-		bookingController.saveBooking();
+		if (bookingController.saveBooking()) {
+			showSuccessMessage("Booking was saved successfully!");
+		} else {
+			showErrorMessage("Something went wrong. Booking was not saved, and payment was canceled. Please try again.");
+		}
 
 		MainMenuGUI mainMenuGUI = new MainMenuGUI(employee);
 		mainMenuGUI.setVisible(true);
 		dispose();
+	}
+
+	private void showSuccessMessage(String message) {
+		JOptionPane.showMessageDialog(null, message, "Success", JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	private void showErrorMessage(String message) {
+		JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
 	}
 
 }

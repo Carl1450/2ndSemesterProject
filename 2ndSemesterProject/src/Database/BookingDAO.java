@@ -74,7 +74,7 @@ public class BookingDAO {
             conflictCheckStmt.setInt(4, booking.getCampsite().getSiteNumber());
             conflictCheckStmt.setDate(5, booking.getEndDate());
             conflictCheckStmt.setDate(6, booking.getStartDate());
-            conflictCheckStmt.setInt(7, booking.getEmployee().getId()); 
+            conflictCheckStmt.setInt(7, booking.getEmployee().getId());
 
             ResultSet rs = conflictCheckStmt.executeQuery();
             return rs.next();
@@ -86,7 +86,6 @@ public class BookingDAO {
         String insertBookingQuery = "INSERT INTO booking(startDate, endDate, totalPrice, amountOfAdults, amountOfChildren, customerId, employeeId, campsiteSiteNo) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 
         try (PreparedStatement prepStat = connection.prepareStatement(insertBookingQuery)) {
-            // Set parameters for booking insert
             prepStat.setDate(1, booking.getStartDate());
             prepStat.setDate(2, booking.getEndDate());
             prepStat.setFloat(3, booking.getTotalPrice());
@@ -94,10 +93,10 @@ public class BookingDAO {
             prepStat.setInt(5, booking.getAmountOfChildren());
             prepStat.setInt(6, booking.getCustomer().getCustomerId());
             prepStat.setInt(7, booking.getEmployee().getId());
-            prepStat.setObject(8,booking.getCampsite().getSiteNumber());
+            prepStat.setObject(8, booking.getCampsite().getSiteNumber());
 
             int result = prepStat.executeUpdate();
-            return (result > 0); // true if insert is successful
+            return (result > 0);
         }
     }
 
