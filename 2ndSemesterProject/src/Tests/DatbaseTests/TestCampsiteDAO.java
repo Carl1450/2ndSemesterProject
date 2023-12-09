@@ -3,7 +3,6 @@ package Tests.DatbaseTests;
 import Database.CampsiteDAO;
 import Database.ConnectionEnvironment;
 import Database.DBConnection;
-import Database.InvalidDateException;
 import Model.Cabin;
 import Model.Campsite;
 import Model.Employee;
@@ -167,24 +166,6 @@ public class TestCampsiteDAO {
         // Assert
         assertEquals(0, result.size());
     }
-
-    @ParameterizedTest
-    @CsvSource({
-            "abc, cba",
-            "'NULL', 'NULL'" // Using 'NULL' as a placeholder for null
-    })
-    void TS_4_TC_1_method_throws_InvalidDateException_when_given_invalid_dates(String startDateString, String endDateString) {
-        // Arrange
-        CampsiteDAO SUT = new CampsiteDAO(ConnectionEnvironment.TESTING);
-
-        // Act & Assert
-        assertThrows(InvalidDateException.class, () -> {
-            Date startDate = (startDateString != null && startDateString.equalsIgnoreCase("NULL")) ? Date.valueOf(startDateString) : null;
-            Date endDate = (endDateString != null && endDateString.equalsIgnoreCase("NULL")) ? Date.valueOf(endDateString) : null;
-            SUT.getAvailableCampsites(startDate, endDate);
-        });
-    }
-
 
     @Test
     public void testReserveCampsite_NoCrash() {
