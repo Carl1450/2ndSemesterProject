@@ -1,6 +1,7 @@
 package Tests.ControllerTests;
 
 import Control.BookingController;
+import Database.BookingDAO;
 import Database.ConnectionEnvironment;
 import Database.DBConnection;
 import Model.*;
@@ -244,5 +245,23 @@ public class TestBookingController {
 
         assertTrue(reservationResult2);
         assertTrue(bookingResult2);
+    }
+
+    @Test
+    void TS_1_TC_2_null_booking_is_not_persisted_in_database() { // Arrange
+        // Arrange
+        Employee mockEmployee = new Employee(1, null, null, null, null, null, null);
+
+        BookingController SUT = new BookingController(mockEmployee);
+
+        Booking mockBooking = null;
+
+        // Act
+        SUT.setCurrentBooking(mockBooking);
+
+        Boolean result = SUT.saveBooking();
+
+        // Assert
+        assertFalse(result);
     }
 }

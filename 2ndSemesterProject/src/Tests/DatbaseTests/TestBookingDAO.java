@@ -119,20 +119,7 @@ public class TestBookingDAO {
         assertTrue(result);
     }
 
-    @Test
-    void TS_1_TC_2_null_booking_is_not_persisted_in_database() { // Arrange
-        BookingDAO SUT = new BookingDAO();
 
-        Booking mockBooking = null;
-
-        // Act
-
-        Boolean result = SUT.saveBooking(mockBooking);
-
-        // Assert
-
-        assertFalse(result);
-    }
 
     @Test
     void TS_1_TC_3_invalid_value_booking_is_not_persisted_in_database() {
