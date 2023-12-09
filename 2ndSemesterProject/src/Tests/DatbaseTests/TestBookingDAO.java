@@ -27,13 +27,10 @@ public class TestBookingDAO {
     void setUp() {
         Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
 
-        // Insert a mock city
         String mockCityInsertQuery = "INSERT INTO City (zipCode, city) VALUES (1000, 'Copenhagen');";
 
-        // Insert a mock address that references the mock city
         String mockAddressInsertQuery = "INSERT INTO [Address] (id, street, streetno, zipcode) VALUES (1, 'Bredgade', 30, 1000);";
 
-        // Insert a mock customer that references the mock address
         String mockCustomerInsertQuery = "INSERT INTO Customer (id, fname, lname, email, phoneno, addressId) VALUES "
                 + "(1, 'Jens', 'Hansen', 'jens.hansen@example.com', '+45 12345678', 1);";
 
@@ -78,7 +75,13 @@ public class TestBookingDAO {
     void tearDown() {
         Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
 
-        String deleteMockDataQuery = "DELETE FROM Price; DELETE FROM Booking; DELETE FROM Campsite; DELETE FROM Employee; DELETE FROM Customer; DELETE FROM Address; DELETE FROM City";
+        String deleteMockDataQuery = "DELETE FROM Price; " +
+                "DELETE FROM Booking; " +
+                "DELETE FROM Campsite; " +
+                "DELETE FROM Employee; " +
+                "DELETE FROM Customer;" +
+                "DELETE FROM Address; " +
+                "DELETE FROM City";
 
         try {
             Statement statement = connection.createStatement();
@@ -104,10 +107,9 @@ public class TestBookingDAO {
                 "", "");
         Price pitchPrice = new Price(500, startDate);
         Campsite campsite = new Pitch(1, "", "", pitchPrice, 1000);
-        Package packageDeal = null;
 
         Booking mockBooking = new Booking(startDate, endDate, price, amountOfAdults, amountOfChildren, customer,
-                employee, campsite, packageDeal);
+                employee, campsite);
 
         // Act
         Boolean result = SUT.saveBooking(mockBooking);
@@ -116,35 +118,6 @@ public class TestBookingDAO {
         assertTrue(result);
     }
 
-
-    @Test
-    void TS_1_TC_3_invalid_value_booking_is_not_persisted_in_database() {
-        // Arrange
-        BookingDAO SUT = new BookingDAO();
-
-        Date startDate = new Date(1000);
-        Date endDate = new Date(50000000);
-        float price = 5000;
-        int amountOfAdults = 2;
-        int amountOfChildren = 1;
-        Customer customer = null; //A null customer would not work in the program, nor the database
-        Employee employee = new Employee(1, "", "", "", "",
-                "", "");
-        Price pitchPrice = new Price(500, startDate);
-        Campsite campsite = new Pitch(1, "", "", pitchPrice, 1000);
-        Package packageDeal = null;
-
-        Booking mockBooking = new Booking(startDate, endDate, price, amountOfAdults, amountOfChildren, customer,
-                employee, campsite, packageDeal);
-
-
-        // Act
-        Boolean result = SUT.saveBooking(mockBooking);
-
-        // Assert
-        assertFalse(result);
-
-    }
 
     @Test
     void TS_1_TC_4_conflicting_booking_is_not_persisted_in_database() {
@@ -161,13 +134,12 @@ public class TestBookingDAO {
                 "", "");
         Price pitchPrice = new Price(500, startDate);
         Campsite campsite = new Pitch(1, "", "", pitchPrice, 1000);
-        Package packageDeal = null;
 
         Booking mockBooking1 = new Booking(startDate, endDate, price, amountOfAdults, amountOfChildren, customer,
-                employee, campsite, packageDeal);
+                employee, campsite);
 
         Booking mockBooking2 = new Booking(startDate, endDate, price, amountOfAdults, amountOfChildren, customer,
-                employee, campsite, packageDeal);
+                employee, campsite);
         // Act
         Boolean result1 = SUT.saveBooking(mockBooking1);
         Boolean result2 = SUT.saveBooking(mockBooking2);

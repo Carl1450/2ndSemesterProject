@@ -87,9 +87,8 @@ public class TestCampsiteDAO {
         Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
 
         try {
-            connection.setAutoCommit(false); // Start transaction
+            connection.setAutoCommit(false);
 
-            // Your delete queries
             String[] deleteQueries = {
                     "DELETE FROM Booking",
                     "DELETE FROM Reservation",
@@ -107,17 +106,17 @@ public class TestCampsiteDAO {
                 }
             }
 
-            connection.commit(); // Commit transaction if all deletions are successful
+            connection.commit();
         } catch (SQLException e) {
             try {
-                connection.rollback(); // Rollback transaction in case of error
+                connection.rollback();
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
             throw new RuntimeException(e);
         } finally {
             try {
-                connection.setAutoCommit(true); // Reset auto-commit behavior
+                connection.setAutoCommit(true);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -130,11 +129,9 @@ public class TestCampsiteDAO {
         // Arrange
         CampsiteDAO SUT = new CampsiteDAO(ConnectionEnvironment.TESTING);
 
-        // Reformatted date strings
         String startDateString = "2023-12-01";
         String endDateString = "2023-12-07";
 
-        // Convert string directly to java.sql.Date
         Date startDate = Date.valueOf(startDateString);
         Date endDate = Date.valueOf(endDateString);
 
@@ -150,11 +147,9 @@ public class TestCampsiteDAO {
         // Arrange
         CampsiteDAO SUT = new CampsiteDAO(ConnectionEnvironment.TESTING);
 
-        // Reformatted date strings
         String startDateString = "2023-01-01";
         String endDateString = "2023-12-31";
 
-        // Convert string directly to java.sql.Date
         Date startDate = Date.valueOf(startDateString);
         Date endDate = Date.valueOf(endDateString);
 
@@ -175,9 +170,6 @@ public class TestCampsiteDAO {
         Date endDate = Date.valueOf("2023-11-03");
 
         Employee mockEmployee = new Employee(1, null, null, null, null, null, null);
-
-
-        Connection mockConnection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
 
         // Act
         boolean result = SUT.reserveCampsite(campsite, startDate, endDate, mockEmployee);

@@ -44,10 +44,9 @@ public class TestCustomerDAO {
     }
 
 
-
     @AfterEach
     void tearDown() {
-       deleteMockData();
+        deleteMockData();
     }
 
     private void deleteMockData() {

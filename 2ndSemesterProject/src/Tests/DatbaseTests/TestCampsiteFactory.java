@@ -28,16 +28,14 @@ public class TestCampsiteFactory {
         Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
 
         try {
-            connection.setAutoCommit(false); // Start transaction
+            connection.setAutoCommit(false);
 
-            // Define your insert queries
             String mockCampsiteInsertQuery = "INSERT INTO Campsite (section, road, siteNo, [type]) VALUES ('Nord', 'Egevej', 1, 'Pitch'), ('Vest', 'Ahornvej', 2, 'Cabin');";
             String mockPitchInsertQuery = "INSERT INTO Pitch (siteNo, fee) VALUES (1, 100);";
             String mockCabinInsertQuery = "INSERT INTO Cabin (siteNo, maxpeople, deposit) VALUES (2, 10, 1000);";
 
             String mockPriceInsertQuery = "INSERT INTO Price (id, price, effectiveDate, campsiteSiteNo) VALUES (1, 50, '2023-01-01', 1), (2, 50, '2023-01-01', 2);";
 
-            // Execute each insert query
             try (Statement statement = connection.createStatement()) {
 
 
@@ -52,17 +50,17 @@ public class TestCampsiteFactory {
                 statement.executeUpdate("SET IDENTITY_INSERT Price OFF");
             }
 
-            connection.commit(); // Commit transaction if all insertions are successful
+            connection.commit();
         } catch (SQLException e) {
             try {
-                connection.rollback(); // Rollback transaction in case of error
+                connection.rollback();
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
             throw new RuntimeException(e);
         } finally {
             try {
-                connection.setAutoCommit(true); // Reset auto-commit behavior
+                connection.setAutoCommit(true);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -79,9 +77,8 @@ public class TestCampsiteFactory {
         Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
 
         try {
-            connection.setAutoCommit(false); // Start transaction
+            connection.setAutoCommit(false);
 
-            // Your delete queries
             String[] deleteQueries = {
                     "DELETE FROM Price",
                     "DELETE FROM Pitch",
@@ -96,17 +93,17 @@ public class TestCampsiteFactory {
                 }
             }
 
-            connection.commit(); // Commit transaction if all deletions are successful
+            connection.commit();
         } catch (SQLException e) {
             try {
-                connection.rollback(); // Rollback transaction in case of error
+                connection.rollback();
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
             throw new RuntimeException(e);
         } finally {
             try {
-                connection.setAutoCommit(true); // Reset auto-commit behavior
+                connection.setAutoCommit(true);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
