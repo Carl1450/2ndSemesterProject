@@ -26,14 +26,6 @@ public class CampsiteDAO {
     }
 
     public List<Campsite> getAvailableCampsites(Date startDate, Date endDate) {
-        try {
-            validateDate(startDate);
-            validateDate(endDate);
-        } catch (InvalidDateException e) {
-            e.printStackTrace();
-            return null;
-        }
-
         return queryAvailableCampsites(startDate, endDate);
     }
 
@@ -128,17 +120,5 @@ public class CampsiteDAO {
         }
     }
 
-    private void validateDate(Date date) throws InvalidDateException {
-        if (date == null) {
-            throw new InvalidDateException();
-        }
-        try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            dateFormat.format(date);
-        } catch (IllegalArgumentException e) {
-            throw new InvalidDateException();
-
-        }
-    }
 
 }
