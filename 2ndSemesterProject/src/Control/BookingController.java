@@ -66,8 +66,28 @@ public class BookingController {
 
     }
 
+    public boolean cancelRerservationOfCampsite() {
+
+        return true;
+    }
+
     public boolean saveBooking() {
-        return bookingDAO.saveBooking(currentBooking);
+        boolean success = false;
+
+        if (validateBooking(currentBooking)) {
+            success = bookingDAO.saveBooking(currentBooking);
+        }
+        return success;
+    }
+
+    private boolean validateBooking(Booking booking) {
+        boolean validBooking = true;
+
+        if (booking == null) {
+            validBooking = false;
+        }
+
+        return validBooking;
     }
 
 
