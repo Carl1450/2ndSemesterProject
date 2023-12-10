@@ -25,26 +25,14 @@ public class TestProductDAO {
     }
 
     void insertMockDataIntoDatabase() {
-        Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
 
-        String insertQuery = "INSERT INTO Product (barcode, name, stockNO) VALUES (1, Test, 10);";
+        String insertQuery = "INSERT INTO Product (barcode, name, stockNO) VALUES (1, 'Test', 10);";
 
-        try {
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(insertQuery);
+        Connection connection = DBConnection.getConnection(ConnectionEnvironment.TESTING);
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+        DBConnection.executeUpdate(connection, insertQuery);
 
-        } finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
+        DBConnection.closeConnection(connection);
     }
 
     @AfterEach
@@ -53,26 +41,15 @@ public class TestProductDAO {
     }
 
     void deleteMockDataFromDatabase() {
-        Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
 
         String insertQuery = "DELETE FROM Product;";
 
-        try {
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(insertQuery);
+        Connection connection = DBConnection.getConnection(ConnectionEnvironment.TESTING);
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+        DBConnection.executeUpdate(connection, insertQuery);
 
-        } finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
+        DBConnection.closeConnection(connection);
+
     }
 
     @Test

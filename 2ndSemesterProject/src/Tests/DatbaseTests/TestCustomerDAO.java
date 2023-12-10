@@ -23,24 +23,22 @@ public class TestCustomerDAO {
     }
 
     private void insertMockData() {
-        try (Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
-             Statement statement = connection.createStatement()) {
+        String insertMockCity = "INSERT INTO City (zipCode, city) VALUES (1000, 'Copenhagen');";
 
-            // Insert a mock city
-            statement.executeUpdate("INSERT INTO City (zipCode, city) VALUES (1000, 'Copenhagen');");
+        String insertMockAddress = "INSERT INTO [Address] (id, street, streetno, zipcode) VALUES (1, 'Bredgade', 30, 1000);";
 
-            statement.executeUpdate("SET IDENTITY_INSERT [Address] ON");
-            statement.executeUpdate("INSERT INTO [Address] (id, street, streetno, zipcode) VALUES (1, 'Bredgade', 30, 1000);");
-            statement.executeUpdate("SET IDENTITY_INSERT [Address] OFF");
+        String insertMockCustomer = "INSERT INTO Customer (id, fname, lname, email, phoneno, addressId) " +
+                "VALUES (1, 'Jens', 'Hansen', 'jens.hansen@example.com', '+45 12345678', 1);";
 
+        Connection connection = DBConnection.getConnection(ConnectionEnvironment.TESTING);
 
-            statement.executeUpdate("SET IDENTITY_INSERT Customer ON");
-            statement.executeUpdate("INSERT INTO Customer (id, fname, lname, email, phoneno, addressId) " +
-                    "VALUES (1, 'Jens', 'Hansen', 'jens.hansen@example.com', '+45 12345678', 1);");
-            statement.executeUpdate("SET IDENTITY_INSERT Customer OFF");
-        } catch (SQLException e) {
-            throw new RuntimeException("Error setting up mock data", e);
-        }
+        DBConnection.executeUpdate(connection, insertMockCity);
+
+        DBConnection.executeUpdateWithIdentityInsert(connection, insertMockAddress, "[Address]");
+
+        DBConnection.executeUpdateWithIdentityInsert(connection, insertMockCustomer, "Customer");
+
+        DBConnection.closeConnection(connection);
     }
 
 
@@ -50,16 +48,14 @@ public class TestCustomerDAO {
     }
 
     private void deleteMockData() {
-        try (Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
-             Statement statement = connection.createStatement()) {
 
-            // Delete all mock data
-            statement.executeUpdate("DELETE FROM Customer;");
-            statement.executeUpdate("DELETE FROM [Address];");
-            statement.executeUpdate("DELETE FROM City;");
-        } catch (SQLException e) {
-            throw new RuntimeException("Error cleaning up mock data", e);
-        }
+        String deleteMockData = "DELETE FROM Customer; DELETE FROM [Address]; DELETE FROM City;";
+
+        Connection connection = DBConnection.getConnection(ConnectionEnvironment.TESTING);
+
+        DBConnection.executeUpdate(connection, deleteMockData);
+
+        DBConnection.closeConnection(connection);
     }
 
     @Test

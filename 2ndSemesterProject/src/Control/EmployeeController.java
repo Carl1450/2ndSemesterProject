@@ -1,5 +1,6 @@
 package Control;
 
+import Database.ConnectionEnvironment;
 import Model.Employee;
 
 import java.nio.charset.StandardCharsets;
@@ -10,23 +11,24 @@ import Database.EmployeeDAO;
 
 public class EmployeeController {
 
+	private ConnectionEnvironment env;
 	private EmployeeDAO employeeDAO;
 	private Employee employee;
 	
-	public EmployeeController() {
-		employeeDAO = new EmployeeDAO();
+	public EmployeeController(ConnectionEnvironment env) {
+		this.env = env;
+		employeeDAO = new EmployeeDAO(env);
 	}
 
 	public Employee findEmployeeById(int id) {
 		return employeeDAO.findEmployeeById(id);
 	}
 
-	public boolean validateLogin(int id, String password) {
-		employee = findEmployeeById(id);
-
+	public boolean validateLogin(Employee employee, String password) {
+		
 		if (employee != null) {
 			String enteredPasswordHash = hashPassword(password);
-			if (enteredPasswordHash.equals(employee.getPassword()) && id == employee.getId()) {
+			if (enteredPasswordHash.equals(employee.getPassword())) {
 				return true;
 			}
 		}

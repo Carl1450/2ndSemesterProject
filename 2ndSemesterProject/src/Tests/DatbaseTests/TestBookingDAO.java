@@ -1,14 +1,9 @@
 package Tests.DatbaseTests;
 
-import Model.Customer;
-import Model.Employee;
-import Model.Pitch;
-import Model.Price;
-import Model.Campsite;
+import Model.*;
 import Database.BookingDAO;
 import Database.ConnectionEnvironment;
 import Database.DBConnection;
-import Model.Booking;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -25,8 +20,11 @@ public class TestBookingDAO {
 
     @BeforeEach
     void setUp() {
-        Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
+        deleteMockDataFromDatabase();
+        insertMockDataInDatabase();
+    }
 
+    void insertMockDataInDatabase() {
         String mockCityInsertQuery = "INSERT INTO City (zipCode, city) VALUES (1000, 'Copenhagen');";
 
         String mockAddressInsertQuery = "INSERT INTO [Address] (id, street, streetno, zipcode) VALUES (1, 'Bredgade', 30, 1000);";
@@ -42,39 +40,35 @@ public class TestBookingDAO {
 
         String mockPriceInsertQuery = "INSERT INTO Price (id, price, effectiveDate, campsiteSiteNo) " + "VALUES (1, 0, '2023-01-01', 1);";
 
-        try {
-            Statement statement = connection.createStatement();
+        try (Connection connection = DBConnection.getConnection(ConnectionEnvironment.TESTING)){
+            DBConnection.startTransaction(connection);
 
-            statement.executeUpdate(mockCityInsertQuery);
+            DBConnection.executeUpdate(connection, mockCityInsertQuery);
 
-            statement.executeUpdate("SET IDENTITY_INSERT [Address] ON");
-            statement.executeUpdate(mockAddressInsertQuery);
-            statement.executeUpdate("SET IDENTITY_INSERT [Address] OFF");
+            DBConnection.executeUpdateWithIdentityInsert(connection, mockAddressInsertQuery, "[Address]");
 
-            statement.executeUpdate("SET IDENTITY_INSERT [Customer] ON");
-            statement.executeUpdate(mockCustomerInsertQuery);
-            statement.executeUpdate("SET IDENTITY_INSERT [Customer] OFF");
+            DBConnection.executeUpdateWithIdentityInsert(connection, mockCustomerInsertQuery, "Customer");
 
-            statement.executeUpdate("SET IDENTITY_INSERT [Employee] ON");
-            statement.executeUpdate(mockEmployeeInsertQuery);
-            statement.executeUpdate("SET IDENTITY_INSERT [Employee] OFF");
+            DBConnection.executeUpdateWithIdentityInsert(connection, mockEmployeeInsertQuery, "Employee");
 
-            statement.executeUpdate(mockCampsiteInsertQuery);
+            DBConnection.executeUpdate(connection, mockCampsiteInsertQuery);
 
-            statement.executeUpdate("SET IDENTITY_INSERT [Price] ON");
-            statement.executeUpdate(mockPriceInsertQuery);
-            statement.executeUpdate("SET IDENTITY_INSERT [Price] OFF");
+            DBConnection.executeUpdateWithIdentityInsert(connection, mockPriceInsertQuery, "Price");
 
+            DBConnection.commitTransaction(connection);
+
+            DBConnection.closeConnection(connection);
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-
     }
 
     @AfterEach
     void tearDown() {
-        Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
+        deleteMockDataFromDatabase();
+    }
 
+    void deleteMockDataFromDatabase() {
         String deleteMockDataQuery = "DELETE FROM Price; " +
                 "DELETE FROM Booking; " +
                 "DELETE FROM Campsite; " +
@@ -83,10 +77,9 @@ public class TestBookingDAO {
                 "DELETE FROM Address; " +
                 "DELETE FROM City";
 
-        try {
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(deleteMockDataQuery);
-            connection.close();
+        try (Connection connection = DBConnection.getConnection(ConnectionEnvironment.TESTING)) {
+            DBConnection.executeUpdate(connection, deleteMockDataQuery);
+            DBConnection.closeConnection(connection);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -95,7 +88,7 @@ public class TestBookingDAO {
     @Test
     void TS_1_TC_1_valid_booking_is_persisted_in_database() {
         // Arrange
-        BookingDAO SUT = new BookingDAO();
+        BookingDAO SUT = new BookingDAO(ConnectionEnvironment.TESTING);
 
         Date startDate = new Date(1000);
         Date endDate = new Date(50000000);
@@ -103,7 +96,7 @@ public class TestBookingDAO {
         int amountOfAdults = 2;
         int amountOfChildren = 1;
         Customer customer = new Customer(1, null, null, null, null);
-        Employee employee = new Employee(1, "", "", "", "",
+        Employee employee = new Admin(1, "", "", "", "",
                 "", "");
         Price pitchPrice = new Price(500, startDate);
         Campsite campsite = new Pitch(1, "", "", pitchPrice, 1000);
@@ -122,7 +115,7 @@ public class TestBookingDAO {
     @Test
     void TS_1_TC_4_conflicting_booking_is_not_persisted_in_database() {
         // Arrange
-        BookingDAO SUT = new BookingDAO();
+        BookingDAO SUT = new BookingDAO(ConnectionEnvironment.TESTING);
 
         Date startDate = new Date(1000);
         Date endDate = new Date(50000000);
@@ -130,7 +123,7 @@ public class TestBookingDAO {
         int amountOfAdults = 2;
         int amountOfChildren = 1;
         Customer customer = new Customer(1, null, null, null, null);
-        Employee employee = new Employee(1, "", "", "", "",
+        Employee employee = new Admin(1, "", "", "", "",
                 "", "");
         Price pitchPrice = new Price(500, startDate);
         Campsite campsite = new Pitch(1, "", "", pitchPrice, 1000);

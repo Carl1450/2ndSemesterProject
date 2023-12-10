@@ -4,11 +4,8 @@ import Model.Product;
 
 public class ProductDAO {
 
-    ConnectionEnvironment env;
+    private ConnectionEnvironment env;
 
-    public ProductDAO() {
-        env = ConnectionEnvironment.PRODUCTION;
-    }
 
     public ProductDAO(ConnectionEnvironment env) {
         this.env = env;

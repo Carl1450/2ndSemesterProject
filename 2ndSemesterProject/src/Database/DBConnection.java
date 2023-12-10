@@ -6,91 +6,95 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DBConnection {
-    private Connection connection = null;
-    private static DBConnection dbConnection;
 
-    private static final String driverClass = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
     private static final String serverAddress = "hildur.ucn.dk";
     private static final int serverPort = 1433;
     private static final String password = "Password1!";
 
-    private ConnectionEnvironment env;
+    public static Connection getConnection(ConnectionEnvironment env) {
+        Connection connection;
 
-    private DBConnection(ConnectionEnvironment env) {
-        this.env = env;
-
-        String connectionString = String.format("jdbc:sqlserver://%s:%d;databaseName=%s;user=%s;password=%s;encrypt=false",
-                serverAddress, serverPort, env.getDatabaseName(), env.getUserName(), password);
         try {
+            String connectionString = String.format(
+                    "jdbc:sqlserver://%s:%d;databaseName=%s;user=%s;password=%s;encrypt=false",
+                    serverAddress, serverPort, env.getDatabaseName(), env.getUserName(), password);
             connection = DriverManager.getConnection(connectionString);
-        } catch (SQLException e) {
-            System.err.println("Could not connect to database " + env.getDatabaseName() + "@" + serverAddress + ":" + serverPort + " as user " + env.getUserName() + " using password ******");
-            System.out.println("Connection string was: " + connectionString.substring(0, connectionString.length() - password.length()) + "....");
-            e.printStackTrace();
-        }
-    }
 
-    public static DBConnection getInstance(ConnectionEnvironment env) {
-        if (dbConnection == null) {
-            dbConnection = new DBConnection(env);
-        }
-        return dbConnection;
-    }
-
-    public static DBConnection getInstance() {
-        if (dbConnection == null) {
-            dbConnection = new DBConnection(ConnectionEnvironment.PRODUCTION);
-        }
-        return dbConnection;
-    }
-
-    public void startTransaction() throws SQLException {
-        connection.setAutoCommit(false);
-    }
-
-    public void commitTransaction() throws SQLException {
-        connection.commit();
-        connection.setAutoCommit(true);
-    }
-
-    public void rollbackTransaction() throws SQLException {
-        connection.rollback();
-        connection.setAutoCommit(true);
-    }
-
-    public int executeUpdate(String sql) throws SQLException {
-        System.out.println("DBConnection, Updating: " + sql);
-        int res = -1;
-        try (Statement s = connection.createStatement()) {
-            res = s.executeUpdate(sql);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw e;
-        }
-        return res;
-    }
-
-
-    public Connection getConnection() {
-        try {
-            if (connection == null || connection.isClosed()) {
-                // Reinitialize the connection
-                String connectionString = String.format(
-                        "jdbc:sqlserver://%s:%d;databaseName=%s;user=%s;password=%s;encrypt=false",
-                        serverAddress, serverPort, env.getDatabaseName(), env.getUserName(), password);
-                connection = DriverManager.getConnection(connectionString);
-            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return connection;
     }
 
-    public void disconnect() {
+    public static void startTransaction(Connection connection) throws SQLException {
+        connection.setAutoCommit(false);
+    }
+
+    public static void startTransaction(Connection connection, int isolationLevel) throws SQLException {
+        connection.setAutoCommit(false);
+
+        if (isValidTransactionIsolation(isolationLevel)) {
+            connection.setTransactionIsolation(isolationLevel);
+        } else {
+            connection.setAutoCommit(true);
+            throw new IllegalArgumentException("Unsupported isolation level: " + isolationLevel);
+        }
+
+    }
+
+    private static boolean isValidTransactionIsolation(int isolationLevel) {
+        // Check if the provided isolation level is a valid constant according to java.sql.Connection
+        return isolationLevel == Connection.TRANSACTION_NONE ||
+                isolationLevel == Connection.TRANSACTION_READ_UNCOMMITTED ||
+                isolationLevel == Connection.TRANSACTION_READ_COMMITTED ||
+                isolationLevel == Connection.TRANSACTION_REPEATABLE_READ ||
+                isolationLevel == Connection.TRANSACTION_SERIALIZABLE;
+    }
+
+    public static void commitTransaction(Connection connection) throws SQLException {
+        connection.commit();
+        connection.setAutoCommit(true);
+    }
+
+    public static void rollbackTransaction(Connection connection) throws SQLException {
+        connection.rollback();
+        connection.setAutoCommit(true);
+    }
+
+    public static void executeUpdateWithIdentityInsert(Connection connection, String query, String columnName) {
+
+        String setIdentityInsertOn = "SET IDENTITY_INSERT " + columnName + " ON";
+        String setIdentityInsertOff = "SET IDENTITY_INSERT " + columnName + " OFF";
         try {
-            connection.close();
+            Statement statement = connection.createStatement();
+
+            statement.executeUpdate(setIdentityInsertOn);
+            statement.executeUpdate(query);
+            statement.executeUpdate(setIdentityInsertOff);
+
+            statement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void executeUpdate(Connection connection, String query) {
+        try {
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(query);
+            statement.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void closeConnection(Connection connection) {
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

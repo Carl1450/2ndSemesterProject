@@ -6,14 +6,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Database.CampsiteDAO;
+import Database.ConnectionEnvironment;
 import Model.Campsite;
 import Model.Employee;
 
 public class CampsiteController {
 	private CampsiteDAO campsiteDAO;
-	
-	public CampsiteController() {
-		campsiteDAO = new CampsiteDAO();
+
+	private ConnectionEnvironment env;
+
+	public CampsiteController(ConnectionEnvironment env) {
+		this.env = env;
+		campsiteDAO = new CampsiteDAO(env);
 	}
 	
 	public List<Campsite> getAvailableCampsites(Date startDate, Date endDate) {

@@ -1,7 +1,7 @@
 package GUI;
 
 import Control.EmployeeController;
-import Database.EmployeeDAO;
+import Database.ConnectionEnvironment;
 import Model.Employee;
 
 import java.awt.EventQueue;
@@ -33,8 +33,9 @@ public class LoginGUI extends JFrame {
 	private JPanel contentPane;
 	private JTextField employeeIdTextField;
 	private EmployeeController employeeController;
-	private EmployeeDAO employeeDAO;
 	private JPasswordField employeePasswordTextField;
+
+	private ConnectionEnvironment env = ConnectionEnvironment.PRODUCTION;
 
 	/**
 	 * Launch the application.
@@ -56,8 +57,7 @@ public class LoginGUI extends JFrame {
 	 * Create the frame.
 	 */
 	public LoginGUI() {
-		employeeDAO = new EmployeeDAO();
-		employeeController = new EmployeeController();
+		employeeController = new EmployeeController(env);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(450, 300);
@@ -158,12 +158,12 @@ public class LoginGUI extends JFrame {
 		panel_2.add(loginButton);
 	}
 
-	public void loginButtonClicked() {
+	private void loginButtonClicked() {
 		String employeeId = employeeIdTextField.getText();
 		String employeePassword = new String(employeePasswordTextField.getPassword());
 		Employee employee = employeeController.findEmployeeById(Integer.parseInt(employeeId));
 		try {
-			if (employeeController.validateLogin(employee.getId(), employeePassword) == true) {
+			if (employeeController.validateLogin(employee, employeePassword) == true) {
 				MainMenuGUI mainMenuGUI = new MainMenuGUI(employee);
 				mainMenuGUI.setVisible(true);
 				dispose();
@@ -179,7 +179,7 @@ public class LoginGUI extends JFrame {
 			JOptionPane.showMessageDialog(this, "Invalid Employee ID", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	public void enterKey() {
+	private void enterKey() {
 		employeePasswordTextField.addKeyListener(new KeyListener() {
 
 			@Override

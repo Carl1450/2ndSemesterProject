@@ -9,78 +9,72 @@ import Model.*;
 
 public class CustomerDAO {
 
-	ConnectionEnvironment env;
+    private ConnectionEnvironment env;
 
-	private String findCustomerByPhoneNumberQ = "SELECT cust.id, cust.fname, cust.lname, cust.email, [address].street, [address].streetno, [address].zipcode, city.city "
-			+ "FROM customer cust "
-			+ "LEFT JOIN [address] ON cust.addressId = [address].id "
-			+ "LEFT JOIN city ON [address].zipcode = city.zipcode "
-			+ "WHERE phoneNo = ?";
-	
-	private DBConnection connectionDB;
 
-	public CustomerDAO() {
-		env = ConnectionEnvironment.PRODUCTION;
-	}
+    public CustomerDAO(ConnectionEnvironment env) {
+        this.env = env;
+    }
 
-	public CustomerDAO(ConnectionEnvironment env) {
-		this.env = env;
-	}
+    public Customer findCustomerByPhoneNumber(String phoneNumber) {
 
-	public Customer findCustomerByPhoneNumber(String phoneNumber) {
+        String findCustomerByPhoneNumberQ = "SELECT cust.id, cust.fname, cust.lname, cust.email, [address].street, [address].streetno, [address].zipcode, city.city "
+                + "FROM customer cust "
+                + "LEFT JOIN [address] ON cust.addressId = [address].id "
+                + "LEFT JOIN city ON [address].zipcode = city.zipcode "
+                + "WHERE phoneNo = ?";
 
-		Customer customer = null;
+        Customer customer = null;
 
-		ResultSet rs = null;
+        try (Connection connection = DBConnection.getConnection(env)) {
+            PreparedStatement prepStat = connection.prepareStatement(findCustomerByPhoneNumberQ);
+            prepStat.setString(1, phoneNumber);
+            ResultSet rs = prepStat.executeQuery();
 
-		try (Connection connection = DBConnection.getInstance(env).getConnection()) {
-			PreparedStatement prepStat = connection.prepareStatement(findCustomerByPhoneNumberQ);
-			prepStat.setString(1, phoneNumber);
-			rs = prepStat.executeQuery();
+            if (rs.next()) {
 
-			if (rs.next()) {
-				int id = rs.getInt("id");
-				String fname = rs.getString("fname");
-				String lname = rs.getString("lname");
-				String street = rs.getString("street");
-				String streetno = rs.getString("streetno");
-				String zipcode = rs.getString("zipcode");
-				String city = rs.getString("city");
-				String email = rs.getString("email");
-				String name = fname + " " + lname;
-				String address = street + " " + streetno + " " + city + " " + zipcode;
-				
-				customer = new Customer(id, name, address, phoneNumber, email);
-			}
+                int id = rs.getInt("id");
+                String fname = rs.getString("fname");
+                String lname = rs.getString("lname");
+                String street = rs.getString("street");
+                String streetno = rs.getString("streetno");
+                String zipcode = rs.getString("zipcode");
+                String city = rs.getString("city");
+                String email = rs.getString("email");
+                String name = fname + " " + lname;
+                String address = street + " " + streetno + " " + city + " " + zipcode;
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+                customer = new Customer(id, name, address, phoneNumber, email);
+            }
 
-		return customer;
-	}
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-	public boolean saveCustomer(String name, String address, String phoneNumber, String email) {
+        return customer;
+    }
 
-		Connection conn = connectionDB.getConnection();
-		String insertOrderQ = "INSERT INTO customer( fname, lname, email, phoneno, addressId) VALUES (?, ?, ?, ?);";
-		int rowsAffected = 0;
-		String[] splitName = name.split("\\s+");
-		try {
-			// Save customer info
-			PreparedStatement prepStat = conn.prepareStatement(insertOrderQ);
-			prepStat.setString(1, splitName[0]);
-			prepStat.setString(2, splitName[1]);
-			prepStat.setString(3, email);
-			prepStat.setString(4, phoneNumber);
-			prepStat.setString(5, address);
+    public boolean saveCustomer(String name, String address, String phoneNumber, String email) {
 
-			rowsAffected = prepStat.executeUpdate();
+        Connection conn = DBConnection.getConnection(env);
+        String insertOrderQ = "INSERT INTO customer( fname, lname, email, phoneno, addressId) VALUES (?, ?, ?, ?);";
+        int rowsAffected = 0;
+        String[] splitName = name.split("\\s+");
+        try {
+            // Save customer info
+            PreparedStatement prepStat = conn.prepareStatement(insertOrderQ);
+            prepStat.setString(1, splitName[0]);
+            prepStat.setString(2, splitName[1]);
+            prepStat.setString(3, email);
+            prepStat.setString(4, phoneNumber);
+            prepStat.setString(5, address);
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+            rowsAffected = prepStat.executeUpdate();
 
-		return rowsAffected > 0;
-	}
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return rowsAffected > 0;
+    }
 }

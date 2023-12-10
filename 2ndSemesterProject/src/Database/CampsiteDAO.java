@@ -17,10 +17,6 @@ public class CampsiteDAO {
 
     ConnectionEnvironment env;
 
-    public CampsiteDAO() {
-        env = ConnectionEnvironment.PRODUCTION;
-    }
-
     public CampsiteDAO(ConnectionEnvironment env) {
         this.env = env;
     }
@@ -43,7 +39,7 @@ public class CampsiteDAO {
                 "SELECT 1 FROM Reservation r WHERE r.campsiteSiteNo = c.siteNo AND (r.startDate <= ? AND r.endDate >= ?) AND NOT (r.timeChanged < DATEADD(minute, -10, GETDATE()))" +
                 ")";
 
-        try (Connection connection = DBConnection.getInstance(env).getConnection();
+        try (Connection connection = DBConnection.getConnection(env);
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setDate(1, endDate);
             preparedStatement.setDate(2, startDate);
@@ -67,18 +63,17 @@ public class CampsiteDAO {
     public boolean reserveCampsite(Campsite campsite, Date startDate, Date endDate, Employee employee) {
         boolean reservationStarted = false;
 
-        try (Connection connection = DBConnection.getInstance().getConnection()) {
-            connection.setAutoCommit(false);
-
+        try (Connection connection = DBConnection.getConnection(env)) {
+            DBConnection.startTransaction(connection);
             if (!checkForConflictingBooking(connection, campsite.getSiteNumber(), startDate, endDate, employee)) {
                 if (insertTentativeReservation(connection, campsite.getSiteNumber(), startDate, endDate, employee.getId())) {
-                    connection.commit();
+                    DBConnection.commitTransaction(connection);
                     reservationStarted = true;
                 } else {
-                    connection.rollback();
+                    DBConnection.rollbackTransaction(connection);
                 }
             } else {
-                connection.rollback();
+                DBConnection.rollbackTransaction(connection);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -91,7 +86,7 @@ public class CampsiteDAO {
 
         int successfulCancel = 0;
 
-        Connection connection = DBConnection.getInstance().getConnection();
+        Connection connection = DBConnection.getConnection(env);
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(cancelReservationQuery)) {
             connection.setAutoCommit(false);
@@ -107,7 +102,7 @@ public class CampsiteDAO {
         } catch (SQLException e) {
             e.printStackTrace();
             try {
-                connection.rollback();
+                DBConnection.rollbackTransaction(connection);
             } catch (SQLException ex) {
                 throw new RuntimeException("Error rolling back transaction", ex);
             }

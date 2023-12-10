@@ -1,14 +1,20 @@
 package Control;
 
+import Database.ConnectionEnvironment;
 import Database.CustomerDAO;
 import Model.Customer;
+
+import java.sql.Connection;
 
 public class CustomerController {
 
 	private CustomerDAO customerDAO;
 
-	public CustomerController() {
-		this.customerDAO = new CustomerDAO();
+	private ConnectionEnvironment env;
+
+	public CustomerController(ConnectionEnvironment env) {
+		this.env = env;
+		this.customerDAO = new CustomerDAO(env);
 
 	}
 

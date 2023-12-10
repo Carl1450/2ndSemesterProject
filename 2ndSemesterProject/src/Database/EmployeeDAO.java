@@ -9,39 +9,37 @@ import Model.Employee;
 
 public class EmployeeDAO {
 
-	ConnectionEnvironment env;
-	private String findEmployeeByIdQ = "SELECT id, fname, lname, password FROM Employee WHERE id = ?";
-	private DBConnection connectionDB;
+    private ConnectionEnvironment env;
 
-	public EmployeeDAO() {
-		env = ConnectionEnvironment.PRODUCTION;
-	}
 
-	public EmployeeDAO(ConnectionEnvironment env) {
-		this.env = env;
+    public EmployeeDAO(ConnectionEnvironment env) {
+        this.env = env;
 
-	}
-		
-	
-	public Employee findEmployeeById(int id) {
-		Employee employee = null;
+    }
 
-		try (Connection connection = DBConnection.getInstance(env).getConnection()) {
-			PreparedStatement prepStatement = connection.prepareStatement(findEmployeeByIdQ);
-			prepStatement.setInt(1, id);
-			ResultSet rs = prepStatement.executeQuery();
 
-			if (rs.next()) {
-				id = rs.getInt("id");
-				String fname = rs.getString("fname");
-				String lname = rs.getString("lname");
-				String password = rs.getString("password");
-				employee = new Employee(id, fname, lname, null, null, null, password);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return employee;
-	}
+    public Employee findEmployeeById(int id) {
+        String findEmployeeByIdQ = "SELECT emp.id, emp.fname, emp.lname, emp.password, emp.[role], emp.phoneno, emp.email, " +
+                "[address].street, [address].streetno, [address].zipcode, city.city " +
+                "FROM Employee emp " +
+                "LEFT JOIN [address] ON emp.addressId = [address].id " +
+                "LEFT JOIN city ON [address].zipcode = city.zipcode " +
+                "WHERE emp.id = ?";
+
+        Employee employee = null;
+
+        try (Connection connection = DBConnection.getConnection(env)) {
+            PreparedStatement prepStatement = connection.prepareStatement(findEmployeeByIdQ);
+            prepStatement.setInt(1, id);
+            ResultSet rs = prepStatement.executeQuery();
+
+            if (rs.next()) {
+                employee = EmployeeFactory.getEmployee(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return employee;
+    }
 
 }

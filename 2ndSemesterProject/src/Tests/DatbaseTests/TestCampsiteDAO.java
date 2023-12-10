@@ -3,6 +3,7 @@ package Tests.DatbaseTests;
 import Database.CampsiteDAO;
 import Database.ConnectionEnvironment;
 import Database.DBConnection;
+import Model.Admin;
 import Model.Cabin;
 import Model.Campsite;
 import Model.Employee;
@@ -29,54 +30,45 @@ public class TestCampsiteDAO {
     }
 
     private void insertMockDataInDatabase() {
-        Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
+
+        String mockCityInsertQuery = "INSERT INTO City (zipCode, city) VALUES (1000, 'Copenhagen');";
+        String mockAddressInsertQuery = "INSERT INTO [Address] (id, street, streetno, zipcode) VALUES (1, 'Bredgade', 30, 1000);";
+        String mockCustomerInsertQuery = "INSERT INTO Customer (id, fname, lname, email, phoneno, addressId) VALUES (1, 'Jens', 'Larsen', 'jens.larsen@email.com', '+45 12345678', 1);";
+        String mockEmployeeInsertQuery = "INSERT INTO Employee (id, fname, lname, email, phoneno, [role], cprNo, password, addressId) VALUES (1, 'Anne', 'Nielsen', 'anne.nielsen@email.com', '+45 87654321', 'Admin', '0101901234', 'password1', 1), (2, 'Anne', 'Nielsen', 'anne.nielsen@email.com', '+45 87654321', 'Admin', '0101901234', 'password2', 1);";
+        String mockCampsiteInsertQuery = "INSERT INTO Campsite (section, road, siteNo, [type]) VALUES ('Nord', 'Egevej', 1, 'Pitch'), ('Syd', 'Bøgevej', 2, 'Pitch'), ('Vest', 'Ahornvej', 3, 'Cabin');";
+        String mockBookingInsertQuery = "INSERT INTO Booking (id, startDate, endDate, totalPrice, amountOfAdults, amountOfChildren, customerId, employeeId, campsiteSiteNo) VALUES (1, '2023-01-01', '2023-01-07', 500.0, 2, 1, 1, 1, 1), (2, '2023-02-01', '2023-02-07', 550.0, 2, 0, 1, 1, 2), (3, '2023-03-01', '2023-03-07', 600.0, 1, 1, 1, 1, 3), (4, '2023-04-01', '2023-04-07', 650.0, 3, 1, 1, 1, 1), (5, '2023-05-01', '2023-05-07', 700.0, 2, 2, 1, 1, 2);";
+
+        Connection connection = DBConnection.getConnection(ConnectionEnvironment.TESTING);
 
         try {
-            connection.setAutoCommit(false); // Start transaction
+            DBConnection.startTransaction(connection);
 
-            // Define your insert queries
-            String mockCityInsertQuery = "INSERT INTO City (zipCode, city) VALUES (1000, 'Copenhagen');";
-            String mockAddressInsertQuery = "INSERT INTO [Address] (id, street, streetno, zipcode) VALUES (1, 'Bredgade', 30, 1000);";
-            String mockCustomerInsertQuery = "INSERT INTO Customer (id, fname, lname, email, phoneno, addressId) VALUES (1, 'Jens', 'Larsen', 'jens.larsen@email.com', '+45 12345678', 1);";
-            String mockEmployeeInsertQuery = "INSERT INTO Employee (id, fname, lname, email, phoneno, [role], cprNo, password, addressId) VALUES (1, 'Anne', 'Nielsen', 'anne.nielsen@email.com', '+45 87654321', 'Manager', '0101901234', 'password1', 1), (2, 'Anne', 'Nielsen', 'anne.nielsen@email.com', '+45 87654321', 'Manager', '0101901234', 'password2', 1);";
-            String mockCampsiteInsertQuery = "INSERT INTO Campsite (section, road, siteNo, [type]) VALUES ('Nord', 'Egevej', 1, 'Pitch'), ('Syd', 'Bøgevej', 2, 'Pitch'), ('Vest', 'Ahornvej', 3, 'Cabin');";
-            String mockBookingInsertQuery = "INSERT INTO Booking (id, startDate, endDate, totalPrice, amountOfAdults, amountOfChildren, customerId, employeeId, campsiteSiteNo) VALUES (1, '2023-01-01', '2023-01-07', 500.0, 2, 1, 1, 1, 1), (2, '2023-02-01', '2023-02-07', 550.0, 2, 0, 1, 1, 2), (3, '2023-03-01', '2023-03-07', 600.0, 1, 1, 1, 1, 3), (4, '2023-04-01', '2023-04-07', 650.0, 3, 1, 1, 1, 1), (5, '2023-05-01', '2023-05-07', 700.0, 2, 2, 1, 1, 2);";
+            DBConnection.executeUpdate(connection, mockCityInsertQuery);
 
-            // Execute each insert query
-            try (Statement statement = connection.createStatement()) {
-                statement.executeUpdate(mockCityInsertQuery);
-                statement.executeUpdate("SET IDENTITY_INSERT [Address] ON");
-                statement.executeUpdate(mockAddressInsertQuery);
-                statement.executeUpdate("SET IDENTITY_INSERT [Address] OFF");
-                statement.executeUpdate("SET IDENTITY_INSERT Customer ON");
-                statement.executeUpdate(mockCustomerInsertQuery);
-                statement.executeUpdate("SET IDENTITY_INSERT Customer OFF");
-                statement.executeUpdate("SET IDENTITY_INSERT Employee ON");
-                statement.executeUpdate(mockEmployeeInsertQuery);
-                statement.executeUpdate("SET IDENTITY_INSERT Employee OFF");
-                statement.executeUpdate(mockCampsiteInsertQuery);
-                statement.executeUpdate("SET IDENTITY_INSERT Booking ON");
-                statement.executeUpdate(mockBookingInsertQuery);
-                statement.executeUpdate("SET IDENTITY_INSERT Booking OFF");
-            }
+            DBConnection.executeUpdateWithIdentityInsert(connection, mockAddressInsertQuery, "[Address]");
 
-            connection.commit(); // Commit transaction if all insertions are successful
+            DBConnection.executeUpdateWithIdentityInsert(connection, mockCustomerInsertQuery, "Customer");
+
+            DBConnection.executeUpdateWithIdentityInsert(connection, mockEmployeeInsertQuery, "Employee");
+
+            DBConnection.executeUpdate(connection, mockCampsiteInsertQuery);
+
+            DBConnection.executeUpdateWithIdentityInsert(connection, mockBookingInsertQuery, "Booking");
+
+            DBConnection.commitTransaction(connection);
+
         } catch (SQLException e) {
+            e.printStackTrace();
             try {
-                connection.rollback(); // Rollback transaction in case of error
+                DBConnection.rollbackTransaction(connection);
             } catch (SQLException ex) {
-                ex.printStackTrace();
+                throw new RuntimeException(ex);
             }
-            throw new RuntimeException(e);
         } finally {
-            try {
-                connection.setAutoCommit(true); // Reset auto-commit behavior
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            DBConnection.closeConnection(connection);
         }
-    }
 
+    }
 
     @AfterEach
     void tearDown() {
@@ -84,36 +76,12 @@ public class TestCampsiteDAO {
     }
 
     private void deleteMockDataFromDatabase() {
-        Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
+        String deleteQuery = "DELETE FROM Booking; DELETE FROM Reservation; DELETE FROM Campsite; DELETE FROM Employee; DELETE FROM Customer; DELETE FROM [Address]; DELETE FROM City;";
 
-        try {
-            connection.setAutoCommit(false);
+        Connection connection = DBConnection.getConnection(ConnectionEnvironment.TESTING);
 
-            String[] deleteQueries = {"DELETE FROM Booking", "DELETE FROM Reservation", "DELETE FROM Campsite", "DELETE FROM Employee", "DELETE FROM Customer", "DELETE FROM [Address]", "DELETE FROM City"
+        DBConnection.executeUpdate(connection, deleteQuery);
 
-            };
-
-            try (Statement statement = connection.createStatement()) {
-                for (String query : deleteQueries) {
-                    statement.executeUpdate(query);
-                }
-            }
-
-            connection.commit();
-        } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-            throw new RuntimeException(e);
-        } finally {
-            try {
-                connection.setAutoCommit(true);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
 
@@ -157,12 +125,12 @@ public class TestCampsiteDAO {
     public void testReserveCampsite_NoCrash() {
         // Arrange
 
-        CampsiteDAO SUT = new CampsiteDAO();
+        CampsiteDAO SUT = new CampsiteDAO(ConnectionEnvironment.TESTING);
         Campsite campsite = new Cabin(1, null, null, null, 0, 0);
         Date startDate = Date.valueOf("2023-11-01");
         Date endDate = Date.valueOf("2023-11-03");
 
-        Employee mockEmployee = new Employee(1, null, null, null, null, null, null);
+        Employee mockEmployee = new Admin(1, null, null, null, null, null, null);
 
         // Act
         boolean result = SUT.reserveCampsite(campsite, startDate, endDate, mockEmployee);
@@ -182,8 +150,8 @@ public class TestCampsiteDAO {
         Date startDate = Date.valueOf("2023-11-01");
         Date endDate = Date.valueOf("2023-11-03");
 
-        Employee mockEmployee1 = new Employee(1, null, null, null, null, null, null);
-        Employee mockEmployee2 = new Employee(2, null, null, null, null, null, null);
+        Employee mockEmployee1 = new Admin(1, null, null, null, null, null, null);
+        Employee mockEmployee2 = new Admin(2, null, null, null, null, null, null);
 
         // Act
         mockCampsiteDAO.reserveCampsite(campsite, startDate, endDate, mockEmployee1);
@@ -204,8 +172,8 @@ public class TestCampsiteDAO {
         Date startDate = Date.valueOf("2023-11-01");
         Date endDate = Date.valueOf("2023-11-03");
 
-        Employee mockEmployee1 = new Employee(1, null, null, null, null, null, null);
-        Employee mockEmployee2 = new Employee(2, null, null, null, null, null, null);
+        Employee mockEmployee1 = new Admin(1, null, null, null, null, null, null);
+        Employee mockEmployee2 = new Admin(2, null, null, null, null, null, null);
 
         // Act
         boolean firstReservationSuccess = mockCampsiteDAO.reserveCampsite(campsite, startDate, endDate, mockEmployee1);
@@ -232,7 +200,7 @@ public class TestCampsiteDAO {
         Date startDate = Date.valueOf("2023-11-01");
         Date endDate = Date.valueOf("2023-11-03");
 
-        Employee mockEmployee = new Employee(1, null, null, null, null, null, null);
+        Employee mockEmployee = new Admin(1, null, null, null, null, null, null);
 
         // Act
 
