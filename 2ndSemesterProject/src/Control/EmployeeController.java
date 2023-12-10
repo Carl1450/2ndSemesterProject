@@ -24,12 +24,11 @@ public class EmployeeController {
 		return employeeDAO.findEmployeeById(id);
 	}
 
-	public boolean validateLogin(int id, String password) {
-		employee = findEmployeeById(id);
-
+	public boolean validateLogin(Employee employee, String password) {
+		
 		if (employee != null) {
 			String enteredPasswordHash = hashPassword(password);
-			if (enteredPasswordHash.equals(employee.getPassword()) && id == employee.getId()) {
+			if (enteredPasswordHash.equals(employee.getPassword())) {
 				return true;
 			}
 		}

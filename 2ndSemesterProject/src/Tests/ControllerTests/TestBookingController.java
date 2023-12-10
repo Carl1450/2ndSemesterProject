@@ -108,7 +108,7 @@ public class TestBookingController {
     @Test
     public void testReserveAndSaveBookingForSameEmployee() {
         // Arrange
-        Employee employee = new Employee(1, "", "", "", "", "", "");
+        Employee employee = new Admin(1, "", "", "", "", "", "");
         Date startDate = Date.valueOf("2023-07-01");
         Date endDate = Date.valueOf("2023-07-07");
         float price = 5000;
@@ -138,7 +138,7 @@ public class TestBookingController {
     @Test
     public void testReserveAndSaveTwoDifferentCampsitesForSameEmployee() {
         // Arrange
-        Employee employee = new Employee(1, "", "", "", "", "", "");
+        Employee employee = new Admin(1, "", "", "", "", "", "");
         Date startDate = Date.valueOf("2023-07-01");
         Date endDate = Date.valueOf("2023-07-07");
         float price = 5000;
@@ -174,8 +174,8 @@ public class TestBookingController {
     @Test
     public void testConcurrentReservationAndBooking() {
         // Arrange
-        Employee employee1 = new Employee(1, "", "", "", "", "", "");
-        Employee employee2 = new Employee(2, "", "", "", "", "", "");
+        Employee employee1 = new Admin(1, "", "", "", "", "", "");
+        Employee employee2 = new Admin(2, "", "", "", "", "", "");
         Date startDate = Date.valueOf("2023-07-01");
         Date endDate = Date.valueOf("2023-07-07");
         float price = 5000;
@@ -213,8 +213,8 @@ public class TestBookingController {
     @Test
     public void testNonOverlappingReservationAndBooking() {
         // Arrange
-        Employee employee1 = new Employee(1, "", "", "", "", "", "");
-        Employee employee2 = new Employee(2, "", "", "", "", "", "");
+        Employee employee1 = new Admin(1, "", "", "", "", "", "");
+        Employee employee2 = new Admin(2, "", "", "", "", "", "");
         Date startDate1 = Date.valueOf("2023-07-01");
         Date endDate1 = Date.valueOf("2023-07-07");
         Date startDate2 = Date.valueOf("2023-07-08");
@@ -253,7 +253,7 @@ public class TestBookingController {
     @Test
     void TS_1_TC_2_null_booking_is_not_persisted_in_database() {
         // Arrange
-        Employee mockEmployee = new Employee(1, null, null, null, null, null, null);
+        Employee mockEmployee = new Admin(1, null, null, null, null, null, null);
 
         BookingController SUT = new BookingController(mockEmployee, ConnectionEnvironment.TESTING);
 
@@ -272,7 +272,7 @@ public class TestBookingController {
     @Test
     void TS_1_TC_3_invalid_value_booking_is_not_persisted_in_database() {
         // Arrange
-        Employee employee = new Employee(1, "", "", "", "",
+        Employee employee = new Admin(1, "", "", "", "",
                 "", "");
         BookingController SUT = new BookingController(employee , ConnectionEnvironment.TESTING);
 

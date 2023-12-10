@@ -19,7 +19,12 @@ public class EmployeeDAO {
 
 
     public Employee findEmployeeById(int id) {
-        String findEmployeeByIdQ = "SELECT id, fname, lname, password FROM Employee WHERE id = ?";
+        String findEmployeeByIdQ = "SELECT emp.id, emp.fname, emp.lname, emp.password, emp.[role], emp.phoneno, emp.email, " +
+                "[address].street, [address].streetno, [address].zipcode, city.city " +
+                "FROM Employee emp " +
+                "LEFT JOIN [address] ON emp.addressId = [address].id " +
+                "LEFT JOIN city ON [address].zipcode = city.zipcode " +
+                "WHERE emp.id = ?";
 
         Employee employee = null;
 
@@ -29,11 +34,7 @@ public class EmployeeDAO {
             ResultSet rs = prepStatement.executeQuery();
 
             if (rs.next()) {
-                id = rs.getInt("id");
-                String fname = rs.getString("fname");
-                String lname = rs.getString("lname");
-                String password = rs.getString("password");
-                employee = new Employee(id, fname, lname, null, null, null, password);
+                employee = EmployeeFactory.getEmployee(rs);
             }
         } catch (SQLException e) {
             e.printStackTrace();

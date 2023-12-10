@@ -1,14 +1,9 @@
 package Tests.DatbaseTests;
 
-import Model.Customer;
-import Model.Employee;
-import Model.Pitch;
-import Model.Price;
-import Model.Campsite;
+import Model.*;
 import Database.BookingDAO;
 import Database.ConnectionEnvironment;
 import Database.DBConnection;
-import Model.Booking;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -101,7 +96,7 @@ public class TestBookingDAO {
         int amountOfAdults = 2;
         int amountOfChildren = 1;
         Customer customer = new Customer(1, null, null, null, null);
-        Employee employee = new Employee(1, "", "", "", "",
+        Employee employee = new Admin(1, "", "", "", "",
                 "", "");
         Price pitchPrice = new Price(500, startDate);
         Campsite campsite = new Pitch(1, "", "", pitchPrice, 1000);
@@ -128,7 +123,7 @@ public class TestBookingDAO {
         int amountOfAdults = 2;
         int amountOfChildren = 1;
         Customer customer = new Customer(1, null, null, null, null);
-        Employee employee = new Employee(1, "", "", "", "",
+        Employee employee = new Admin(1, "", "", "", "",
                 "", "");
         Price pitchPrice = new Price(500, startDate);
         Campsite campsite = new Pitch(1, "", "", pitchPrice, 1000);

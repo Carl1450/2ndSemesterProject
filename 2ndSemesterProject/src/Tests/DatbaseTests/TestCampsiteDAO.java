@@ -3,6 +3,7 @@ package Tests.DatbaseTests;
 import Database.CampsiteDAO;
 import Database.ConnectionEnvironment;
 import Database.DBConnection;
+import Model.Admin;
 import Model.Cabin;
 import Model.Campsite;
 import Model.Employee;
@@ -33,7 +34,7 @@ public class TestCampsiteDAO {
         String mockCityInsertQuery = "INSERT INTO City (zipCode, city) VALUES (1000, 'Copenhagen');";
         String mockAddressInsertQuery = "INSERT INTO [Address] (id, street, streetno, zipcode) VALUES (1, 'Bredgade', 30, 1000);";
         String mockCustomerInsertQuery = "INSERT INTO Customer (id, fname, lname, email, phoneno, addressId) VALUES (1, 'Jens', 'Larsen', 'jens.larsen@email.com', '+45 12345678', 1);";
-        String mockEmployeeInsertQuery = "INSERT INTO Employee (id, fname, lname, email, phoneno, [role], cprNo, password, addressId) VALUES (1, 'Anne', 'Nielsen', 'anne.nielsen@email.com', '+45 87654321', 'Manager', '0101901234', 'password1', 1), (2, 'Anne', 'Nielsen', 'anne.nielsen@email.com', '+45 87654321', 'Manager', '0101901234', 'password2', 1);";
+        String mockEmployeeInsertQuery = "INSERT INTO Employee (id, fname, lname, email, phoneno, [role], cprNo, password, addressId) VALUES (1, 'Anne', 'Nielsen', 'anne.nielsen@email.com', '+45 87654321', 'Admin', '0101901234', 'password1', 1), (2, 'Anne', 'Nielsen', 'anne.nielsen@email.com', '+45 87654321', 'Admin', '0101901234', 'password2', 1);";
         String mockCampsiteInsertQuery = "INSERT INTO Campsite (section, road, siteNo, [type]) VALUES ('Nord', 'Egevej', 1, 'Pitch'), ('Syd', 'Bøgevej', 2, 'Pitch'), ('Vest', 'Ahornvej', 3, 'Cabin');";
         String mockBookingInsertQuery = "INSERT INTO Booking (id, startDate, endDate, totalPrice, amountOfAdults, amountOfChildren, customerId, employeeId, campsiteSiteNo) VALUES (1, '2023-01-01', '2023-01-07', 500.0, 2, 1, 1, 1, 1), (2, '2023-02-01', '2023-02-07', 550.0, 2, 0, 1, 1, 2), (3, '2023-03-01', '2023-03-07', 600.0, 1, 1, 1, 1, 3), (4, '2023-04-01', '2023-04-07', 650.0, 3, 1, 1, 1, 1), (5, '2023-05-01', '2023-05-07', 700.0, 2, 2, 1, 1, 2);";
 
@@ -129,7 +130,7 @@ public class TestCampsiteDAO {
         Date startDate = Date.valueOf("2023-11-01");
         Date endDate = Date.valueOf("2023-11-03");
 
-        Employee mockEmployee = new Employee(1, null, null, null, null, null, null);
+        Employee mockEmployee = new Admin(1, null, null, null, null, null, null);
 
         // Act
         boolean result = SUT.reserveCampsite(campsite, startDate, endDate, mockEmployee);
@@ -149,8 +150,8 @@ public class TestCampsiteDAO {
         Date startDate = Date.valueOf("2023-11-01");
         Date endDate = Date.valueOf("2023-11-03");
 
-        Employee mockEmployee1 = new Employee(1, null, null, null, null, null, null);
-        Employee mockEmployee2 = new Employee(2, null, null, null, null, null, null);
+        Employee mockEmployee1 = new Admin(1, null, null, null, null, null, null);
+        Employee mockEmployee2 = new Admin(2, null, null, null, null, null, null);
 
         // Act
         mockCampsiteDAO.reserveCampsite(campsite, startDate, endDate, mockEmployee1);
@@ -171,8 +172,8 @@ public class TestCampsiteDAO {
         Date startDate = Date.valueOf("2023-11-01");
         Date endDate = Date.valueOf("2023-11-03");
 
-        Employee mockEmployee1 = new Employee(1, null, null, null, null, null, null);
-        Employee mockEmployee2 = new Employee(2, null, null, null, null, null, null);
+        Employee mockEmployee1 = new Admin(1, null, null, null, null, null, null);
+        Employee mockEmployee2 = new Admin(2, null, null, null, null, null, null);
 
         // Act
         boolean firstReservationSuccess = mockCampsiteDAO.reserveCampsite(campsite, startDate, endDate, mockEmployee1);
@@ -199,7 +200,7 @@ public class TestCampsiteDAO {
         Date startDate = Date.valueOf("2023-11-01");
         Date endDate = Date.valueOf("2023-11-03");
 
-        Employee mockEmployee = new Employee(1, null, null, null, null, null, null);
+        Employee mockEmployee = new Admin(1, null, null, null, null, null, null);
 
         // Act
 

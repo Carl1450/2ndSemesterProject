@@ -163,7 +163,7 @@ public class LoginGUI extends JFrame {
 		String employeePassword = new String(employeePasswordTextField.getPassword());
 		Employee employee = employeeController.findEmployeeById(Integer.parseInt(employeeId));
 		try {
-			if (employeeController.validateLogin(employee.getId(), employeePassword) == true) {
+			if (employeeController.validateLogin(employee, employeePassword) == true) {
 				MainMenuGUI mainMenuGUI = new MainMenuGUI(employee);
 				mainMenuGUI.setVisible(true);
 				dispose();
