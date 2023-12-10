@@ -32,6 +32,7 @@ public class CustomerDAO {
             ResultSet rs = prepStat.executeQuery();
 
             if (rs.next()) {
+
                 int id = rs.getInt("id");
                 String fname = rs.getString("fname");
                 String lname = rs.getString("lname");
