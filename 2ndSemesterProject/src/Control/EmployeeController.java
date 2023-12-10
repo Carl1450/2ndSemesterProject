@@ -1,5 +1,6 @@
 package Control;
 
+import Database.ConnectionEnvironment;
 import Model.Employee;
 
 import java.nio.charset.StandardCharsets;
@@ -10,11 +11,13 @@ import Database.EmployeeDAO;
 
 public class EmployeeController {
 
+	private ConnectionEnvironment env;
 	private EmployeeDAO employeeDAO;
 	private Employee employee;
 	
-	public EmployeeController() {
-		employeeDAO = new EmployeeDAO();
+	public EmployeeController(ConnectionEnvironment env) {
+		this.env = env;
+		employeeDAO = new EmployeeDAO(env);
 	}
 
 	public Employee findEmployeeById(int id) {

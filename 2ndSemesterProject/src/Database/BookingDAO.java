@@ -11,10 +11,6 @@ public class BookingDAO {
 
     ConnectionEnvironment env;
 
-    public BookingDAO() {
-        env = ConnectionEnvironment.PRODUCTION;
-    }
-
     public BookingDAO(ConnectionEnvironment env) {
         this.env = env;
     }
@@ -24,39 +20,29 @@ public class BookingDAO {
         Connection connection = null;
 
         try {
-            connection = DBConnection.getInstance().getConnection();
-            connection.setAutoCommit(false);
-            connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+            connection = DBConnection.getConnection(env);
+            DBConnection.startTransaction(connection, Connection.TRANSACTION_SERIALIZABLE);
 
             if (!hasBookingConflict(connection, booking)) {
                 hasPersisted = insertBooking(connection, booking);
                 if (hasPersisted) {
-                    connection.commit();
+                    DBConnection.commitTransaction(connection);
                 } else {
-                    connection.rollback();
+                    DBConnection.rollbackTransaction(connection);
                 }
             } else {
-                connection.rollback();
+                DBConnection.rollbackTransaction(connection);
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
             try {
-                if (connection != null) {
-                    connection.rollback();
-                }
+                DBConnection.rollbackTransaction(connection);
             } catch (SQLException ex) {
-                ex.printStackTrace();
+                throw new RuntimeException(ex);
             }
         } finally {
-            try {
-                if (connection != null) {
-                    connection.setAutoCommit(true);
-                    connection.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            DBConnection.closeConnection(connection);
         }
         return hasPersisted;
     }
@@ -67,16 +53,16 @@ public class BookingDAO {
                 "UNION SELECT 1 FROM reservation WHERE campsiteSiteNo = ? AND NOT (startdate >= ? OR endDate <= ?) " +
                 "AND timechanged >= DATEADD(minute, -10, GETDATE()) AND employeeid <> ?;";
 
-        try (PreparedStatement conflictCheckStmt = connection.prepareStatement(conflictCheckQuery)) {
-            conflictCheckStmt.setInt(1, booking.getCampsite().getSiteNumber());
-            conflictCheckStmt.setDate(2, booking.getEndDate());
-            conflictCheckStmt.setDate(3, booking.getStartDate());
-            conflictCheckStmt.setInt(4, booking.getCampsite().getSiteNumber());
-            conflictCheckStmt.setDate(5, booking.getEndDate());
-            conflictCheckStmt.setDate(6, booking.getStartDate());
-            conflictCheckStmt.setInt(7, booking.getEmployee().getId());
+        try (PreparedStatement conflictCheckStatement = connection.prepareStatement(conflictCheckQuery)) {
+            conflictCheckStatement.setInt(1, booking.getCampsite().getSiteNumber());
+            conflictCheckStatement.setDate(2, booking.getEndDate());
+            conflictCheckStatement.setDate(3, booking.getStartDate());
+            conflictCheckStatement.setInt(4, booking.getCampsite().getSiteNumber());
+            conflictCheckStatement.setDate(5, booking.getEndDate());
+            conflictCheckStatement.setDate(6, booking.getStartDate());
+            conflictCheckStatement.setInt(7, booking.getEmployee().getId());
 
-            ResultSet rs = conflictCheckStmt.executeQuery();
+            ResultSet rs = conflictCheckStatement.executeQuery();
             return rs.next();
         }
     }
@@ -99,6 +85,4 @@ public class BookingDAO {
             return (result > 0);
         }
     }
-
-
 }

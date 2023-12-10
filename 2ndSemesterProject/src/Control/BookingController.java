@@ -8,6 +8,7 @@ import java.util.List;
 
 import Database.BookingDAO;
 import Database.CampsiteFactory;
+import Database.ConnectionEnvironment;
 import Database.DBConnection;
 import Model.Booking;
 import Model.Campsite;
@@ -19,16 +20,17 @@ public class BookingController {
     private CampsiteController campsiteController;
     private Booking currentBooking;
     private CustomerController customerController;
-
-    private Connection bookingConnection;
-
     private Employee currentEmployee;
 
-    public BookingController(Employee employee) {
-        customerController = new CustomerController();
-        campsiteController = new CampsiteController();
+    private ConnectionEnvironment env;
 
-        bookingDAO = new BookingDAO();
+    public BookingController(Employee employee, ConnectionEnvironment env) {
+        this.env = env;
+
+        customerController = new CustomerController(env);
+        campsiteController = new CampsiteController(env);
+
+        bookingDAO = new BookingDAO(env);
 
         currentEmployee = employee;
 
@@ -139,14 +141,8 @@ public class BookingController {
 
 
     public void cancelBooking() {
-        try {
-            if (bookingConnection != null && !bookingConnection.getAutoCommit()) {
-                bookingConnection.rollback();
-                bookingConnection.close();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        campsiteController.cancelReservationOfCampsite(currentBooking.getCampsite(), currentBooking.getStartDate(), currentBooking.getEndDate(), currentBooking.getEmployee());
+        currentBooking = null;
     }
 
 

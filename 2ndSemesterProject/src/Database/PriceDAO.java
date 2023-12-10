@@ -2,8 +2,10 @@ package Database;
 
 public class PriceDAO {
 
-	public PriceDAO() {
-		// TODO Auto-generated constructor stub
-	}
+    private ConnectionEnvironment env;
+
+    public PriceDAO(ConnectionEnvironment env) {
+        this.env = env;
+    }
 
 }

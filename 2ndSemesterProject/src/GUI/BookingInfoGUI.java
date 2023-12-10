@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import Control.BookingController;
+import Database.ConnectionEnvironment;
 import Model.Campsite;
 import Model.Customer;
 import Model.Employee;
@@ -55,6 +56,7 @@ public class BookingInfoGUI extends JFrame {
     private BookingController bookingController;
     private Employee employee;
 
+    private ConnectionEnvironment env = ConnectionEnvironment.PRODUCTION;
 
     private CampsiteTableModel campsiteTableModel;
     private JComboBox startYearComboBox;
@@ -445,7 +447,7 @@ public class BookingInfoGUI extends JFrame {
 
     private void init(Employee employee) {
         this.employee = employee;
-        this.bookingController = new BookingController(this.employee);
+        this.bookingController = new BookingController(this.employee, this.env);
         bookingController.startBooking();
     }
 

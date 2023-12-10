@@ -29,72 +29,55 @@ public class TestBookingController {
     }
 
     void insertMockDataToDatabase() {
-        Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
 
+        String mockCityInsertQuery = "INSERT INTO City (zipCode, city) VALUES (1000, 'Copenhagen');";
+        String mockAddressInsertQuery = "INSERT INTO [Address] (id, street, streetno, zipcode) VALUES (1, 'Bredgade', 30, 1000);";
+
+        String mockCustomerInsertQuery = "INSERT INTO Customer (id, fname, lname, email, phoneno, addressId) VALUES (1, 'Jens', 'Larsen', 'jens.larsen@email.com', '+45 12345678', 1);";
+        String mockEmployeeInsertQuery = "INSERT INTO Employee (id, fname, lname, email, phoneno, [role], cprNo, password, addressId) VALUES (1, 'Anne', 'Nielsen', 'anne.nielsen@email.com', '+45 87654321', 'Manager', '0101901234', 'password1', 1), (2, 'Bo', 'Nielsen', 'anne.nielsen@email.com', '+45 87654321', 'Manager', '0101901235', 'password2', 1);";
+
+        String mockCampsiteInsertQuery =
+                "INSERT INTO Campsite (section, road, siteNo, [type]) VALUES " +
+                        "('Nord', 'Egevej', 1, 'Cabin'), " +
+                        "('Syd', 'Bøgevej', 2, 'Pitch'), " +
+                        "('Vest', 'Ahornvej', 3, 'Cabin');";
+
+        String mockBookingInsertQuery =
+                "INSERT INTO Booking (id, startDate, endDate, totalPrice, amountOfAdults, amountOfChildren, customerId, employeeId, campsiteSiteNo) VALUES " +
+                        "(1, '2023-01-01', '2023-01-07', 500.0, 2, 1, 1, 1, 1), " +
+                        "(2, '2023-02-01', '2023-02-07', 550.0, 2, 0, 1, 1, 2), " +
+                        "(3, '2023-03-01', '2023-03-07', 600.0, 1, 1, 1, 1, 3), " +
+                        "(4, '2023-04-01', '2023-04-07', 650.0, 3, 1, 1, 1, 1), " +
+                        "(5, '2023-05-01', '2023-05-07', 700.0, 2, 2, 1, 1, 2);";
+
+
+        Connection connection = DBConnection.getConnection(ConnectionEnvironment.TESTING);
         try {
-            connection.setAutoCommit(false);
 
-            String mockCityInsertQuery = "INSERT INTO City (zipCode, city) VALUES (1000, 'Copenhagen');";
-            String mockAddressInsertQuery = "INSERT INTO [Address] (id, street, streetno, zipcode) VALUES (1, 'Bredgade', 30, 1000);";
+            DBConnection.startTransaction(connection);
 
-            String mockCustomerInsertQuery = "INSERT INTO Customer (id, fname, lname, email, phoneno, addressId) VALUES (1, 'Jens', 'Larsen', 'jens.larsen@email.com', '+45 12345678', 1);";
-            String mockEmployeeInsertQuery = "INSERT INTO Employee (id, fname, lname, email, phoneno, [role], cprNo, password, addressId) VALUES (1, 'Anne', 'Nielsen', 'anne.nielsen@email.com', '+45 87654321', 'Manager', '0101901234', 'password1', 1), (2, 'Bo', 'Nielsen', 'anne.nielsen@email.com', '+45 87654321', 'Manager', '0101901235', 'password2', 1);";
 
-            String mockCampsiteInsertQuery =
-                    "INSERT INTO Campsite (section, road, siteNo, [type]) VALUES " +
-                            "('Nord', 'Egevej', 1, 'Cabin'), " +
-                            "('Syd', 'Bøgevej', 2, 'Pitch'), " +
-                            "('Vest', 'Ahornvej', 3, 'Cabin');";
+            DBConnection.executeUpdate(connection, mockCityInsertQuery);
 
-            String mockBookingInsertQuery =
-                    "INSERT INTO Booking (id, startDate, endDate, totalPrice, amountOfAdults, amountOfChildren, customerId, employeeId, campsiteSiteNo) VALUES " +
-                            "(1, '2023-01-01', '2023-01-07', 500.0, 2, 1, 1, 1, 1), " +
-                            "(2, '2023-02-01', '2023-02-07', 550.0, 2, 0, 1, 1, 2), " +
-                            "(3, '2023-03-01', '2023-03-07', 600.0, 1, 1, 1, 1, 3), " +
-                            "(4, '2023-04-01', '2023-04-07', 650.0, 3, 1, 1, 1, 1), " +
-                            "(5, '2023-05-01', '2023-05-07', 700.0, 2, 2, 1, 1, 2);";
+            DBConnection.executeUpdateWithIdentityInsert(connection, mockAddressInsertQuery, "[Address]");
 
-            Statement statement = connection.createStatement();
+            DBConnection.executeUpdateWithIdentityInsert(connection, mockCustomerInsertQuery, "Customer");
 
-            statement.executeUpdate(mockCityInsertQuery);
+            DBConnection.executeUpdateWithIdentityInsert(connection, mockEmployeeInsertQuery, "Employee");
 
-            statement.executeUpdate("SET IDENTITY_INSERT [Address] ON");
-            statement.executeUpdate(mockAddressInsertQuery);
-            statement.executeUpdate("SET IDENTITY_INSERT [Address] OFF");
+            DBConnection.executeUpdate(connection, mockCampsiteInsertQuery);
 
-            statement.executeUpdate("SET IDENTITY_INSERT Customer ON");
-            statement.executeUpdate(mockCustomerInsertQuery);
-            statement.executeUpdate("SET IDENTITY_INSERT Customer OFF");
+            DBConnection.executeUpdateWithIdentityInsert(connection, mockBookingInsertQuery, "Booking");
 
-            statement.executeUpdate("SET IDENTITY_INSERT Employee ON");
-            statement.executeUpdate(mockEmployeeInsertQuery);
-            statement.executeUpdate("SET IDENTITY_INSERT Employee OFF");
-
-            statement.executeUpdate(mockCampsiteInsertQuery);
-
-            statement.executeUpdate("SET IDENTITY_INSERT Booking ON");
-            statement.executeUpdate(mockBookingInsertQuery);
-            statement.executeUpdate("SET IDENTITY_INSERT Booking OFF");
-
-            connection.commit();  // Commit the transaction
+            DBConnection.commitTransaction(connection);
         } catch (SQLException e) {
             try {
-                if (connection != null) {
-                    connection.rollback();  // Rollback the transaction if an exception occurs
-                }
-            } catch (SQLException rollbackException) {
-                throw new RuntimeException("Error during rollback", rollbackException);
+                DBConnection.rollbackTransaction(connection);
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
             }
-            throw new RuntimeException("Error during insert operations", e);
         } finally {
-            try {
-                if (connection != null) {
-                    connection.setAutoCommit(true);  // Reset auto-commit to its default state
-                    connection.close();  // Close the connection
-                }
-            } catch (SQLException closeException) {
-                throw new RuntimeException("Error closing connection", closeException);
-            }
+            DBConnection.closeConnection(connection);
         }
     }
 
@@ -113,32 +96,12 @@ public class TestBookingController {
                 "DELETE FROM City; " +
                 "DELETE FROM Reservation;";
 
-        Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
+        Connection connection = DBConnection.getConnection(ConnectionEnvironment.TESTING);
 
-        try {
-            connection.setAutoCommit(false);
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(deleteMockDataQuery);
-            connection.commit();
-        } catch (SQLException e) {
-            try {
-                if (connection != null) {
-                    connection.rollback();
-                }
-            } catch (SQLException rollbackException) {
-                throw new RuntimeException("Error during rollback", rollbackException);
-            }
-            throw new RuntimeException("Error during delete operations", e);
-        } finally {
-            try {
-                if (connection != null) {
-                    connection.setAutoCommit(true);
-                    connection.close();
-                }
-            } catch (SQLException closeException) {
-                throw new RuntimeException("Error closing connection", closeException);
-            }
-        }
+        DBConnection.executeUpdate(connection, deleteMockDataQuery);
+
+        DBConnection.closeConnection(connection);
+
     }
 
 
@@ -158,7 +121,7 @@ public class TestBookingController {
         Booking mockBooking = new Booking(startDate, endDate, price, amountOfAdults, amountOfChildren, customer,
                 employee, campsite);
 
-        BookingController SUT = new BookingController(employee);
+        BookingController SUT = new BookingController(employee, ConnectionEnvironment.TESTING);
 
         // Act
         SUT.setCurrentBooking(mockBooking);
@@ -190,7 +153,7 @@ public class TestBookingController {
         Booking booking1 = new Booking(startDate, endDate, price, amountOfAdults, amountOfChildren, customer, employee, campsite1);
         Booking booking2 = new Booking(startDate, endDate, price, amountOfAdults, amountOfChildren, customer, employee, campsite2);
 
-        BookingController SUT = new BookingController(employee);
+        BookingController SUT = new BookingController(employee, ConnectionEnvironment.TESTING);
 
         // Act & Assert
         // For the first campsite
@@ -226,8 +189,8 @@ public class TestBookingController {
         Booking booking1 = new Booking(startDate, endDate, price, amountOfAdults, amountOfChildren, customer, employee1, campsite);
         Booking booking2 = new Booking(startDate, endDate, price, amountOfAdults, amountOfChildren, customer, employee2, campsite);
 
-        BookingController bookingController1 = new BookingController(employee1);
-        BookingController bookingController2 = new BookingController(employee2);
+        BookingController bookingController1 = new BookingController(employee1, ConnectionEnvironment.TESTING);
+        BookingController bookingController2 = new BookingController(employee2, ConnectionEnvironment.TESTING);
 
         // Act
         boolean reservationResult1 = bookingController1.reserveCampsite(campsite, startDate, endDate);
@@ -267,8 +230,8 @@ public class TestBookingController {
         Booking booking1 = new Booking(startDate1, endDate1, price, amountOfAdults, amountOfChildren, customer, employee1, campsite);
         Booking booking2 = new Booking(startDate2, endDate2, price, amountOfAdults, amountOfChildren, customer, employee2, campsite);
 
-        BookingController bookingController1 = new BookingController(employee1);
-        BookingController bookingController2 = new BookingController(employee2);
+        BookingController bookingController1 = new BookingController(employee1, ConnectionEnvironment.TESTING);
+        BookingController bookingController2 = new BookingController(employee2, ConnectionEnvironment.TESTING);
 
         // Act
         bookingController1.setCurrentBooking(booking1);
@@ -292,7 +255,7 @@ public class TestBookingController {
         // Arrange
         Employee mockEmployee = new Employee(1, null, null, null, null, null, null);
 
-        BookingController SUT = new BookingController(mockEmployee);
+        BookingController SUT = new BookingController(mockEmployee, ConnectionEnvironment.TESTING);
 
         Booking mockBooking = null;
 
@@ -311,7 +274,7 @@ public class TestBookingController {
         // Arrange
         Employee employee = new Employee(1, "", "", "", "",
                 "", "");
-        BookingController SUT = new BookingController(employee);
+        BookingController SUT = new BookingController(employee , ConnectionEnvironment.TESTING);
 
         Date startDate = new Date(1000);
         Date endDate = new Date(50000000);

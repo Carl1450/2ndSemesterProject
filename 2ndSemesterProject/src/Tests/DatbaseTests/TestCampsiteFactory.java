@@ -25,45 +25,38 @@ public class TestCampsiteFactory {
     }
 
     private void insertMockDataInDatabase() {
-        Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
+
+        String mockCampsiteInsertQuery = "INSERT INTO Campsite (section, road, siteNo, [type]) VALUES ('Nord', 'Egevej', 1, 'Pitch'), ('Vest', 'Ahornvej', 2, 'Cabin');";
+        String mockPitchInsertQuery = "INSERT INTO Pitch (siteNo, fee) VALUES (1, 100);";
+        String mockCabinInsertQuery = "INSERT INTO Cabin (siteNo, maxpeople, deposit) VALUES (2, 10, 1000);";
+
+        String mockPriceInsertQuery = "INSERT INTO Price (id, price, effectiveDate, campsiteSiteNo) VALUES (1, 50, '2023-01-01', 1), (2, 50, '2023-01-01', 2);";
+
+        Connection connection = DBConnection.getConnection(ConnectionEnvironment.TESTING);
 
         try {
-            connection.setAutoCommit(false);
 
-            String mockCampsiteInsertQuery = "INSERT INTO Campsite (section, road, siteNo, [type]) VALUES ('Nord', 'Egevej', 1, 'Pitch'), ('Vest', 'Ahornvej', 2, 'Cabin');";
-            String mockPitchInsertQuery = "INSERT INTO Pitch (siteNo, fee) VALUES (1, 100);";
-            String mockCabinInsertQuery = "INSERT INTO Cabin (siteNo, maxpeople, deposit) VALUES (2, 10, 1000);";
+            DBConnection.startTransaction(connection);
 
-            String mockPriceInsertQuery = "INSERT INTO Price (id, price, effectiveDate, campsiteSiteNo) VALUES (1, 50, '2023-01-01', 1), (2, 50, '2023-01-01', 2);";
+            DBConnection.executeUpdate(connection, mockCampsiteInsertQuery);
 
-            try (Statement statement = connection.createStatement()) {
+            DBConnection.executeUpdate(connection, mockCabinInsertQuery);
 
+            DBConnection.executeUpdate(connection, mockPitchInsertQuery);
 
-                statement.executeUpdate(mockCampsiteInsertQuery);
+            DBConnection.executeUpdateWithIdentityInsert(connection, mockPriceInsertQuery, "Price");
 
-                statement.executeUpdate(mockCabinInsertQuery);
-
-                statement.executeUpdate(mockPitchInsertQuery);
-
-                statement.executeUpdate("SET IDENTITY_INSERT Price ON");
-                statement.executeUpdate(mockPriceInsertQuery);
-                statement.executeUpdate("SET IDENTITY_INSERT Price OFF");
-            }
-
-            connection.commit();
-        } catch (SQLException e) {
+            DBConnection.commitTransaction(connection);
+        } catch (SQLException ex) {
             try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-            throw new RuntimeException(e);
-        } finally {
-            try {
-                connection.setAutoCommit(true);
+                DBConnection.rollbackTransaction(connection);
             } catch (SQLException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
+            throw new RuntimeException(ex);
+        } finally {
+            DBConnection.closeConnection(connection);
+
         }
     }
 
@@ -74,40 +67,15 @@ public class TestCampsiteFactory {
     }
 
     private void deleteMockDataFromDatabase() {
-        Connection connection = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection();
 
-        try {
-            connection.setAutoCommit(false);
+        String deleteQuerie = "DELETE FROM Price; DELETE FROM Pitch; DELETE FROM Cabin; DELETE FROM Campsite";
 
-            String[] deleteQueries = {
-                    "DELETE FROM Price",
-                    "DELETE FROM Pitch",
-                    "DELETE FROM Cabin",
-                    "DELETE FROM Campsite",
+        Connection connection = DBConnection.getConnection(ConnectionEnvironment.TESTING);
 
-            };
+        DBConnection.executeUpdate(connection, deleteQuerie);
 
-            try (Statement statement = connection.createStatement()) {
-                for (String query : deleteQueries) {
-                    statement.executeUpdate(query);
-                }
-            }
+        DBConnection.closeConnection(connection);
 
-            connection.commit();
-        } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-            throw new RuntimeException(e);
-        } finally {
-            try {
-                connection.setAutoCommit(true);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     @Test
@@ -123,10 +91,9 @@ public class TestCampsiteFactory {
         Cabin cabinResult = null;
 
         // Act
-        try {
-            Statement statement = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection().createStatement();
-            ResultSet resultSet = statement.executeQuery(selectCampsitesQuery);
 
+        try (Statement statement = DBConnection.getConnection(ConnectionEnvironment.TESTING).createStatement()) {
+            ResultSet resultSet = statement.executeQuery(selectCampsitesQuery);
             resultSet.next();
             pitchResult = (Pitch) CampsiteFactory.getCampsite(resultSet);
             resultSet.next();
@@ -170,8 +137,8 @@ public class TestCampsiteFactory {
         Object campsiteResult = new Object();
 
         // Act
-        try {
-            Statement statement = DBConnection.getInstance(ConnectionEnvironment.TESTING).getConnection().createStatement();
+        try (Statement statement = DBConnection.getConnection(ConnectionEnvironment.TESTING).createStatement()) {
+
             ResultSet resultSet = statement.executeQuery(selectCampsitesQuery);
 
             resultSet.next();
@@ -184,8 +151,5 @@ public class TestCampsiteFactory {
 
         // Assert
         assertNull(campsiteResult);
-
-
     }
-
 }
