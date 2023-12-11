@@ -40,6 +40,9 @@ import java.util.List;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
 import javax.swing.JComboBox;
+import java.awt.FlowLayout;
+import javax.swing.JCheckBox;
+import javax.swing.JRadioButton;
 
 public class BookingInfoGUI extends JFrame {
 
@@ -67,6 +70,10 @@ public class BookingInfoGUI extends JFrame {
     private JComboBox endDayComboBox;
 
     private boolean customerInfoWarningDisplayed = false;
+    private JRadioButton includeFeeRadioButton;
+    private JCheckBox pitchCheckBox;
+    private JCheckBox cabinCheckBox;
+    private JButton updateCustomerInfoButton;
 
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
@@ -246,6 +253,17 @@ public class BookingInfoGUI extends JFrame {
         panel.add(cityField, gbc_cityField);
         cityField.setColumns(10);
 
+        updateCustomerInfoButton = new JButton("Update Customer Info");
+        updateCustomerInfoButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                updateCustomerInfoButtonClicked();
+            }
+        });
+        GridBagConstraints gbc_updateCustomerInfoButton = new GridBagConstraints();
+        gbc_updateCustomerInfoButton.gridx = 1;
+        gbc_updateCustomerInfoButton.gridy = 6;
+        panel.add(updateCustomerInfoButton, gbc_updateCustomerInfoButton);
+
         JPanel panel_1 = new JPanel();
         contentPane.add(panel_1);
         GridBagLayout gbl_panel_1 = new GridBagLayout();
@@ -329,13 +347,6 @@ public class BookingInfoGUI extends JFrame {
         gbc_endDateLabel.gridy = 1;
         panel_1.add(endDateLabel, gbc_endDateLabel);
 
-        JButton searchButton = new JButton("Search");
-        searchButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                searchButtonClicked();
-            }
-        });
-
         JPanel panel_5 = new JPanel();
         GridBagConstraints gbc_panel_5 = new GridBagConstraints();
         gbc_panel_5.insets = new Insets(0, 0, 5, 0);
@@ -372,14 +383,32 @@ public class BookingInfoGUI extends JFrame {
         gbc_endDayComboBox.gridx = 2;
         gbc_endDayComboBox.gridy = 0;
         panel_5.add(endDayComboBox, gbc_endDayComboBox);
-        searchButton.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
 
-        GridBagConstraints gbc_searchButton = new GridBagConstraints();
-        gbc_searchButton.insets = new Insets(0, 0, 5, 0);
-        gbc_searchButton.anchor = GridBagConstraints.EAST;
-        gbc_searchButton.gridx = 1;
-        gbc_searchButton.gridy = 2;
-        panel_1.add(searchButton, gbc_searchButton);
+        JPanel panel_6 = new JPanel();
+        GridBagConstraints gbc_panel_6 = new GridBagConstraints();
+        gbc_panel_6.insets = new Insets(0, 0, 5, 0);
+        gbc_panel_6.fill = GridBagConstraints.BOTH;
+        gbc_panel_6.gridx = 1;
+        gbc_panel_6.gridy = 2;
+        panel_1.add(panel_6, gbc_panel_6);
+        panel_6.setLayout(new FlowLayout(FlowLayout.TRAILING, 5, 5));
+
+        cabinCheckBox = new JCheckBox("Cabin");
+        cabinCheckBox.setSelected(true);
+        panel_6.add(cabinCheckBox);
+
+        pitchCheckBox = new JCheckBox("Pitch");
+        pitchCheckBox.setSelected(true);
+        panel_6.add(pitchCheckBox);
+
+        JButton searchButton = new JButton("Search");
+        panel_6.add(searchButton);
+        searchButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                searchButtonClicked();
+            }
+        });
+        searchButton.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
 
         JPanel panel_2 = new JPanel();
         GridBagConstraints gbc_panel_2 = new GridBagConstraints();
@@ -390,9 +419,9 @@ public class BookingInfoGUI extends JFrame {
         panel_1.add(panel_2, gbc_panel_2);
         GridBagLayout gbl_panel_2 = new GridBagLayout();
         gbl_panel_2.columnWidths = new int[]{0, 0};
-        gbl_panel_2.rowHeights = new int[]{0, 0, 0, 0};
+        gbl_panel_2.rowHeights = new int[]{0, 0, 0, 0, 0};
         gbl_panel_2.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-        gbl_panel_2.rowWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
+        gbl_panel_2.rowWeights = new double[]{0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
         panel_2.setLayout(gbl_panel_2);
 
         JLabel availableCampsitesLabel = new JLabel("Available Campsites");
@@ -414,12 +443,25 @@ public class BookingInfoGUI extends JFrame {
         campsiteTable = new JTable();
         scrollPane.setViewportView(campsiteTable);
 
+        JPanel panel_7 = new JPanel();
+        FlowLayout flowLayout = (FlowLayout) panel_7.getLayout();
+        flowLayout.setAlignment(FlowLayout.RIGHT);
+        GridBagConstraints gbc_panel_7 = new GridBagConstraints();
+        gbc_panel_7.insets = new Insets(0, 0, 5, 0);
+        gbc_panel_7.fill = GridBagConstraints.BOTH;
+        gbc_panel_7.gridx = 0;
+        gbc_panel_7.gridy = 2;
+        panel_2.add(panel_7, gbc_panel_7);
+
+        includeFeeRadioButton = new JRadioButton("Include fee");
+        panel_7.add(includeFeeRadioButton);
+
         JPanel panel_3 = new JPanel();
         GridBagConstraints gbc_panel_3 = new GridBagConstraints();
         gbc_panel_3.anchor = GridBagConstraints.EAST;
         gbc_panel_3.fill = GridBagConstraints.VERTICAL;
         gbc_panel_3.gridx = 0;
-        gbc_panel_3.gridy = 2;
+        gbc_panel_3.gridy = 3;
         panel_2.add(panel_3, gbc_panel_3);
         panel_3.setLayout(new BoxLayout(panel_3, BoxLayout.X_AXIS));
 
@@ -461,8 +503,11 @@ public class BookingInfoGUI extends JFrame {
         String startDateString = formatComboBoxValuesToDate(startYearComboBox, startMonthComboBox, startDayComboBox);
         String endDateString = formatComboBoxValuesToDate(endYearComboBox, endMonthComboBox, endDayComboBox);
 
+        boolean searchForCabin = cabinCheckBox.isSelected();
+        boolean searchForPitch = pitchCheckBox.isSelected();
+
         if (isDate(startDateString) && isDate(endDateString)) {
-            campsites = bookingController.getAvailableCampsites(startDateString, endDateString);
+            campsites = bookingController.getAvailableCampsites(startDateString, endDateString, searchForCabin, searchForPitch);
             tableModel();
         } else {
             JOptionPane.showMessageDialog(contentPane, "You have entered an invalid date.\n Format is YYYY-MM-DD");
@@ -485,17 +530,44 @@ public class BookingInfoGUI extends JFrame {
 
     private void confirmButtonClicked() {
 
-        String startDateString = formatComboBoxValuesToDate(startYearComboBox, startMonthComboBox, startDayComboBox);
-        String endDateString = formatComboBoxValuesToDate(endYearComboBox, endMonthComboBox, endDayComboBox);
+        if (necessaryInformationValid()) {
+            String startDateString = formatComboBoxValuesToDate(startYearComboBox, startMonthComboBox, startDayComboBox);
+            String endDateString = formatComboBoxValuesToDate(endYearComboBox, endMonthComboBox, endDayComboBox);
 
-        int rowIndex = campsiteTable.getSelectedRow();
-        Campsite currentCampsite = campsiteTableModel.getCampsite(rowIndex);
-        bookingController.addCampsiteToBooking(currentCampsite, startDateString, endDateString);
+            int rowIndex = campsiteTable.getSelectedRow();
+            Campsite currentCampsite = campsiteTableModel.getCampsite(rowIndex);
 
-        FinishBookingGUI finishBookingGUI = new FinishBookingGUI(this.employee, this.bookingController);
+            boolean includeFeed = includeFeeRadioButton.isSelected();
 
-        finishBookingGUI.setVisible(true);
-        dispose();
+            bookingController.addCampsiteToBooking(currentCampsite, startDateString, endDateString, includeFeed);
+
+            FinishBookingGUI finishBookingGUI = new FinishBookingGUI(this.employee, this.bookingController);
+
+            finishBookingGUI.setVisible(true);
+            dispose();
+        } else {
+            JOptionPane.showMessageDialog(null, "Please fill out all the textFields and select a campsite", "Missing information", JOptionPane.INFORMATION_MESSAGE);
+        }
+
+    }
+
+    private boolean necessaryInformationValid() {
+        boolean hasNecessaryInformation = true;
+
+        JTextField[] textFields = {nameTextField, emailField, addressField, cityField, zipCodeField};
+
+        for (JTextField textField : textFields) {
+            String text = textField.getText().trim();
+            if (text.isEmpty()) {
+                hasNecessaryInformation = false;
+            }
+        }
+
+        if (campsiteTable.getSelectedRow() == -1) {
+            hasNecessaryInformation = false;
+        }
+
+        return hasNecessaryInformation;
     }
 
     private void backButtonClicked() {
@@ -503,6 +575,10 @@ public class BookingInfoGUI extends JFrame {
         MainMenuGUI mainMenuGUI = new MainMenuGUI(employee);
         mainMenuGUI.setVisible(true);
         dispose();
+    }
+
+    private void updateCustomerInfoButtonClicked() {
+        JOptionPane.showMessageDialog(null, "This feature is not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void fillCustomerInfo() {
@@ -514,7 +590,8 @@ public class BookingInfoGUI extends JFrame {
         Customer customer = bookingController.findCustomerByPhoneNumber(phoneNumber);
 
         if (customer != null) {
-            if (informationInAnyTextFields()) {
+            informationInFieldsMatchesCustomer(customer);
+            if (informationInAnyTextFields() && !informationInFieldsMatchesCustomer(customer)) {
                 customerInfoWarningDisplayed = true; // Set the flag to indicate that the dialog has been shown
                 int result = JOptionPane.showConfirmDialog(
                         null,
@@ -531,6 +608,25 @@ public class BookingInfoGUI extends JFrame {
             fillInCustomerTextfields(customer);
 
         }
+    }
+
+    private boolean informationInFieldsMatchesCustomer(Customer customer) {
+        boolean informationMatches = false;
+
+        String textFieldName = nameTextField.getText();
+        String textFieldEmail = emailField.getText();
+
+        String textFieldAddress = addressField.getText();
+        String textFieldCity = cityField.getText();
+        String textFieldZipCode = zipCodeField.getText();
+
+        String combinedTextFieldAddress = textFieldAddress + " " + textFieldCity + " " + textFieldZipCode;
+
+        if (customer.getName().equals(textFieldName) && customer.getEmail().equals(textFieldEmail) && customer.getAddress().equals(combinedTextFieldAddress)) {
+            informationMatches = true;
+        }
+
+        return informationMatches;
     }
 
     private void fillInCustomerTextfields(Customer customer) {

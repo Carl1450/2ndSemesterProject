@@ -31,8 +31,6 @@ public class EmployeeFactory {
             String name = fname + " " + lname;
             String address = street + " " + streetno + " " + city + " " + zipcode;
 
-            System.out.println(role.toLowerCase());
-
             switch (role.toLowerCase()) {
                 case "admin":
                     employee = new Admin(id, name, address, phoneNumber, email, null, password);

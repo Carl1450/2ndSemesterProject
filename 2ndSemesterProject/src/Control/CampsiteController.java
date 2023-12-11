@@ -20,11 +20,11 @@ public class CampsiteController {
 		campsiteDAO = new CampsiteDAO(env);
 	}
 	
-	public List<Campsite> getAvailableCampsites(Date startDate, Date endDate) {
+	public List<Campsite> getAvailableCampsites(Date startDate, Date endDate, boolean searchForCabin, boolean searchForPitch) {
 		List<Campsite> campsiteList = new ArrayList<>();
 
 		if (validateDates(startDate, endDate)) {
-			campsiteList = campsiteDAO.getAvailableCampsites(startDate, endDate);
+			campsiteList = campsiteDAO.getAvailableCampsites(startDate, endDate, searchForCabin, searchForPitch);
 		}
 		return campsiteList;
 		

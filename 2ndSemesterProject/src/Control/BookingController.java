@@ -47,18 +47,25 @@ public class BookingController {
         return customer;
     }
 
-    public List<Campsite> getAvailableCampsites(String startDate, String endDate) {
+    public List<Campsite> getAvailableCampsites(String startDate, String endDate, boolean searchForCabin, boolean searchForPitch) {
         Date startDateFormatted = Date.valueOf(startDate);
         Date endDateFormatted = Date.valueOf(endDate);
-        return campsiteController.getAvailableCampsites(startDateFormatted, endDateFormatted);
+        return campsiteController.getAvailableCampsites(startDateFormatted, endDateFormatted, searchForCabin, searchForPitch);
     }
 
-    public void addCampsiteToBooking(Campsite campsite, String startDate, String endDate) {
+    public void addCampsiteToBooking(Campsite campsite, String startDate, String endDate, boolean includeFee) {
         Date startDateFormatted = Date.valueOf(startDate);
         Date endDateFormatted = Date.valueOf(endDate);
         if (reserveCampsite(campsite, startDateFormatted, endDateFormatted)) {
             currentBooking.setCampsite(campsite);
-            currentBooking.setTotalPrice(campsite.getPrice().getPrice());
+
+            float totalPrice = 0;
+            totalPrice += campsite.getPrice().getPrice();
+            if (includeFee) {
+                totalPrice += campsite.getFee();
+            }
+            currentBooking.setTotalPrice(totalPrice);
+
             currentBooking.setStartDate(startDateFormatted);
             currentBooking.setEndDate(endDateFormatted);
         }
@@ -141,7 +148,7 @@ public class BookingController {
 
 
     public void cancelBooking() {
-        campsiteController.cancelReservationOfCampsite(currentBooking.getCampsite(), currentBooking.getStartDate(), currentBooking.getEndDate(), currentBooking.getEmployee());
+        cancelReservationOfCampsite();
         currentBooking = null;
     }
 

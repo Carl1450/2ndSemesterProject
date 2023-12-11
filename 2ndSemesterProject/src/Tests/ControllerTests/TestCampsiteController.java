@@ -21,7 +21,7 @@ public class TestCampsiteController {
         Date endDate = new Date(400);
 
         // Act
-        List<Campsite> result = SUT.getAvailableCampsites(startDate, endDate);
+        List<Campsite> result = SUT.getAvailableCampsites(startDate, endDate, true, true);
 
         // Assert
         assertTrue(result.isEmpty());
