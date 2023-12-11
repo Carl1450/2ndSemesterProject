@@ -20,7 +20,7 @@ public class ProductTableModel extends AbstractTableModel {
 			this.data = orderLines;
 		} else {
 			this.data = new ArrayList<>();
-			System.out.println("Warning: Campsites list was null. Initializing with an empty list.");
+			System.out.println("Warning: Product list was null. Initializing with an empty list.");
 		}
 	}
 
@@ -60,7 +60,7 @@ public class ProductTableModel extends AbstractTableModel {
 			case 3:
 				if(o.getQuantity() > 1) {
 				Price price = o.getProduct().getPrice();
-				float totalPrice = price.getPrice() * o.getQuantity();
+				double totalPrice = price.getPrice() * o.getQuantity();
 				res = String.valueOf(totalPrice); 
 				} else {
 					Price price = o.getProduct().getPrice();
