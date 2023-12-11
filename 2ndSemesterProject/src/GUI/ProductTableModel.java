@@ -64,7 +64,8 @@ public class ProductTableModel extends AbstractTableModel {
 				res = String.valueOf(totalPrice); 
 				} else {
 					Price price = o.getProduct().getPrice();
-					res = String.valueOf(price);
+					float singlePrice = price.getPrice();
+					res = String.valueOf(singlePrice);
 				}
 				
 				break;
