@@ -5,28 +5,25 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import Model.Cabin;
-import Model.Campsite;
-import Model.Pitch;
+import Model.OrderLine;
 import Model.Price;
-import Model.Product;
 
 public class ProductTableModel extends AbstractTableModel {
-	
-	private List<Product> data;
-	private static final String[] COL_NAMES = { "Name", "Barcode", "Quantity", "Price" };
-	
-	public ProductTableModel(List<Product> products) {
+
+	private List<OrderLine> data;
+	private static final String[] COL_NAMES = { "Product Name", "Barcode", "Quantity", "Price" };
+
+	public ProductTableModel(List<OrderLine> orderLines) {
 		super();
 
-		if (products != null) {
-			this.data = products;
+		if (orderLines != null) {
+			this.data = orderLines;
 		} else {
 			this.data = new ArrayList<>();
 			System.out.println("Warning: Campsites list was null. Initializing with an empty list.");
 		}
 	}
-	
+
 	@Override
 	public String getColumnName(int col) {
 		return COL_NAMES[col];
@@ -44,24 +41,24 @@ public class ProductTableModel extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Product p = data.get(rowIndex);
+		OrderLine o = data.get(rowIndex);
 		String res = "";
-		if (p != null) {
+		if (o != null) {
 			switch (columnIndex) {
 			case 0:
-				String name = p.getName();
+				String name = o.getProduct().getName();
 				res = name;
 				break;
 			case 1:
-				int barcode = p.getBarcode();
+				int barcode = o.getProduct().getBarcode();
 				res = String.valueOf(barcode);
 				break;
 			case 2:
-				int quantity = 1;
+				int quantity = o.getQuantity();
 				res = String.valueOf(quantity);
 				break;
 			case 3:
-				Price price = p.getPrice();
+				Price price = o.getProduct().getPrice();
 				res = String.valueOf(price);
 				break;
 			default:
@@ -72,6 +69,15 @@ public class ProductTableModel extends AbstractTableModel {
 		}
 		return res;
 
+	}
+
+	public OrderLine getOrderLine(int index) {
+		return data.get(index);
+	}
+
+	public void setData(List<OrderLine> data) {
+		this.data = data;
+		super.fireTableDataChanged();
 	}
 
 }

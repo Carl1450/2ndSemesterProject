@@ -19,6 +19,7 @@ import Model.Customer;
 import Model.Employee;
 import Model.Order;
 import Model.OrderLine;
+import Model.Price;
 import Model.Product;
 
 public class TestOrderDAO {
@@ -101,11 +102,12 @@ public class TestOrderDAO {
         OrderDAO SUT = new OrderDAO(ConnectionEnvironment.TESTING);
 
         Date date = new Date(1000);
-        float totalPrice = 5000;
+        Price price = new Price(100, date);
+        float totalPrice = 100;
         Employee employee = new Admin(1, "", "", "", "",
                 "", "");
         Customer customer = new Customer(1, null, null, null, null);
-        Product product = new Product(1001, null, 50);
+        Product product = new Product(1001, null, 50, price);
         OrderLine orderLine = new OrderLine(product, 5);
         ArrayList<OrderLine> orderLines = new ArrayList<>();
         orderLines.add(orderLine);
