@@ -16,11 +16,12 @@ public class Order {
 		this.date = date;
 		this.totalPrice = totalPrice;
 		this.employee = employee;
-		this.setCustomer(customer);
+		this.customer = customer;
 	}
 	
 	public Order(Employee employee) {
 		this.employee = employee;
+		this.orderLines = new ArrayList<>();
 	}
 	
 	public void addOrderLine(OrderLine orderLine) {

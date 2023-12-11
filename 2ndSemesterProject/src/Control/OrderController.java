@@ -43,7 +43,7 @@ public class OrderController {
     	return orderLine;
     }
     
-    public void addOrderLine(OrderLine orderLine){
+    public void addOrderLine(Order currentOrder, OrderLine orderLine){
     	currentOrder.addOrderLine(orderLine);
     }
     
