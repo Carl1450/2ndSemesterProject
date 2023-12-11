@@ -35,7 +35,7 @@ public class TestCampsiteDAO {
         String mockAddressInsertQuery = "INSERT INTO [Address] (id, street, streetno, zipcode) VALUES (1, 'Bredgade', 30, 1000);";
         String mockCustomerInsertQuery = "INSERT INTO Customer (id, fname, lname, email, phoneno, addressId) VALUES (1, 'Jens', 'Larsen', 'jens.larsen@email.com', '+45 12345678', 1);";
         String mockEmployeeInsertQuery = "INSERT INTO Employee (id, fname, lname, email, phoneno, [role], cprNo, password, addressId) VALUES (1, 'Anne', 'Nielsen', 'anne.nielsen@email.com', '+45 87654321', 'Admin', '0101901234', 'password1', 1), (2, 'Anne', 'Nielsen', 'anne.nielsen@email.com', '+45 87654321', 'Admin', '0101901234', 'password2', 1);";
-        String mockCampsiteInsertQuery = "INSERT INTO Campsite (section, road, siteNo, [type]) VALUES ('Nord', 'Egevej', 1, 'Pitch'), ('Syd', 'Bøgevej', 2, 'Pitch'), ('Vest', 'Ahornvej', 3, 'Cabin');";
+        String mockCampsiteInsertQuery = "INSERT INTO Campsite (section, road, siteNo, [type], fee) VALUES ('Nord', 'Egevej', 1, 'Pitch', 100), ('Syd', 'Bøgevej', 2, 'Pitch', 100), ('Vest', 'Ahornvej', 3, 'Cabin', 100);";
         String mockBookingInsertQuery = "INSERT INTO Booking (id, startDate, endDate, totalPrice, amountOfAdults, amountOfChildren, customerId, employeeId, campsiteSiteNo) VALUES (1, '2023-01-01', '2023-01-07', 500.0, 2, 1, 1, 1, 1), (2, '2023-02-01', '2023-02-07', 550.0, 2, 0, 1, 1, 2), (3, '2023-03-01', '2023-03-07', 600.0, 1, 1, 1, 1, 3), (4, '2023-04-01', '2023-04-07', 650.0, 3, 1, 1, 1, 1), (5, '2023-05-01', '2023-05-07', 700.0, 2, 2, 1, 1, 2);";
 
         Connection connection = DBConnection.getConnection(ConnectionEnvironment.TESTING);
@@ -97,7 +97,7 @@ public class TestCampsiteDAO {
         Date endDate = Date.valueOf(endDateString);
 
         // Act
-        List<Campsite> result = SUT.getAvailableCampsites(startDate, endDate);
+        List<Campsite> result = SUT.getAvailableCampsites(startDate, endDate, true, true);
 
         // Assert
         assertEquals(3, result.size());
@@ -115,7 +115,7 @@ public class TestCampsiteDAO {
         Date endDate = Date.valueOf(endDateString);
 
         // Act
-        List<Campsite> result = SUT.getAvailableCampsites(startDate, endDate);
+        List<Campsite> result = SUT.getAvailableCampsites(startDate, endDate, true, true);
 
         // Assert
         assertEquals(0, result.size());
@@ -126,7 +126,7 @@ public class TestCampsiteDAO {
         // Arrange
 
         CampsiteDAO SUT = new CampsiteDAO(ConnectionEnvironment.TESTING);
-        Campsite campsite = new Cabin(1, null, null, null, 0, 0);
+        Campsite campsite = new Cabin(1, null, null, null, 0, 0, 0);
         Date startDate = Date.valueOf("2023-11-01");
         Date endDate = Date.valueOf("2023-11-03");
 
@@ -146,7 +146,7 @@ public class TestCampsiteDAO {
         // Arrange
         CampsiteDAO mockCampsiteDAO = new CampsiteDAO(ConnectionEnvironment.TESTING);
         CampsiteDAO SUT = new CampsiteDAO(ConnectionEnvironment.TESTING);
-        Campsite campsite = new Cabin(1, null, null, null, 0, 0);
+        Campsite campsite = new Cabin(1, null, null, null, 0, 0, 0);
         Date startDate = Date.valueOf("2023-11-01");
         Date endDate = Date.valueOf("2023-11-03");
 
@@ -168,7 +168,7 @@ public class TestCampsiteDAO {
         // Arrange
         CampsiteDAO mockCampsiteDAO = new CampsiteDAO(ConnectionEnvironment.TESTING);
         CampsiteDAO SUT = new CampsiteDAO(ConnectionEnvironment.TESTING);
-        Campsite campsite = new Cabin(1, null, null, null, 0, 0);
+        Campsite campsite = new Cabin(1, null, null, null, 0, 0, 0);
         Date startDate = Date.valueOf("2023-11-01");
         Date endDate = Date.valueOf("2023-11-03");
 
@@ -196,7 +196,7 @@ public class TestCampsiteDAO {
     public void test_cancel_reservation_returns_false_when_nothing_is_cancelled() {
         // Arrange
         CampsiteDAO SUT = new CampsiteDAO(ConnectionEnvironment.TESTING);
-        Campsite campsite = new Cabin(1, null, null, null, 0, 0);
+        Campsite campsite = new Cabin(1, null, null, null, 0, 0, 0);
         Date startDate = Date.valueOf("2023-11-01");
         Date endDate = Date.valueOf("2023-11-03");
 

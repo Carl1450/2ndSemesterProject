@@ -35,8 +35,8 @@ public class TestBookingDAO {
         String mockEmployeeInsertQuery = "INSERT INTO Employee (id, fname, lname, email, phoneno, role, cprno, password, addressid) "
                 + "VALUES (1, '', '', '', '', '', '', '', 1);";
 
-        String mockCampsiteInsertQuery = "INSERT INTO Campsite (section, road, siteno, type) "
-                + "VALUES ('', '', 1, '');";
+        String mockCampsiteInsertQuery = "INSERT INTO Campsite (section, road, siteno, type, fee) "
+                + "VALUES ('', '', 1, '', 100);";
 
         String mockPriceInsertQuery = "INSERT INTO Price (id, price, effectiveDate, campsiteSiteNo) " + "VALUES (1, 0, '2023-01-01', 1);";
 

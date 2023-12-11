@@ -21,14 +21,14 @@ public class CampsiteDAO {
         this.env = env;
     }
 
-    public List<Campsite> getAvailableCampsites(Date startDate, Date endDate) {
-        return queryAvailableCampsites(startDate, endDate);
+    public List<Campsite> getAvailableCampsites(Date startDate, Date endDate, boolean searchForCabin, boolean searchForPitch) {
+        return queryAvailableCampsites(startDate, endDate, searchForCabin, searchForPitch);
     }
 
-    private List<Campsite> queryAvailableCampsites(Date startDate, Date endDate) {
+    private List<Campsite> queryAvailableCampsites(Date startDate, Date endDate, boolean searchForCabin, boolean searchForPitch) {
         List<Campsite> campsiteList = new ArrayList<>();
 
-        String query = "SELECT c.siteNo, c.section, c.road, c.[type], cab.maxpeople, cab.deposit, p.fee, pr.price, pr.effectiveDate " +
+        String query = "SELECT c.siteNo, c.section, c.road, c.[type], c.fee, cab.maxpeople, cab.deposit, pr.price, pr.effectiveDate " +
                 "FROM Campsite c " +
                 "LEFT JOIN Cabin cab ON c.siteNo = cab.siteNo " +
                 "LEFT JOIN Pitch p ON c.siteNo = p.siteNo " +
@@ -38,6 +38,14 @@ public class CampsiteDAO {
                 ") AND NOT EXISTS (" +
                 "SELECT 1 FROM Reservation r WHERE r.campsiteSiteNo = c.siteNo AND (r.startDate <= ? AND r.endDate >= ?) AND NOT (r.timeChanged < DATEADD(minute, -10, GETDATE()))" +
                 ")";
+
+        if (searchForCabin == searchForPitch) {
+            query += " AND (c.[type] = 'cabin' OR c.[type] = 'pitch')";
+        } else if (searchForCabin) {
+            query += " AND c.[type] = 'cabin'";
+        } else if (searchForPitch) {
+            query += " AND c.[type] = 'pitch'";
+        }
 
         try (Connection connection = DBConnection.getConnection(env);
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -118,7 +126,6 @@ public class CampsiteDAO {
 
         return successfulCancel > 0;
     }
-
 
 
     private boolean checkForConflictingBooking(Connection connection, int campsiteSiteNo, Date startDate, Date endDate, Employee employee) throws SQLException {

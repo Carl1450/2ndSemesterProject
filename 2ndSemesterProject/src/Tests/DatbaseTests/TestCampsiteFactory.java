@@ -26,8 +26,8 @@ public class TestCampsiteFactory {
 
     private void insertMockDataInDatabase() {
 
-        String mockCampsiteInsertQuery = "INSERT INTO Campsite (section, road, siteNo, [type]) VALUES ('Nord', 'Egevej', 1, 'Pitch'), ('Vest', 'Ahornvej', 2, 'Cabin');";
-        String mockPitchInsertQuery = "INSERT INTO Pitch (siteNo, fee) VALUES (1, 100);";
+        String mockCampsiteInsertQuery = "INSERT INTO Campsite (section, road, siteNo, [type], fee) VALUES ('Nord', 'Egevej', 1, 'Pitch' , 100), ('Vest', 'Ahornvej', 2, 'Cabin' , 100);";
+        String mockPitchInsertQuery = "INSERT INTO Pitch (siteNo) VALUES (1);";
         String mockCabinInsertQuery = "INSERT INTO Cabin (siteNo, maxpeople, deposit) VALUES (2, 10, 1000);";
 
         String mockPriceInsertQuery = "INSERT INTO Price (id, price, effectiveDate, campsiteSiteNo) VALUES (1, 50, '2023-01-01', 1), (2, 50, '2023-01-01', 2);";
@@ -81,7 +81,7 @@ public class TestCampsiteFactory {
     @Test
     void test_campsiteFactory_returns_expected_object() {
         // Arrange
-        String selectCampsitesQuery = "SELECT c.siteNo, c.section, c.road, c.siteNo, c.[type], cab.maxpeople, cab.deposit, p.fee, pr.price, pr.effectiveDate " +
+        String selectCampsitesQuery = "SELECT c.siteNo, c.section, c.road, c.siteNo, c.[type], c.fee, cab.maxpeople, cab.deposit, pr.price, pr.effectiveDate " +
                 "FROM Campsite c " +
                 "LEFT JOIN Cabin cab ON c.siteNo = cab.siteNo " +
                 "LEFT JOIN Pitch p ON c.siteNo = p.siteNo " +
@@ -116,6 +116,7 @@ public class TestCampsiteFactory {
         assertEquals("Ahornvej", cabinResult.getRoad(), "Cabin road was incorrect");
         assertEquals(50, cabinResult.getPrice().getPrice(), "Cabin price was incorrect");
         assertEquals("Vest", cabinResult.getSection(), "Cabin section was incorrect");
+        assertEquals(100, cabinResult.getFee(), "Cabin fee was incorrect");
         assertEquals(1000, cabinResult.getDeposit(), "Cabin deposit was incorrect");
         assertEquals(10, cabinResult.getMaxPeople(), "Cabin max people was incorrect");
 
@@ -126,7 +127,7 @@ public class TestCampsiteFactory {
     @Test
     void test_campsiteFactory_returns_null_when_no_campsite_are_given() {
         // Arrange
-        String selectCampsitesQuery = "SELECT c.siteNo, c.section, c.road, c.siteNo, c.[type], cab.maxpeople, cab.deposit, p.fee, pr.price, pr.effectiveDate " +
+        String selectCampsitesQuery = "SELECT c.siteNo, c.section, c.road, c.siteNo, c.[type], c.fee, cab.maxpeople, cab.deposit, pr.price, pr.effectiveDate " +
                 "FROM Campsite c " +
                 "LEFT JOIN Cabin cab ON c.siteNo = cab.siteNo " +
                 "LEFT JOIN Pitch p ON c.siteNo = p.siteNo " +

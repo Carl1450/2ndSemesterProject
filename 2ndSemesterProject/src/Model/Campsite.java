@@ -7,11 +7,14 @@ public abstract class Campsite {
     private int siteNumber;
     private Price price;
 
-    public Campsite(int siteNumber, String section, String road, Price price) {
+    private float fee;
+
+    public Campsite(int siteNumber, String section, String road, Price price, float fee) {
         this.siteNumber = siteNumber;
         this.section = section;
         this.road = road;
         this.price = price;
+        this.fee = fee;
     }
 
     public String getSection() {
@@ -44,6 +47,14 @@ public abstract class Campsite {
 
     public void setPrice(Price price) {
         this.price = price;
+    }
+
+    public float getFee() {
+        return fee;
+    }
+
+    public void setPrice(float fee) {
+        this.fee = fee;
     }
 
 }
