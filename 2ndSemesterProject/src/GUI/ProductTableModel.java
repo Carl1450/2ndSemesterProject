@@ -58,16 +58,16 @@ public class ProductTableModel extends AbstractTableModel {
 				res = String.valueOf(quantity);
 				break;
 			case 3:
-				if(o.getQuantity() > 1) {
-				Price price = o.getProduct().getPrice();
-				double totalPrice = price.getPrice() * o.getQuantity();
-				res = String.valueOf(totalPrice); 
+				if (o.getQuantity() > 1) {
+					Price price = o.getProduct().getPrice();
+					float totalPrice = price.getPrice() * o.getQuantity();
+					res = String.valueOf(totalPrice);
 				} else {
 					Price price = o.getProduct().getPrice();
 					float singlePrice = price.getPrice();
 					res = String.valueOf(singlePrice);
 				}
-				
+
 				break;
 			default:
 				res = "Unknown";
