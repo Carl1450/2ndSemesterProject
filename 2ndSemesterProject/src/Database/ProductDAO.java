@@ -40,5 +40,25 @@ public class ProductDAO {
 
 		return foundProduct;
 	}
+	
+	public boolean saveProduct(int barcode, String name, int stockNumber) {
+		
+		Connection conn = DBConnection.getConnection(env);
+		String insertProductQ = "INSERT INTO Product(barcode, name, stockNO) VALUES (?, ?, ?);";
+		int rowsAffected = 0;
+		
+		try {
+			PreparedStatement prepStat = conn.prepareStatement(insertProductQ);
+            prepStat.setInt(1, barcode);
+            prepStat.setString(2, name);
+            prepStat.setInt(3, stockNumber);
+            
+            rowsAffected = prepStat.executeUpdate();
+		} catch (SQLException e) {
+            e.printStackTrace();
+        }
+		
+		return rowsAffected > 0;
+	}
 
 }
