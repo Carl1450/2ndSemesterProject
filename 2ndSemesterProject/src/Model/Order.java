@@ -9,12 +9,14 @@ public class Order {
 	private Date date;
 	private float totalPrice;
 	private Employee employee;
+	private Customer customer;
 
-	public Order(ArrayList<OrderLine> orderLines, Date date, float totalPrice, Employee employee) {
+	public Order(ArrayList<OrderLine> orderLines, Date date, float totalPrice, Employee employee, Customer customer) {
 		this.orderLines = orderLines;
 		this.date = date;
 		this.totalPrice = totalPrice;
 		this.employee = employee;
+		this.setCustomer(customer);
 	}
 	
 	public Order(Employee employee) {
@@ -50,6 +52,14 @@ public class Order {
 
 	public void setEmployee(Employee employee) {
 		this.employee = employee;
+	}
+
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
 	}
 	
 	
