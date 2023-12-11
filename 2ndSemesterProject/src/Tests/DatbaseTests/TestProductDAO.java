@@ -78,5 +78,18 @@ public class TestProductDAO {
         // Assert
         assertNull(result);
     }
+    
+    @Test
+    void test_null_returned_when_barcode_is_empty() {
+    	// Arrange
+    	ProductDAO SUT = new ProductDAO(ConnectionEnvironment.TESTING);
+    	int emptyBarcode = 0;
+    	
+    	// Act
+    	Product result = SUT.findProductByBarcode(emptyBarcode);
+    	
+    	// Assert
+    	assertNull(result);
+    }
 
 }

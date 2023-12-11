@@ -19,7 +19,7 @@ public class ProductDAO {
 		Product foundProduct = null;
 
 		String findProductByBarcodeQ = "SELECT prod.barcode, prod.name, prod.stockNO, [Price].price"
-				+ "from Product prod left join [Price] on prod.barcode = [Price].productId where prod.barcode = ?";
+				+ " FROM Product prod LEFT JOIN [Price] ON prod.barcode = [Price].productId WHERE prod.barcode = ?";
 
 		try (Connection connection = DBConnection.getConnection(env)) {
 			PreparedStatement prepStatement = connection.prepareStatement(findProductByBarcodeQ);
