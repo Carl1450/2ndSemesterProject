@@ -43,6 +43,8 @@ public class FinishBookingGUI extends JFrame {
 
 	private Employee employee;
 	private BookingController bookingController;
+	private JLabel insertAmountOfAdultsLabel;
+	private JLabel insertAmountOfChildrenLabel;
 
 	public FinishBookingGUI(Employee employee, BookingController bookingController) {
 
@@ -216,9 +218,9 @@ public class FinishBookingGUI extends JFrame {
 		panel_1.add(panel_4, gbc_panel_4);
 		GridBagLayout gbl_panel_4 = new GridBagLayout();
 		gbl_panel_4.columnWidths = new int[] { 115, 0, 0 };
-		gbl_panel_4.rowHeights = new int[] { 0, 0, 0, 0, 0, 0 };
+		gbl_panel_4.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
 		gbl_panel_4.columnWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
-		gbl_panel_4.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		gbl_panel_4.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		panel_4.setLayout(gbl_panel_4);
 
 		JLabel startDateLabel = new JLabel("Start Date:");
@@ -268,13 +270,46 @@ public class FinishBookingGUI extends JFrame {
 		gbc_insertCampsiteLabel.gridx = 1;
 		gbc_insertCampsiteLabel.gridy = 2;
 		panel_4.add(insertCampsiteLabel, gbc_insertCampsiteLabel);
+		
+		JLabel amountOfAdultsLabel = new JLabel("Amount of Adults:");
+		amountOfAdultsLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		GridBagConstraints gbc_amountOfAdultsLabel = new GridBagConstraints();
+		gbc_amountOfAdultsLabel.anchor = GridBagConstraints.WEST;
+		gbc_amountOfAdultsLabel.insets = new Insets(0, 0, 5, 5);
+		gbc_amountOfAdultsLabel.gridx = 0;
+		gbc_amountOfAdultsLabel.gridy = 3;
+		panel_4.add(amountOfAdultsLabel, gbc_amountOfAdultsLabel);
+		
+		insertAmountOfAdultsLabel = new JLabel("");
+		GridBagConstraints gbc_insertAmountOfAdultsLabel = new GridBagConstraints();
+		gbc_insertAmountOfAdultsLabel.anchor = GridBagConstraints.WEST;
+		gbc_insertAmountOfAdultsLabel.insets = new Insets(0, 0, 5, 0);
+		gbc_insertAmountOfAdultsLabel.gridx = 1;
+		gbc_insertAmountOfAdultsLabel.gridy = 3;
+		panel_4.add(insertAmountOfAdultsLabel, gbc_insertAmountOfAdultsLabel);
+		
+		JLabel amountOfChildrenLabel = new JLabel("Amount of Children:");
+		GridBagConstraints gbc_amountOfChildrenLabel = new GridBagConstraints();
+		gbc_amountOfChildrenLabel.anchor = GridBagConstraints.WEST;
+		gbc_amountOfChildrenLabel.insets = new Insets(0, 0, 5, 5);
+		gbc_amountOfChildrenLabel.gridx = 0;
+		gbc_amountOfChildrenLabel.gridy = 4;
+		panel_4.add(amountOfChildrenLabel, gbc_amountOfChildrenLabel);
+		
+		insertAmountOfChildrenLabel = new JLabel("");
+		GridBagConstraints gbc_insertAmountOfChildrenLabel = new GridBagConstraints();
+		gbc_insertAmountOfChildrenLabel.anchor = GridBagConstraints.WEST;
+		gbc_insertAmountOfChildrenLabel.insets = new Insets(0, 0, 5, 0);
+		gbc_insertAmountOfChildrenLabel.gridx = 1;
+		gbc_insertAmountOfChildrenLabel.gridy = 4;
+		panel_4.add(insertAmountOfChildrenLabel, gbc_insertAmountOfChildrenLabel);
 
 		JLabel priceLabel = new JLabel("Price:");
 		GridBagConstraints gbc_priceLabel = new GridBagConstraints();
 		gbc_priceLabel.anchor = GridBagConstraints.WEST;
 		gbc_priceLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_priceLabel.gridx = 0;
-		gbc_priceLabel.gridy = 3;
+		gbc_priceLabel.gridy = 5;
 		panel_4.add(priceLabel, gbc_priceLabel);
 
 		insertPriceLabel = new JLabel("");
@@ -282,7 +317,7 @@ public class FinishBookingGUI extends JFrame {
 		gbc_insertPriceLabel.anchor = GridBagConstraints.WEST;
 		gbc_insertPriceLabel.insets = new Insets(0, 0, 5, 0);
 		gbc_insertPriceLabel.gridx = 1;
-		gbc_insertPriceLabel.gridy = 3;
+		gbc_insertPriceLabel.gridy = 5;
 		panel_4.add(insertPriceLabel, gbc_insertPriceLabel);
 
 		JLabel employeeLabel = new JLabel("Employee:");
@@ -290,14 +325,14 @@ public class FinishBookingGUI extends JFrame {
 		gbc_employeeLabel.anchor = GridBagConstraints.WEST;
 		gbc_employeeLabel.insets = new Insets(0, 0, 0, 5);
 		gbc_employeeLabel.gridx = 0;
-		gbc_employeeLabel.gridy = 4;
+		gbc_employeeLabel.gridy = 6;
 		panel_4.add(employeeLabel, gbc_employeeLabel);
 
 		insertEmployeeLabel = new JLabel("");
 		GridBagConstraints gbc_insertEmployeeLabel = new GridBagConstraints();
 		gbc_insertEmployeeLabel.anchor = GridBagConstraints.WEST;
 		gbc_insertEmployeeLabel.gridx = 1;
-		gbc_insertEmployeeLabel.gridy = 4;
+		gbc_insertEmployeeLabel.gridy = 6;
 		panel_4.add(insertEmployeeLabel, gbc_insertEmployeeLabel);
 
 		JPanel panel_2 = new JPanel();
@@ -363,7 +398,9 @@ public class FinishBookingGUI extends JFrame {
 		insertEmployeeLabel.setText(employee.getName());
 		insertPriceLabel.setText(Float.toString(booking.getTotalPrice()));
 		insertCampsiteLabel.setText(campsite.getSection() + ", " + campsite.getRoad() + " " + campsite.getSiteNumber());
-
+		insertAmountOfAdultsLabel.setText("" + booking.getAmountOfAdults());
+		insertAmountOfChildrenLabel.setText("" + booking.getAmountOfChildren());
+		
 	}
 
 	private void finishButtonClicked() {

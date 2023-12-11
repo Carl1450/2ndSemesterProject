@@ -153,6 +153,11 @@ public class BookingController {
     }
 
 
+    public void setAmountOfPeople(int amountOfAdults, int amountOfChildren) {
+        currentBooking.setAmountOfAdults(amountOfAdults);
+        currentBooking.setAmountOfChildren(amountOfChildren);
+    }
+
     public boolean handlePayment(float amount) {
         return amount > 0;
 
