@@ -16,5 +16,9 @@ public class ProductController {
     public Product findProductByBarcode(int barcode) {
     	return productDAO.findProductByBarcode(barcode);
     }
+    
+    public boolean saveProduct(int barcode, String name, int stockNumber) {
+    	return productDAO.saveProduct(barcode, name, stockNumber);
+    }
 
 }
