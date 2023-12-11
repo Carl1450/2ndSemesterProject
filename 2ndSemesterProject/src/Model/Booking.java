@@ -53,10 +53,17 @@ public class Booking {
         return amountOfAdults;
     }
 
+    public void setAmountOfAdults(int amountOfAdults) {
+        this.amountOfAdults = amountOfAdults;
+    }
+
     public int getAmountOfChildren() {
         return amountOfChildren;
     }
 
+    public void setAmountOfChildren(int amountOfChildren) {
+        this.amountOfChildren = amountOfChildren;
+    }
     public Employee getEmployee() {
         return employee;
     }
