@@ -13,7 +13,7 @@ public class OrderDAO {
 
 	private ConnectionEnvironment env;
 	private Product product;
-	String insertOrderQ = "INSERT INTO Order(date, totalPrice, employeeId) VALUES (?, ?, ?);";
+	String insertOrderQ = "INSERT INTO [Order](date, totalPrice, employeeId) VALUES (?, ?, ?);";
 	String insertOrderLineQ = "INSERT INTO OrderLine(orderId, productId, quantity) VALUES (?, ?, ?);";
 
 	public OrderDAO(ConnectionEnvironment env) {
