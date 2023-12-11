@@ -98,7 +98,11 @@ public class TestBookingController {
 
         Connection connection = DBConnection.getConnection(ConnectionEnvironment.TESTING);
 
-        DBConnection.executeUpdate(connection, deleteMockDataQuery);
+        try {
+            DBConnection.executeUpdate(connection, deleteMockDataQuery);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         DBConnection.closeConnection(connection);
 

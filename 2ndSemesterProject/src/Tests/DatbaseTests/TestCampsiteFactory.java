@@ -72,7 +72,11 @@ public class TestCampsiteFactory {
 
         Connection connection = DBConnection.getConnection(ConnectionEnvironment.TESTING);
 
-        DBConnection.executeUpdate(connection, deleteQuerie);
+        try {
+            DBConnection.executeUpdate(connection, deleteQuerie);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         DBConnection.closeConnection(connection);
 

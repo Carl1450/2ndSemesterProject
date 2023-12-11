@@ -1,9 +1,6 @@
 package Database;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class DBConnection {
 
@@ -61,7 +58,7 @@ public class DBConnection {
         connection.setAutoCommit(true);
     }
 
-    public static void executeUpdateWithIdentityInsert(Connection connection, String query, String columnName) {
+    public static void executeUpdateWithIdentityInsert(Connection connection, String query, String columnName) throws SQLException {
 
         String setIdentityInsertOn = "SET IDENTITY_INSERT " + columnName + " ON";
         String setIdentityInsertOff = "SET IDENTITY_INSERT " + columnName + " OFF";
@@ -74,19 +71,32 @@ public class DBConnection {
 
             statement.close();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new SQLException(e);
         }
     }
 
-    public static void executeUpdate(Connection connection, String query) {
+    public static int executeUpdate(Connection connection, String query) throws SQLException {
+        int result = 0;
+        try (Statement statement = connection.createStatement();) {
+            result = statement.executeUpdate(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException(e);
+        }
+        return result;
+    }
+
+    public static ResultSet executeQuery(Connection connection, String query) {
+        ResultSet resultSet = null;
         try {
             Statement statement = connection.createStatement();
-            statement.executeUpdate(query);
-            statement.close();
+            resultSet = statement.executeQuery(query);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
+        return resultSet;
     }
+
 
     public static void closeConnection(Connection connection) {
         if (connection != null) {

@@ -30,7 +30,11 @@ public class TestProductDAO {
 
         Connection connection = DBConnection.getConnection(ConnectionEnvironment.TESTING);
 
-        DBConnection.executeUpdate(connection, insertQuery);
+        try {
+            DBConnection.executeUpdate(connection, insertQuery);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         DBConnection.closeConnection(connection);
     }
@@ -46,7 +50,11 @@ public class TestProductDAO {
 
         Connection connection = DBConnection.getConnection(ConnectionEnvironment.TESTING);
 
-        DBConnection.executeUpdate(connection, insertQuery);
+        try {
+            DBConnection.executeUpdate(connection, insertQuery);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         DBConnection.closeConnection(connection);
 

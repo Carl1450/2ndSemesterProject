@@ -32,11 +32,15 @@ public class TestCustomerDAO {
 
         Connection connection = DBConnection.getConnection(ConnectionEnvironment.TESTING);
 
-        DBConnection.executeUpdate(connection, insertMockCity);
+        try {
+            DBConnection.executeUpdate(connection, insertMockCity);
+            DBConnection.executeUpdateWithIdentityInsert(connection, insertMockAddress, "[Address]");
+            DBConnection.executeUpdateWithIdentityInsert(connection, insertMockCustomer, "Customer");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
-        DBConnection.executeUpdateWithIdentityInsert(connection, insertMockAddress, "[Address]");
 
-        DBConnection.executeUpdateWithIdentityInsert(connection, insertMockCustomer, "Customer");
 
         DBConnection.closeConnection(connection);
     }
@@ -53,7 +57,11 @@ public class TestCustomerDAO {
 
         Connection connection = DBConnection.getConnection(ConnectionEnvironment.TESTING);
 
-        DBConnection.executeUpdate(connection, deleteMockData);
+        try {
+            DBConnection.executeUpdate(connection, deleteMockData);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         DBConnection.closeConnection(connection);
     }

@@ -80,7 +80,13 @@ public class TestCampsiteDAO {
 
         Connection connection = DBConnection.getConnection(ConnectionEnvironment.TESTING);
 
-        DBConnection.executeUpdate(connection, deleteQuery);
+        try {
+            DBConnection.executeUpdate(connection, deleteQuery);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        DBConnection.closeConnection(connection);
 
     }
 
