@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Date;
 
+import Model.Price;
 import Model.Product;
 
 public class ProductDAO {
@@ -18,7 +20,7 @@ public class ProductDAO {
 	public Product findProductByBarcode(int barcode) {
 		Product foundProduct = null;
 
-		String findProductByBarcodeQ = "SELECT prod.barcode, prod.name, prod.stockNO, [Price].price"
+		String findProductByBarcodeQ = "SELECT prod.barcode, prod.name, prod.stockNO, [Price].price, [Price].effectiveDate"
 				+ " FROM Product prod LEFT JOIN [Price] ON prod.barcode = [Price].productId WHERE prod.barcode = ?";
 
 		try (Connection connection = DBConnection.getConnection(env)) {
@@ -29,9 +31,12 @@ public class ProductDAO {
 			if (rs.next()) {
 				String name = rs.getString("name");
 				int stockNumber = rs.getInt("stockNO");
-				int price = rs.getInt("price");
+				float price = rs.getFloat("price");
+				Date effectiveDate = rs.getDate("effectiveDate");
+				
+				Price productPrice = new Price(price, effectiveDate);
 
-				foundProduct = new Product(barcode, name, stockNumber);
+				foundProduct = new Product(barcode, name, stockNumber, productPrice);
 			}
 
 		} catch (SQLException e) {

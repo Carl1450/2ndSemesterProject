@@ -15,9 +15,12 @@ import Database.ConnectionEnvironment;
 import Database.DBConnection;
 import Database.OrderDAO;
 import Model.Admin;
+import Model.Customer;
 import Model.Employee;
 import Model.Order;
 import Model.OrderLine;
+import Model.Price;
+import Model.Product;
 
 public class TestOrderDAO {
 
@@ -32,7 +35,7 @@ public class TestOrderDAO {
 
         String mockAddressInsertQuery = "INSERT INTO [Address] (id, street, streetno, zipcode) VALUES (1, 'Bredgade', 30, 1000);";
     	
-    	String mockProductInsertQuery = "INSERT INTO Product (barcode, name, stockNO) VALUES (1111, '', 50);";
+    	String mockProductInsertQuery = "INSERT INTO Product (barcode, name, stockNO) VALUES (1001, '', 50);";
     	
     	String mockCustomerInsertQuery = "INSERT INTO Customer (id, fname, lname, email, phoneno, addressId) VALUES "
                  + "(1, 'Jens', 'Hansen', 'jens.hansen@example.com', '+45 12345678', 1);";
@@ -41,9 +44,9 @@ public class TestOrderDAO {
                 + "VALUES (1, '', '', '', '', '', '', '', 1);";
     	
     	String mockOrderInsertQuery = "INSERT INTO [Order] (id, date, totalPrice, customerId, employeeId) "
-    			+ "VALUES (1, '', '100', 1, 1);";
+    			+ "VALUES (1, '2023-01-01', 100, 1, 1);";
     	
-    	String mockOrderLineInsertQuery = "INSERT INTO OrderLine (orderId, productId, quantity) VALUES (1 ,1111, 5);";
+    	String mockOrderLineInsertQuery = "INSERT INTO OrderLine (orderId, productId, quantity) VALUES (1 ,1001, 5);";
     	
 
     	try (Connection connection = DBConnection.getConnection(ConnectionEnvironment.TESTING)){
@@ -99,15 +102,18 @@ public class TestOrderDAO {
         OrderDAO SUT = new OrderDAO(ConnectionEnvironment.TESTING);
 
         Date date = new Date(1000);
-        float totalPrice = 5000;
+        Price price = new Price(100, date);
+        float totalPrice = 100;
         Employee employee = new Admin(1, "", "", "", "",
                 "", "");
-        OrderLine orderLine = new OrderLine(null, 5);
+        Customer customer = new Customer(1, null, null, null, null);
+        Product product = new Product(1001, null, 50, price);
+        OrderLine orderLine = new OrderLine(product, 5);
         ArrayList<OrderLine> orderLines = new ArrayList<>();
         orderLines.add(orderLine);
       
 
-        Order mockOrder = new Order(orderLines, date, totalPrice, employee);
+        Order mockOrder = new Order(orderLines, date, totalPrice, employee, customer);
 
         // Act
         Boolean result = SUT.saveOrder(mockOrder);
