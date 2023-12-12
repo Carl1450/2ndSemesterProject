@@ -18,6 +18,7 @@ import javax.swing.border.EmptyBorder;
 import Model.Admin;
 import Model.Employee;
 import Model.Janitor;
+import Model.Order;
 import Model.Receptionist;
 import Model.SalesAssistant;
 
@@ -103,6 +104,11 @@ public class MainMenuGUI extends JFrame {
 		panel.add(bookingButton, gbc_bookingButton);
 		
 		orderButton = new JButton("Create Order");
+		orderButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				orderButtonClicked();
+			}
+		});
 		orderButton.setVisible(false);
 		GridBagConstraints gbc_orderButton = new GridBagConstraints();
 		gbc_orderButton.insets = new Insets(0, 0, 5, 0);
@@ -157,5 +163,12 @@ public class MainMenuGUI extends JFrame {
 		} else if (employee instanceof Janitor) {
 			
 		}
+	}
+	
+	private void orderButtonClicked() {
+		Order currentOrder = new Order(employee);
+		OrderInfoGUI orderInfoGUI = new OrderInfoGUI(currentOrder);
+		orderInfoGUI.setVisible(true);
+		dispose();
 	}
 }
