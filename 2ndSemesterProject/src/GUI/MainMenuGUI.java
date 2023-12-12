@@ -30,6 +30,7 @@ public class MainMenuGUI extends JFrame {
 	private Employee employee;
 	private JButton orderButton;
 	private JButton bookingButton;
+	private ProductTableModel productTableModel;
 
 	/**
 	 * Launch the application.
@@ -153,7 +154,7 @@ public class MainMenuGUI extends JFrame {
 	private void displayButtonBasedOnAccessLevel() {
 		
 		
-		if (employee instanceof Admin) {
+		if (employee instanceof Admin) { 
 			bookingButton.setVisible(true);
 			orderButton.setVisible(true);
 		} else if (employee instanceof Receptionist) {
@@ -167,7 +168,7 @@ public class MainMenuGUI extends JFrame {
 	
 	private void orderButtonClicked() {
 		Order currentOrder = new Order(employee);
-		OrderInfoGUI orderInfoGUI = new OrderInfoGUI(currentOrder);
+		OrderInfoGUI orderInfoGUI = new OrderInfoGUI(currentOrder, productTableModel, employee);
 		orderInfoGUI.setVisible(true);
 		dispose();
 	}
