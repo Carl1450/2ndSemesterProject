@@ -17,6 +17,7 @@ import java.awt.Insets;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Font;
 
 public class EditCustomerGUI extends JFrame {
 
@@ -58,6 +59,7 @@ public class EditCustomerGUI extends JFrame {
 		contentPane.add(panel, BorderLayout.NORTH);
 		
 		JLabel editCustomerLabel = new JLabel("Edit Customer");
+		editCustomerLabel.setFont(new Font("Lucida Grande", Font.BOLD, 16));
 		panel.add(editCustomerLabel);
 		
 		JPanel panel_1 = new JPanel();
@@ -89,6 +91,11 @@ public class EditCustomerGUI extends JFrame {
 		panel_1.add(updateCustomerButton, gbc_updateCustomerButton);
 		
 		JButton deleteCustomerButton = new JButton("Delete Customer");
+		deleteCustomerButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				deleteCustomerButtonClicked();
+			}
+		});
 		GridBagConstraints gbc_deleteCustomerButton = new GridBagConstraints();
 		gbc_deleteCustomerButton.gridx = 0;
 		gbc_deleteCustomerButton.gridy = 3;
@@ -118,6 +125,14 @@ public class EditCustomerGUI extends JFrame {
 		CreateCustomerGUI createCustomerGUI = new CreateCustomerGUI();
 		createCustomerGUI.setVisible(true);
 		dispose();
+	}
+	
+	private void updateCustomerButtonClicked() {
+		
+	}
+	
+	private void deleteCustomerButtonClicked() {
+		
 	}
 
 }
