@@ -100,12 +100,33 @@ public class TestTaskController {
         Janitor janitor = new Janitor(2, null, null, null, null, null, null);
 
         // Act
-        SUT.createTask(description, priority, deadline, receptionist);
+        SUT.createTask(description, priority, receptionist, deadline);
         SUT.assignJanitorToTask(janitor);
 
         Boolean result = SUT.finishTask();
 
         // Assert
         assertTrue(result);
+    }
+
+    @Test
+    void test_cant_save_invalid_task() {
+        // Arrange
+        TaskController SUT = new TaskController(ConnectionEnvironment.TESTING);
+
+        String description = null;
+        int priority = -1;
+        Date deadline = null;
+        Employee receptionist = null;
+        Janitor janitor = null;
+
+        // Act
+        SUT.createTask(description, priority, receptionist, Date.valueOf("2023-01-01"));
+        SUT.assignJanitorToTask(janitor);
+
+        Boolean result = SUT.finishTask();
+
+        // Assert
+        assertFalse(result);
     }
 }

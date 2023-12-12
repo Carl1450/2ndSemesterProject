@@ -9,6 +9,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -18,38 +19,35 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 
-
+import Control.OrderController;
+import Database.ConnectionEnvironment;
+import Model.Employee;
 import Model.Order;
+
 
 
 public class FinishOrderGUI extends JFrame {
 
 	private JPanel contentPane;
 	private JTable productTable;
-	private static Order currentOrder;
+	private Order currentOrder;
 	private JLabel filledDateLabel;
 	private JLabel filledEmployeeLabel;
+	private JLabel filledTotalPriceLabel;
+	private Employee employee;
+	private ProductTableModel productTableModel;
+	private OrderController orderController;
+	private ConnectionEnvironment env = ConnectionEnvironment.PRODUCTION;
 	
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					FinishOrderGUI frame = new FinishOrderGUI(currentOrder);
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the frame.
+	 * @param employee 
 	 */
-	public FinishOrderGUI(Order currentOrder) {
+	public FinishOrderGUI(Order currentOrder, ProductTableModel productTableModel, Employee employee) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(750, 600);
 		setLocationRelativeTo(null);
@@ -159,6 +157,7 @@ public class FinishOrderGUI extends JFrame {
 		panel.add(scrollPane, gbc_scrollPane);
 		
 		productTable = new JTable();
+		productTable.setEnabled(false);
 		scrollPane.setViewportView(productTable);
 		
 		JPanel panel_3 = new JPanel();
@@ -177,7 +176,7 @@ public class FinishOrderGUI extends JFrame {
 		gbc_totalPriceLabel.gridy = 9;
 		panel.add(totalPriceLabel, gbc_totalPriceLabel);
 		
-		JLabel filledTotalPriceLabel = new JLabel("");
+		filledTotalPriceLabel = new JLabel("");
 		GridBagConstraints gbc_filledTotalPriceLabel = new GridBagConstraints();
 		gbc_filledTotalPriceLabel.anchor = GridBagConstraints.NORTHWEST;
 		gbc_filledTotalPriceLabel.insets = new Insets(0, 0, 5, 0);
@@ -185,23 +184,40 @@ public class FinishOrderGUI extends JFrame {
 		gbc_filledTotalPriceLabel.gridy = 9;
 		panel.add(filledTotalPriceLabel, gbc_filledTotalPriceLabel);
 		
-		init(currentOrder);
+		init(currentOrder, productTableModel, employee);
 	}
 
-	private void init(Order currentOrder) {
+	private void init(Order currentOrder, ProductTableModel productTableModel, Employee employee) {
+		this.employee = employee;
+		this.productTableModel = productTableModel;
+		this.currentOrder = currentOrder;
+		
 		String dateString = String.valueOf(currentOrder.getFormattedDate());
 		String employeeString = String.valueOf(currentOrder.getEmployee().getName());
+		String totalPriceString = String.valueOf(currentOrder.getTotalPrice());
+		
 		filledDateLabel.setText(dateString);
         filledEmployeeLabel.setText(employeeString);
+        filledTotalPriceLabel.setText(totalPriceString);
+        
+        productTable.setModel(productTableModel); 
 	}
 	
 	public void backButtonClicked() {
-		OrderInfoGUI orderInfoGUI = new OrderInfoGUI(currentOrder);
+		OrderInfoGUI orderInfoGUI = new OrderInfoGUI(currentOrder, productTableModel, employee);
 		orderInfoGUI.setVisible(true);
 		dispose();
 	}
 	
 	private void finishButtonClicked() {
-		
+		try {
+			orderController = new OrderController(employee, env, currentOrder);
+			orderController.saveOrder();
+			MainMenuGUI mainMenuGUI = new MainMenuGUI(employee);
+			mainMenuGUI.setVisible(true);
+			dispose();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

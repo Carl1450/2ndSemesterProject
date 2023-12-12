@@ -113,7 +113,7 @@ public class TestOrderDAO {
         orderLines.add(orderLine);
       
 
-        Order mockOrder = new Order(orderLines, date, totalPrice, employee, customer);
+        Order mockOrder = new Order(orderLines, totalPrice, employee, customer);
 
         // Act
         Boolean result = SUT.saveOrder(mockOrder);

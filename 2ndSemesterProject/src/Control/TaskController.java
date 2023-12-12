@@ -26,8 +26,8 @@ public class TaskController {
         taskDAO = new TaskDAO(env);
     }
 
-    public Task createTask(String description, int priority, Date deadline, Employee receptionist) {
-        currentTask = new Task(description, priority, deadline, receptionist);
+    public Task createTask(String description, int priority, Employee receptionist, Date deadline) {
+        currentTask = new Task(0, description, priority, deadline, receptionist, null);
         return currentTask;
     }
 
@@ -45,7 +45,22 @@ public class TaskController {
     }
 
     public boolean finishTask() {
-        return taskDAO.saveTask(currentTask);
+
+        boolean result = false;
+
+        if (currentTask != null && currentTask.getDescription() != null && currentTask.getPriority() > 0 && currentTask.getDeadline() != null && currentTask.getReceptionist() != null && currentTask.getJanitor() != null) {
+            result = taskDAO.saveTask(currentTask);
+        }
+
+        return result;
+    }
+
+    public List<Task> getUncompletedTasks(int janitorId) {
+        return taskDAO.getUncompletedTasks(janitorId, true);
+    }
+
+    public boolean finishTask(Task task) {
+        return taskDAO.finishTask(task.getId());
     }
 
 }
