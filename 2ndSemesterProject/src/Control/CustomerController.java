@@ -32,4 +32,8 @@ public class CustomerController {
 			String newEmail) {
 		customerDAO.updateCustomerByPhoneNumber(oldPhoneNumber, newName, newAddress, newPhoneNumber, newEmail);
 	}
+	
+	public void deleteCustomer(String phoneNumber) {
+		customerDAO.deleteCustomer(phoneNumber);
+	}
 }
