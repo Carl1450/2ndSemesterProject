@@ -190,8 +190,15 @@ public class MainMenuGUI extends JFrame {
 	}
 	
 	private void taskButtonClicked() {
-		CreateTaskGUI createTaskGUI = new CreateTaskGUI();
-		createTaskGUI.setVisible(true);
+		if (employee instanceof Janitor) {
+			CompleteTaskGUI completeTaskGUI = new CompleteTaskGUI(employee);
+			completeTaskGUI.setVisible(true);
+		} else {
+			CreateTaskGUI createTaskGUI = new CreateTaskGUI();
+			createTaskGUI.setVisible(true);
+			dispose();
+		}
+
 		dispose();
 	}
 }
