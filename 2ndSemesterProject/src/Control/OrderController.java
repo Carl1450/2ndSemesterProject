@@ -4,6 +4,7 @@ import java.sql.SQLException;
 
 import Database.ConnectionEnvironment;
 import Database.OrderDAO;
+import Model.Customer;
 import Model.Employee;
 import Model.Order;
 import Model.OrderLine;
@@ -16,16 +17,18 @@ public class OrderController {
     private Employee currentEmployee;
     private Order currentOrder;
     private ProductController productController;
+    private Customer customer;
 
 
-    public OrderController(Employee employee, ConnectionEnvironment env) {
+    public OrderController(Employee employee, ConnectionEnvironment env, Order currentOrder) {
         this.env = env;
+        this.currentOrder = currentOrder;
         
         productController = new ProductController(env);
         
         orderDAO = new OrderDAO(env);
         
-        currentEmployee = employee;
+        this.currentEmployee = employee;
     }
     
     public Order createOrder() {

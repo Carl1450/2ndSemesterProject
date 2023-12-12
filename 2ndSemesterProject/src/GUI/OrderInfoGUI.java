@@ -1,7 +1,6 @@
 package GUI;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -22,6 +21,7 @@ import javax.swing.border.EmptyBorder;
 
 import Control.OrderController;
 import Database.ConnectionEnvironment;
+import Model.Customer;
 import Model.Employee;
 import Model.Order;
 import Model.OrderLine;
@@ -178,7 +178,8 @@ public class OrderInfoGUI extends JFrame {
 
 	private void init(ProductTableModel productTableModel, Order currentOrder, Employee employee) {
 		this.employee = employee;
-		orderController = new OrderController(employee, env);
+		orderController = new OrderController(employee, env, currentOrder);
+		currentOrder.setCustomer(new Customer(9999, null, null, null, null));
 		orderLines = new ArrayList<>();
 		if (productTableModel == null) {
 			productTableModel = new ProductTableModel(orderLines);
@@ -210,14 +211,15 @@ public class OrderInfoGUI extends JFrame {
 
 			Product product = orderController.findProductByBarcode(barcode);
 
+			OrderLine orderLine = new OrderLine(product, quantity);
+			
 			if (product != null) {
-				OrderLine orderLine = new OrderLine(product, quantity);
-
 				boolean updated = false;
 				for (OrderLine existingOrderLine : orderLines) {
-					if (existingOrderLine.getProduct().equals(product)) {
-						existingOrderLine.setQuantity(quantity);
+					if (existingOrderLine.getProduct().getBarcode() == product.getBarcode()) {
+						existingOrderLine.setQuantity(existingOrderLine.getQuantity() + quantity);
 						updated = true;
+						break;
 					}
 				}
 				if (!updated) {
@@ -226,7 +228,7 @@ public class OrderInfoGUI extends JFrame {
 				}
 				barcodeTextField.setText("");
 				quantityTextField.setText("");
-				tableModel();
+				updateProductTableModel();
 			} else {
 				JOptionPane.showMessageDialog(this, "Error: No product found");
 			}
@@ -235,7 +237,7 @@ public class OrderInfoGUI extends JFrame {
 		}
 	}
 
-	private void tableModel() {
+	private void updateProductTableModel() {
 		productTableModel = new ProductTableModel(orderLines);
 		productTableModel.setData(orderLines);
 		productTable.setModel(productTableModel);

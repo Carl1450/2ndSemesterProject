@@ -26,6 +26,7 @@ public class Order {
 	
 	public Order(Employee employee) {
 		this.employee = employee;
+		this.customer = new Customer(9999, null, null, null, null);
 		this.orderLines = new ArrayList<>();
 		this.date = new Timestamp(System.currentTimeMillis());
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");

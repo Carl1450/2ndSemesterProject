@@ -9,6 +9,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -18,20 +19,25 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 
+import Control.OrderController;
+import Database.ConnectionEnvironment;
 import Model.Employee;
 import Model.Order;
+
 
 
 public class FinishOrderGUI extends JFrame {
 
 	private JPanel contentPane;
 	private JTable productTable;
-	private static Order currentOrder;
+	private Order currentOrder;
 	private JLabel filledDateLabel;
 	private JLabel filledEmployeeLabel;
 	private JLabel filledTotalPriceLabel;
 	private Employee employee;
-	private static ProductTableModel productTableModel;
+	private ProductTableModel productTableModel;
+	private OrderController orderController;
+	private ConnectionEnvironment env = ConnectionEnvironment.PRODUCTION;
 	
 	/**
 	 * Launch the application.
@@ -204,6 +210,14 @@ public class FinishOrderGUI extends JFrame {
 	}
 	
 	private void finishButtonClicked() {
-		
+		try {
+			orderController = new OrderController(employee, env, currentOrder);
+			orderController.saveOrder();
+			MainMenuGUI mainMenuGUI = new MainMenuGUI(employee);
+			mainMenuGUI.setVisible(true);
+			dispose();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }
