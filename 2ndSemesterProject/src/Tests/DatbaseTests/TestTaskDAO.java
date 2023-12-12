@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -14,6 +15,8 @@ import org.junit.jupiter.api.Test;
 import Database.ConnectionEnvironment;
 import Database.DBConnection;
 import Database.TaskDAO;
+import Model.Janitor;
+import Model.Receptionist;
 import Model.Task;
 
 class TestTaskDAO {
@@ -149,5 +152,25 @@ class TestTaskDAO {
 	// Assert
 	assertTrue(listOfTasks.size() == 2);
 	assertFalse(result);
+    }
+    
+    @Test
+    void taskIsSavedCorrectly() {
+	// Arrange
+	TaskDAO SUT = new TaskDAO(ConnectionEnvironment.TESTING);
+	
+	// Act
+	Date deadLine = new Date(1000);
+	Date startDate = new Date(5000000);
+	Receptionist receptionist = new Receptionist(1, "", "", "", "", "", "");
+	Janitor janitor = new Janitor(2, "", "", "", "", "", "");
+	
+	Task task = new Task(5, "", 2, deadLine, receptionist, startDate);
+	task.setJanitors(janitor);
+	SUT.saveTask(task);
+	ArrayList<Task> listOfTasks = SUT.getUncompletedTasks(0, false);
+	
+	// Assert
+	assertTrue(listOfTasks.size() == 3);
     }
 }
