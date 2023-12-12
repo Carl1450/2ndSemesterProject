@@ -1,5 +1,6 @@
 package Model;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -43,8 +44,8 @@ public class Order {
 		return orderLines;
 	}
 
-	public Timestamp getDate() {
-		return date;
+	public Date getDate() {
+		return new java.sql.Date(date.getTime());
 	}
 
 	public float getTotalPrice() {
