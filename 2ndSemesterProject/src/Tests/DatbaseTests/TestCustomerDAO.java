@@ -16,93 +16,123 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestCustomerDAO {
 
-    @BeforeEach
-    void setUp() {
-        deleteMockData();
-        insertMockData();
-    }
+	@BeforeEach
+	void setUp() {
+		deleteMockData();
+		insertMockData();
+	}
 
-    private void insertMockData() {
-        String insertMockCity = "INSERT INTO City (zipCode, city) VALUES (1000, 'Copenhagen');";
+	private void insertMockData() {
+		String insertMockCity = "INSERT INTO City (zipCode, city) VALUES (1000, 'Copenhagen');";
 
-        String insertMockAddress = "INSERT INTO [Address] (id, street, streetno, zipcode) VALUES (1, 'Bredgade', 30, 1000);";
+		String insertMockAddress = "INSERT INTO [Address] (id, street, streetno, zipcode) VALUES (1, 'Bredgade', 30, 1000);";
 
-        String insertMockCustomer = "INSERT INTO Customer (id, fname, lname, email, phoneno, addressId) " +
-                "VALUES (1, 'Jens', 'Hansen', 'jens.hansen@example.com', '+45 12345678', 1);";
+		String insertMockCustomer = "INSERT INTO Customer (id, fname, lname, email, phoneno, addressId) "
+				+ "VALUES (1, 'Jens', 'Hansen', 'jens.hansen@example.com', '+45 12345678', 1);";
 
-        Connection connection = DBConnection.getConnection(ConnectionEnvironment.TESTING);
+		Connection connection = DBConnection.getConnection(ConnectionEnvironment.TESTING);
 
-        try {
-            DBConnection.executeUpdate(connection, insertMockCity);
-            DBConnection.executeUpdateWithIdentityInsert(connection, insertMockAddress, "[Address]");
-            DBConnection.executeUpdateWithIdentityInsert(connection, insertMockCustomer, "Customer");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+		try {
+			DBConnection.executeUpdate(connection, insertMockCity);
+			DBConnection.executeUpdateWithIdentityInsert(connection, insertMockAddress, "[Address]");
+			DBConnection.executeUpdateWithIdentityInsert(connection, insertMockCustomer, "Customer");
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
 
+		DBConnection.closeConnection(connection);
+	}
 
+	@AfterEach
+	void tearDown() {
+		deleteMockData();
+	}
 
-        DBConnection.closeConnection(connection);
-    }
+	private void deleteMockData() {
 
+		String deleteMockData = "DELETE FROM Customer; DELETE FROM [Address]; DELETE FROM City;";
 
-    @AfterEach
-    void tearDown() {
-        deleteMockData();
-    }
+		Connection connection = DBConnection.getConnection(ConnectionEnvironment.TESTING);
 
-    private void deleteMockData() {
+		try {
+			DBConnection.executeUpdate(connection, deleteMockData);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
 
-        String deleteMockData = "DELETE FROM Customer; DELETE FROM [Address]; DELETE FROM City;";
+		DBConnection.closeConnection(connection);
+	}
 
-        Connection connection = DBConnection.getConnection(ConnectionEnvironment.TESTING);
+	@Test
+	void TS_2_TC_1_find_customer_by_phone_number_with_valid_number() {
+		// Arrange
+		CustomerDAO SUT = new CustomerDAO(ConnectionEnvironment.TESTING);
+		String phoneNumber = "+45 12345678";
 
-        try {
-            DBConnection.executeUpdate(connection, deleteMockData);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+		// Act
+		Customer result = SUT.findCustomerByPhoneNumber(phoneNumber);
 
-        DBConnection.closeConnection(connection);
-    }
+		// Assert
+		assertNotNull(result);
+	}
 
-    @Test
-    void TS_2_TC_1_find_customer_by_phone_number_with_valid_number() {
-        // Arrange
-        CustomerDAO SUT = new CustomerDAO(ConnectionEnvironment.TESTING);
-        String phoneNumber = "+45 12345678";
+	@Test
+	void TS_2_TC_2_find_customer_by_phone_number_with_invalid_number() {
+		// Arrange
+		CustomerDAO SUT = new CustomerDAO(ConnectionEnvironment.TESTING);
+		String phoneNumber = "";
 
-        // Act
-        Customer result = SUT.findCustomerByPhoneNumber(phoneNumber);
+		// Act
+		Customer result = SUT.findCustomerByPhoneNumber(phoneNumber);
 
-        // Assert
-        assertNotNull(result);
-    }
+		// Assert
+		assertNull(result);
+	}
 
-    @Test
-    void TS_2_TC_2_find_customer_by_phone_number_with_invalid_number() {
-        // Arrange
-        CustomerDAO SUT = new CustomerDAO(ConnectionEnvironment.TESTING);
-        String phoneNumber = "";
+	@Test
+	void TS_2_TC_3_find_customer_by_phone_number_with_null() {
+		// Arrange
+		CustomerDAO SUT = new CustomerDAO(ConnectionEnvironment.TESTING);
+		String phoneNumber = null;
 
-        // Act
-        Customer result = SUT.findCustomerByPhoneNumber(phoneNumber);
+		// Act
+		Customer result = SUT.findCustomerByPhoneNumber(phoneNumber);
 
-        // Assert
-        assertNull(result);
-    }
+		// Assert
+		assertNull(result);
+	}
 
-    @Test
-    void TS_2_TC_3_find_customer_by_phone_number_with_null() {
-        // Arrange
-        CustomerDAO SUT = new CustomerDAO(ConnectionEnvironment.TESTING);
-        String phoneNumber = null;
+	@Test
+	void update_Customer_by_phoneNumber_with_validInput() {
+		// Arrange
+		CustomerDAO SUT = new CustomerDAO(ConnectionEnvironment.TESTING);
+		String phoneNumber = "+45 12345678";
+		String newEmail = "new.email@example.com";
+		String newName = "Paul Johnson";
 
-        // Act
-        Customer result = SUT.findCustomerByPhoneNumber(phoneNumber);
+		// Act
+		SUT.updateCustomerByPhoneNumber(phoneNumber, newName, null, null, newEmail);
+		Customer updatedCustomer = SUT.findCustomerByPhoneNumber(phoneNumber);
 
-        // Assert
-        assertNull(result);
-    }
+		// Assert
+		assertNotNull(updatedCustomer);
+		assertEquals(newEmail, updatedCustomer.getEmail());
+		assertEquals(newName, updatedCustomer.getName());
+	}
+
+	@Test
+	void update_customer_by_phoneNumber_with_invalid_phoneNumber() {
+		// Arrange
+		CustomerDAO SUT = new CustomerDAO(ConnectionEnvironment.TESTING);
+		String invalidPhoneNumber = "00000";
+		String newEmail = "new.email@email.com";
+
+		// Act
+		SUT.updateCustomerByPhoneNumber(invalidPhoneNumber, null, null, null, newEmail);
+		Customer updatedCustomer = SUT.findCustomerByPhoneNumber(invalidPhoneNumber);
+
+		// Assert
+		assertNull(updatedCustomer);
+	}
 
 }
