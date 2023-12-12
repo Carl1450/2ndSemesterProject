@@ -7,18 +7,23 @@ public class Task {
 
     private String description;
     private int priority;
+    private Date startDate;
     private Date deadline ;
     private Employee receptionist;
+    private int id;
 
     private Janitor janitor;
 
     private boolean completed;
 
-    public Task(String description, int priority, Date deadline, Employee receptionist) {
+    public Task(int id, String description, int priority, Date deadline, Employee receptionist, Date startDate) {
         this.description = description;
         this.priority = priority;
+        this.startDate = startDate;
         this.deadline = deadline;
         this.receptionist = receptionist;
+        this.id = id;
+        completed = false;
     }
 
     public Janitor getJanitor() {
