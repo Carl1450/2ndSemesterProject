@@ -21,6 +21,7 @@ import Model.Janitor;
 import Model.Order;
 import Model.Receptionist;
 import Model.SalesAssistant;
+import java.awt.FlowLayout;
 
 public class MainMenuGUI extends JFrame {
 
@@ -69,9 +70,9 @@ public class MainMenuGUI extends JFrame {
 		contentPane.add(panel, BorderLayout.CENTER);
 		GridBagLayout gbl_panel = new GridBagLayout();
 		gbl_panel.columnWidths = new int[]{0, 0};
-		gbl_panel.rowHeights = new int[]{0, 0, 77, 0, 0, 0, 0, 0};
+		gbl_panel.rowHeights = new int[]{35, 0, 0, 0, 0};
 		gbl_panel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		panel.setLayout(gbl_panel);
 		
 		bookingButton = new JButton("Booking");
@@ -82,26 +83,11 @@ public class MainMenuGUI extends JFrame {
 				bookingButtonClicked();
 			}
 		});
-		
-		JLabel mainMenuLabel = new JLabel("Main Menu");
-		mainMenuLabel.setFont(new Font("Lucida Grande", Font.BOLD, 16));
-		GridBagConstraints gbc_mainMenuLabel = new GridBagConstraints();
-		gbc_mainMenuLabel.insets = new Insets(0, 0, 5, 0);
-		gbc_mainMenuLabel.gridx = 0;
-		gbc_mainMenuLabel.gridy = 0;
-		panel.add(mainMenuLabel, gbc_mainMenuLabel);
-		
-		JPanel panel_1 = new JPanel();
-		GridBagConstraints gbc_panel_1 = new GridBagConstraints();
-		gbc_panel_1.insets = new Insets(0, 0, 5, 0);
-		gbc_panel_1.fill = GridBagConstraints.BOTH;
-		gbc_panel_1.gridx = 0;
-		gbc_panel_1.gridy = 2;
-		panel.add(panel_1, gbc_panel_1);
 		GridBagConstraints gbc_bookingButton = new GridBagConstraints();
+		gbc_bookingButton.anchor = GridBagConstraints.NORTH;
 		gbc_bookingButton.insets = new Insets(0, 0, 5, 0);
 		gbc_bookingButton.gridx = 0;
-		gbc_bookingButton.gridy = 3;
+		gbc_bookingButton.gridy = 0;
 		panel.add(bookingButton, gbc_bookingButton);
 		
 		orderButton = new JButton("Create Order");
@@ -114,27 +100,51 @@ public class MainMenuGUI extends JFrame {
 		GridBagConstraints gbc_orderButton = new GridBagConstraints();
 		gbc_orderButton.insets = new Insets(0, 0, 5, 0);
 		gbc_orderButton.gridx = 0;
-		gbc_orderButton.gridy = 4;
+		gbc_orderButton.gridy = 1;
 		panel.add(orderButton, gbc_orderButton);
 		
-		JPanel panel_2 = new JPanel();
-		GridBagConstraints gbc_panel_2 = new GridBagConstraints();
-		gbc_panel_2.insets = new Insets(0, 0, 5, 0);
-		gbc_panel_2.fill = GridBagConstraints.BOTH;
-		gbc_panel_2.gridx = 0;
-		gbc_panel_2.gridy = 5;
-		panel.add(panel_2, gbc_panel_2);
+		JButton taskButton = new JButton("Tasks");
+		taskButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				taskButtonClicked();
+			}
+		});
+		GridBagConstraints gbc_taskButton = new GridBagConstraints();
+		gbc_taskButton.insets = new Insets(0, 0, 5, 0);
+		gbc_taskButton.gridx = 0;
+		gbc_taskButton.gridy = 2;
+		panel.add(taskButton, gbc_taskButton);
+		
+		JButton editCustomerButton = new JButton("Edit Customer");
+		editCustomerButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				editCustomerButtonClicked();
+			}
+		});
+		GridBagConstraints gbc_editCustomerButton = new GridBagConstraints();
+		gbc_editCustomerButton.gridx = 0;
+		gbc_editCustomerButton.gridy = 3;
+		panel.add(editCustomerButton, gbc_editCustomerButton);
+		
+		JPanel panel_1 = new JPanel();
+		FlowLayout flowLayout = (FlowLayout) panel_1.getLayout();
+		flowLayout.setAlignment(FlowLayout.RIGHT);
+		contentPane.add(panel_1, BorderLayout.SOUTH);
 		
 		JButton logOutButton = new JButton("Log Out");
+		panel_1.add(logOutButton);
+		
+		JPanel panel_2 = new JPanel();
+		contentPane.add(panel_2, BorderLayout.NORTH);
+		
+		JLabel mainMenuLabel = new JLabel("Main Menu");
+		panel_2.add(mainMenuLabel);
+		mainMenuLabel.setFont(new Font("Lucida Grande", Font.BOLD, 16));
 		logOutButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				logOutButtonClicked();
 			}
 		});
-		GridBagConstraints gbc_logOutButton = new GridBagConstraints();
-		gbc_logOutButton.gridx = 0;
-		gbc_logOutButton.gridy = 6;
-		panel.add(logOutButton, gbc_logOutButton);
 		
 		displayButtonBasedOnAccessLevel();
 	}
@@ -170,6 +180,18 @@ public class MainMenuGUI extends JFrame {
 		Order currentOrder = new Order(employee);
 		OrderInfoGUI orderInfoGUI = new OrderInfoGUI(currentOrder, productTableModel, employee);
 		orderInfoGUI.setVisible(true);
+		dispose();
+	}
+	
+	private void editCustomerButtonClicked() {
+		EditCustomerGUI editCustomerGUI = new EditCustomerGUI(employee);
+		editCustomerGUI.setVisible(true);
+		dispose();
+	}
+	
+	private void taskButtonClicked() {
+		CreateTaskGUI createTaskGUI = new CreateTaskGUI();
+		createTaskGUI.setVisible(true);
 		dispose();
 	}
 }
