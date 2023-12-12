@@ -203,7 +203,7 @@ public class FinishOrderGUI extends JFrame {
         productTable.setModel(productTableModel); 
 	}
 	
-	public void backButtonClicked() {
+	private void backButtonClicked() {
 		OrderInfoGUI orderInfoGUI = new OrderInfoGUI(currentOrder, productTableModel, employee);
 		orderInfoGUI.setVisible(true);
 		dispose();

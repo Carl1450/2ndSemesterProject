@@ -73,7 +73,8 @@ public class Order {
 		this.customer = customer;
 	}
 	
-	public float calculateTotalPrice() {
+	private float calculateTotalPrice() {
+		totalPrice = 0;
 		for(OrderLine orderLine : orderLines) {
 			float singlePrice = orderLine.getProduct().getPrice().getPrice();
 			totalPrice += singlePrice;
