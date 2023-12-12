@@ -5,7 +5,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
+import java.util.ArrayList;
 
 import Model.Task;
 import Model.Receptionist;
@@ -61,9 +61,8 @@ public class TaskDAO {
 	return result > 0;
     }
 
-    public List<Task> getUncompletedTasks(int janitorId, boolean useJanitorId) {
-	String getUncompletedTasksQuery = "SELECT task.id, [priority], [description], startDate, deadLine, completed, receptionistId, janitorId, "
-		+ "SELECT task.id, [priority], [description], startDate, deadLine, receptionistId, "
+    public ArrayList<Task> getUncompletedTasks(int janitorId, boolean useJanitorId) {
+	String getUncompletedTasksQuery = "SELECT task.id, [priority], [description], startDate, deadLine, receptionistId, "
 		+ "fname, lname, email, phoneno, cprNo, " + "street, streetno, [address].zipcode, city " + "FROM task "
 		+ "LEFT JOIN employee ON task.janitorId = employee.id "
 		+ "LEFT JOIN [address] ON addressId = [address].id "
@@ -73,7 +72,7 @@ public class TaskDAO {
 	    getUncompletedTasksQuery += " AND JanitorId = ?";
 	}
 
-	List<Task> result = null;
+	ArrayList<Task> result = new ArrayList<Task>();
 
 	try (Connection connection = DBConnection.getConnection(env)) {
 	    PreparedStatement preparedStatement = connection.prepareStatement(getUncompletedTasksQuery);
@@ -83,8 +82,25 @@ public class TaskDAO {
 	    }
 	    ResultSet rs = preparedStatement.executeQuery();
 
-	    if (rs.next()) {
-		getTask(rs);
+	    while (rs.next()) {
+		int id = rs.getInt("id");
+		int priority = rs.getInt("priority");
+		String description = rs.getString("description");
+		Date startDate = rs.getDate("startDate");
+		Date deadLine = rs.getDate("deadLine");
+		int receptionistId = rs.getInt("receptionistId");
+		String employeeName = rs.getString("fname") + rs.getString("lname");
+		String email = rs.getString("email");
+		String phoneNumber = rs.getString("phoneno");
+		String cpr = rs.getString("cprno");
+		String street = rs.getString("street");
+		int streetNo = rs.getInt("streetNo");
+		int zipCode = rs.getInt("zipcode");
+		String city = rs.getString("city");
+		String address = street + " " + streetNo + " " + zipCode + " " + city;
+		Receptionist receptionist = new Receptionist(receptionistId, employeeName, address, phoneNumber, email,
+			cpr, null);
+		result.add(new Task(id, description, priority, deadLine, receptionist, startDate));
 	    }
 
 	} catch (SQLException e) {
@@ -92,36 +108,5 @@ public class TaskDAO {
 	}
 
 	return result;
-    }
-
-    private Task getTask(ResultSet rs) {
-	Task task = null;
-
-	try {
-	    int id = rs.getInt("id");
-	    int priority = rs.getInt("priority");
-	    String description = rs.getString("description");
-	    Date startDate = rs.getDate("startDate");
-	    Date deadLine = rs.getDate("deadLine");
-	    int receptionistId = rs.getInt("receptionistId");
-	    String employeeName = rs.getString("fname") + rs.getString("lname");
-	    String email = rs.getString("email");
-	    String phoneNumber = rs.getString("phoneno");
-	    String cpr = rs.getString("cprno");
-	    String street = rs.getString("street");
-	    int streetNo = rs.getInt("streetNo");
-	    int zipCode = rs.getInt("address.zipcode");
-	    String city = rs.getString("city");
-	    String address = street + " " + streetNo + " " + zipCode + " " + city;
-
-	    Receptionist receptionist = new Receptionist(receptionistId, employeeName, address, phoneNumber, email, cpr,
-		    null);
-	    task = new Task(id, description, priority, deadLine, receptionist, startDate);
-
-	} catch (SQLException e) {
-	    e.printStackTrace();
-	}
-
-	return task;
     }
 }
