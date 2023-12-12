@@ -48,7 +48,7 @@ public class Order {
 	}
 
 	public float getTotalPrice() {
-		return totalPrice;
+		return calculateTotalPrice();
 	}
 
 	public void setTotalPrice(float totalPrice) {
@@ -71,5 +71,12 @@ public class Order {
 		this.customer = customer;
 	}
 	
-	
+	public float calculateTotalPrice() {
+		for(OrderLine orderLine : orderLines) {
+			float singlePrice = orderLine.getProduct().getPrice().getPrice();
+			totalPrice += singlePrice;
+		}
+		return totalPrice;
+		
+	}
 }

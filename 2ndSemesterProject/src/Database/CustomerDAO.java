@@ -77,8 +77,8 @@ public class CustomerDAO {
 		return rowsAffected > 0;
 	}
 
-	public void updateCustomerByPhoneNumber(String oldPhoneNumber, String newName, String newAddress, String newPhoneNumber,
-			String newEmail) {
+	public void updateCustomerByPhoneNumber(String oldPhoneNumber, String newName, String newAddress,
+			String newPhoneNumber, String newEmail) {
 
 		StringBuilder updateCustomerQ = new StringBuilder("UPDATE Customer SET ");
 		int rowsAffected = 0;
@@ -128,17 +128,40 @@ public class CustomerDAO {
 			}
 
 			preparedStatement.setString(parameterIndex, oldPhoneNumber);
-			
+
 			rowsAffected = preparedStatement.executeUpdate();
-			
+
 		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		if (rowsAffected > 0) {
+			System.out.println("Customer information succcesfully updated. ");
+		} else {
+			System.out.println("Failed to update customer information. ");
+		}
+
+	}
+
+	public void deleteCustomer(String phoneNumber) {
+
+		String deleteCustomerQ = "DELETE FROM Customer WHERE phoneNo = ?";
+		int rowsAffected = 0;
+
+		try (Connection connection = DBConnection.getConnection(env);
+			PreparedStatement preparedStatement = connection.prepareStatement(deleteCustomerQ)) {
+			
+			preparedStatement.setString(1, phoneNumber);
+			rowsAffected = preparedStatement.executeUpdate();
+
+		} catch(SQLException e) {
 			e.printStackTrace();
 		}
 		
 		if(rowsAffected > 0) {
-			System.out.println("Customer information succcesfully updated. ");
+			System.out.println("Customer succesfully deleted. ");
 		} else {
-			System.out.println("Failed to update customer information. ");
+			System.out.println("Failed to delete customer. ");
 		}
 
 	}
