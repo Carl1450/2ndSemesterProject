@@ -24,7 +24,12 @@ public class CustomerController {
 	}
 
 	public boolean saveCustomerToDB(String name, String address, String phoneNumber, String email) {
-		return customerDAO.saveCustomer (name, address, phoneNumber, email);
-		
+		return customerDAO.saveCustomer(name, address, phoneNumber, email);
+
+	}
+
+	public void updateCustomer(String oldPhoneNumber, String newName, String newAddress, String newPhoneNumber,
+			String newEmail) {
+		customerDAO.updateCustomerByPhoneNumber(oldPhoneNumber, newName, newAddress, newPhoneNumber, newEmail);
 	}
 }

@@ -38,29 +38,19 @@ public class OrderInfoGUI extends JFrame {
 	private ProductTableModel productTableModel;
 	private ArrayList<OrderLine> orderLines;
 	private OrderController orderController;
-	private ConnectionEnvironment env = ConnectionEnvironment.PRODUCTION;;
+	private ConnectionEnvironment env = ConnectionEnvironment.PRODUCTION;
+	private Order currentOrder;
 
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				Order currentOrder = new Order(employee);
-				try {
-					OrderInfoGUI frame = new OrderInfoGUI(currentOrder);
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	
 
 	/**
 	 * Create the frame.
 	 */
 	public OrderInfoGUI(Order currentOrder) {
+		this.currentOrder = currentOrder;
 		orderController = new OrderController(employee, env);
 		orderLines = new ArrayList<>();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -86,6 +76,11 @@ public class OrderInfoGUI extends JFrame {
 		panel.add(cancelButton);
 		
 		JButton confirmButton = new JButton("Confirm order");
+		confirmButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				confirmOrderClicked(currentOrder);
+			}
+		});
 		panel.add(confirmButton);
 		
 		JScrollPane scrollPane = new JScrollPane();
@@ -185,19 +180,19 @@ public class OrderInfoGUI extends JFrame {
 		init();
 	}
 	
-	public void init() {
+	private void init() {
 		productTableModel = new ProductTableModel(orderLines);
 		productTable.setModel(productTableModel);
 	}
 	
 	
-	public void cancelButtonClicked(){
+	private void cancelButtonClicked(){
 		MainMenuGUI mainMenuGUI = new MainMenuGUI(employee);
 		mainMenuGUI.setVisible(true);
 		dispose();
 	}
 	
-	public void addButtonClicked(Order currentOrder) {
+	private void addButtonClicked(Order currentOrder) {
 		int barcode = Integer.parseInt(barcodeTextField.getText());
 		int quantity = Integer.parseInt(quantityTextField.getText());
 		Product product = orderController.findProductByBarcode(barcode);
@@ -207,17 +202,23 @@ public class OrderInfoGUI extends JFrame {
 			barcodeTextField.setText("");
 			quantityTextField.setText("");
 			orderLines.add(orderLine);
-			tableModel();
+			productTableModel.fireTableDataChanged();
 		}
 		else {
 			JOptionPane.showMessageDialog(this, "Error: No product found");
 		}
 	}
 	
-	public void tableModel() {
+	private void tableModel() {
 		productTableModel = new ProductTableModel(orderLines);
 		productTableModel.setData(orderLines);
 		productTable.setModel(productTableModel);
+	}
+	
+	private void confirmOrderClicked(Order currentOrder) {
+		FinishOrderGUI finishOrderGUI = new FinishOrderGUI(currentOrder);
+		finishOrderGUI.setVisible(true);
+		dispose();
 	}
 
 }

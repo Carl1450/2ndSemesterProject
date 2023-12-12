@@ -1,27 +1,38 @@
 package Model;
 
-import java.sql.Date;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class Order {
 	
 	private ArrayList<OrderLine> orderLines;
-	private Date date;
+	private Timestamp date;
 	private float totalPrice;
 	private Employee employee;
 	private Customer customer;
+	private String formattedDate;
 
-	public Order(ArrayList<OrderLine> orderLines, Date date, float totalPrice, Employee employee, Customer customer) {
+	public Order(ArrayList<OrderLine> orderLines, float totalPrice, Employee employee, Customer customer) {
 		this.orderLines = orderLines;
-		this.date = date;
 		this.totalPrice = totalPrice;
 		this.employee = employee;
 		this.customer = customer;
+		this.date = new Timestamp(System.currentTimeMillis());
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		formattedDate = dateFormat.format(date);
 	}
 	
 	public Order(Employee employee) {
 		this.employee = employee;
 		this.orderLines = new ArrayList<>();
+		this.date = new Timestamp(System.currentTimeMillis());
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		formattedDate = dateFormat.format(date);
+	}
+	
+	public String getFormattedDate() {
+		return formattedDate;
 	}
 	
 	public void addOrderLine(OrderLine orderLine) {
@@ -32,11 +43,8 @@ public class Order {
 		return orderLines;
 	}
 
-	public Date getDate() {
+	public Timestamp getDate() {
 		return date;
-	}
-	public void setDate(Date date) {
-		this.date = date;
 	}
 
 	public float getTotalPrice() {
