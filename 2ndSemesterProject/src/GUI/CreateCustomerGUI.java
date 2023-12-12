@@ -5,6 +5,10 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import Control.CustomerController;
+import Database.ConnectionEnvironment;
+
 import java.awt.BorderLayout;
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -14,6 +18,8 @@ import javax.swing.JButton;
 import java.awt.FlowLayout;
 import javax.swing.JTextField;
 import java.awt.Insets;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class CreateCustomerGUI extends JFrame {
 
@@ -25,6 +31,8 @@ public class CreateCustomerGUI extends JFrame {
 	private JTextField addressTextField;
 	private JTextField zipCodeTextField;
 	private JTextField cityTextField;
+	private CustomerController customerController;
+	
 
 	/**
 	 * Launch the application.
@@ -46,6 +54,7 @@ public class CreateCustomerGUI extends JFrame {
 	 * Create the frame.
 	 */
 	public CreateCustomerGUI() {
+		customerController = new CustomerController(ConnectionEnvironment.PRODUCTION);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -180,17 +189,30 @@ public class CreateCustomerGUI extends JFrame {
 		panel_2.add(cancelButton);
 		
 		JButton createButton = new JButton("Create");
+		createButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				createButtonClicked();
+			}
+		});
 		panel_2.add(createButton);
 	}
 	
 	private void getTextFieldData(){
-		nameTextField.getText();
-		phoneNumberTextField.getText();
-		emailTextField.getText();
-		addressTextField.getText();
+		String name = nameTextField.getText();
+		String phoneNumber = phoneNumberTextField.getText();
+		String email = emailTextField.getText();
+		String address = addressTextField.getText();
 		String zipCodeText = zipCodeTextField.getText();
 		int zipCode = Integer.parseInt(zipCodeText);
-		cityTextField.getText();
+		String city = cityTextField.getText();
+		
+		
+	}
+	
+	private void createButtonClicked() {
+		getTextFieldData();
+		
+		//boolean saved = customerController.saveCustomerToDB(name, getName(), getTitle(), getWarningString(), ABORT, getName())
 	}
 
 }
