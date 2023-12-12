@@ -19,7 +19,7 @@ public class TestBookingDAO {
 
 
     @BeforeEach
-    void setUp() {
+    void  	() {
         deleteMockDataFromDatabase();
         insertMockDataInDatabase();
     }

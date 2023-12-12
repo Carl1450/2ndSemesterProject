@@ -1,32 +1,38 @@
 package GUI;
 
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.SwingConstants;
 import java.awt.Component;
-import net.miginfocom.swing.MigLayout;
-import javax.swing.JLabel;
-import javax.swing.JComboBox;
-import javax.swing.JCheckBox;
-import javax.swing.JTextField;
-import javax.swing.JEditorPane;
-import javax.swing.JRadioButton;
-import javax.swing.JTable;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Rectangle;
-import javax.swing.JTextPane;
+import java.awt.event.InputMethodEvent;
+import java.awt.event.InputMethodListener;
+import java.sql.Date;
+import java.util.Calendar;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+
+import net.miginfocom.swing.MigLayout;
+import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
+import net.sourceforge.jdatepicker.impl.UtilDateModel;
 
 public class CreateTaskGUI extends JFrame {
 
 	private JPanel contentPane;
 	private JTable table;
 	private JTextField textField;
-
+	private JTable table_1;
+	private JDatePickerImpl datePicker; 
+	private JPanel pnlEventTime; 
+	private JPanel contentPanel; 
+	private JPanel eventPanelModel;
 	/**
 	 * Launch the application.
 	 */
@@ -45,48 +51,99 @@ public class CreateTaskGUI extends JFrame {
 
 	/**
 	 * Create the frame.
+	 * @param eventDateModel 
+	 * @param eventDateModel 
+	 * @param eventDateModel 
+	 * @param datePanel 
+	 * @param datePanel 
 	 */
-	public CreateTaskGUI() {
+	public CreateTaskGUI(UtilDateModel eventDateModel, UtilDateModel datePanel, Date date) {
+	
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 510, 361);
 		contentPane = new JPanel();
+		contentPane.addInputMethodListener(new InputMethodListener() {
+			public void caretPositionChanged(InputMethodEvent event) {
+			}
+			public void inputMethodTextChanged(InputMethodEvent event) {
+				
+			
+			}
+		});
 		contentPane.setBounds(new Rectangle(0, 0, 50, 30));
 		contentPane.setPreferredSize(new Dimension(50, 30));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);
-		contentPane.setLayout(new MigLayout("", "[grow][grow][grow]", "[][][grow][][][]"));
+		contentPane.setLayout(new MigLayout("", "[grow][][grow][grow][grow]", "[][][grow][][][][grow][][]"));
 		
-		JLabel lblNewLabel = new JLabel("Task");
+		JLabel lblNewLabel = new JLabel("Describtion");
 		lblNewLabel.setRequestFocusEnabled(false);
 		lblNewLabel.setPreferredSize(new Dimension(50, 30));
 		lblNewLabel.setSize(new Dimension(50, 30));
-		contentPane.add(lblNewLabel, "cell 0 0");
+		contentPane.add(lblNewLabel, "cell 0 1");
 		
-		JLabel lblNewLabel_1 = new JLabel("Prio");
-		contentPane.add(lblNewLabel_1, "cell 2 1");
+		JLabel lblNewLabel_2 = new JLabel("Janitors");
+		contentPane.add(lblNewLabel_2, "cell 2 1");
 		
-		table = new JTable();
-		contentPane.add(table, "cell 0 2,grow");
-		
-		JComboBox comboBox = new JComboBox();
-		contentPane.add(comboBox, "flowx,cell 2 2,growx,aligny top");
-		
-		JLabel lblNewLabel_2 = new JLabel("EndDate");
-		contentPane.add(lblNewLabel_2, "cell 2 3,alignx right");
+		JLabel lblNewLabel_3 = new JLabel("Task");
+		contentPane.add(lblNewLabel_3, "cell 4 1,alignx center");
 		
 		textField = new JTextField();
-		textField.setInheritsPopupMenu(true);
-		textField.setHorizontalAlignment(SwingConstants.CENTER);
-		contentPane.add(textField, "cell 2 4,alignx right,aligny bottom");
+		contentPane.add(textField, "cell 0 2,grow");
 		textField.setColumns(10);
+		
+		table_1 = new JTable();
+		contentPane.add(table_1, "cell 2 2,grow");
+		
+		table = new JTable();
+		contentPane.add(table, "cell 4 2,grow");
+		
+		JLabel lblNewLabel_1 = new JLabel("priority");
+		contentPane.add(lblNewLabel_1, "cell 0 5,alignx left");
+		
+		JComboBox comboBox = new JComboBox();
+		contentPane.add(comboBox, "flowx,cell 1 5 2 1,growx,aligny top");
+		
+		JLabel lblNewLabel_4 = new JLabel("Deadline");
+		contentPane.add(lblNewLabel_4, "cell 0 6");
+		
+		
+		eventDateModel = new UtilDateModel(); 
+		eventDateModel.setSelected(true); 
+		pnlEventTime.setLayout(null);
+		datePicker = new JDatePickerImpl(null);
+		datePicker.setBounds(20,35,202,21);
+		pnlEventTime.add(datePicker);
+		Date currentDate = new Date (); 
+		Calendar calendar = Calendar.getInstance(); 
+		calendar.setTime(currentDate);
+		int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
+		eventDateModel.setDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),calendar.get (Calendar.DAY_OF_MONTH)+1);
+		pnlEventTime.add(datePicker);
+		
+		
+		JComboBox comboBox_1 = new JComboBox();
+		comboBox_1.setModel(new DefaultComboBoxModel(new String[] {""}));
+		contentPane.add(comboBox_1, "cell 2 6,growx");
 		
 		JButton btnNewButton_1 = new JButton("New button");
 		btnNewButton_1.setAlignmentY(Component.BOTTOM_ALIGNMENT);
-		contentPane.add(btnNewButton_1, "flowx,cell 2 5,alignx right");
+		contentPane.add(btnNewButton_1, "flowx,cell 4 8,alignx right");
 		
 		JButton btnNewButton = new JButton("New button");
-		contentPane.add(btnNewButton, "cell 2 5,alignx right");
+		contentPane.add(btnNewButton, "cell 4 8,alignx right");
+		
+		
+
+		
 	}
+
+	private Object JDatePanelImpl(Object eventDateModel) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
 
 }
