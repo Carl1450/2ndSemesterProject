@@ -23,8 +23,8 @@ public class CustomerController {
 
 	}
 
-	public boolean saveCustomerToDB(String name, String address, String phoneNumber, String email) {
-		return customerDAO.saveCustomer(name, address, phoneNumber, email);
+	public boolean saveCustomerToDB(String name, String address, String phoneNumber, String email, int zipCode, String city) {
+		return customerDAO.saveCustomer(name, address, phoneNumber, email, zipCode, city);
 
 	}
 
