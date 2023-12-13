@@ -77,7 +77,8 @@ public class Order {
 		totalPrice = 0;
 		for(OrderLine orderLine : orderLines) {
 			float singlePrice = orderLine.getProduct().getPrice().getPrice();
-			totalPrice += singlePrice;
+			int quantity = orderLine.getQuantity();
+			totalPrice += singlePrice * quantity;
 		}
 		return totalPrice;
 		
