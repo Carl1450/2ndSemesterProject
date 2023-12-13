@@ -47,25 +47,31 @@ class TestTaskDAO {
 		+ "VALUES (2, 4, 'A task', '2023-12-12', 0, 1, 3);";
 
 	try (Connection connection = DBConnection.getConnection(ConnectionEnvironment.TESTING)) {
-	    DBConnection.startTransaction(connection);
+	    try {
+		DBConnection.startTransaction(connection);
 
-	    DBConnection.executeUpdate(connection, mockCityInsertQuery);
+		DBConnection.executeUpdate(connection, mockCityInsertQuery);
 
-	    DBConnection.executeUpdateWithIdentityInsert(connection, mockAddressInsertQuery, "[Address]");
+		DBConnection.executeUpdateWithIdentityInsert(connection, mockAddressInsertQuery, "[Address]");
 
-	    DBConnection.executeUpdateWithIdentityInsert(connection, mockReceptionistInsertQuery, "Employee");
+		DBConnection.executeUpdateWithIdentityInsert(connection, mockReceptionistInsertQuery, "Employee");
 
-	    DBConnection.executeUpdateWithIdentityInsert(connection, mockFirstJanitorInsertQuery, "Employee");
+		DBConnection.executeUpdateWithIdentityInsert(connection, mockFirstJanitorInsertQuery, "Employee");
 
-	    DBConnection.executeUpdateWithIdentityInsert(connection, mockSecondJanitorInsertQuery, "Employee");
+		DBConnection.executeUpdateWithIdentityInsert(connection, mockSecondJanitorInsertQuery, "Employee");
 
-	    DBConnection.executeUpdateWithIdentityInsert(connection, mockFirstTaskInsertQuery, "Task");
+		DBConnection.executeUpdateWithIdentityInsert(connection, mockFirstTaskInsertQuery, "Task");
 
-	    DBConnection.executeUpdateWithIdentityInsert(connection, mockSecondTaskInsertQuery, "Task");
+		DBConnection.executeUpdateWithIdentityInsert(connection, mockSecondTaskInsertQuery, "Task");
 
-	    DBConnection.commitTransaction(connection);
+		DBConnection.commitTransaction(connection);
+	    } catch (Exception e) {
+		DBConnection.rollbackTransaction(connection);
+		e.printStackTrace();
+	    } finally {
+		DBConnection.closeConnection(connection);
+	    }
 
-	    DBConnection.closeConnection(connection);
 	} catch (SQLException e) {
 	    throw new RuntimeException(e);
 	}
@@ -125,51 +131,51 @@ class TestTaskDAO {
 	// Assert
 	assertTrue(listOfTasks.size() == 0);
     }
-    
+
     @Test
     void finishesTaskSuccessfully() {
 	// Arrange
 	TaskDAO SUT = new TaskDAO(ConnectionEnvironment.TESTING);
-	
+
 	// Act
 	boolean result = SUT.finishTask(1);
 	ArrayList<Task> listOfTasks = SUT.getUncompletedTasks(0, false);
-	
+
 	// Assert
 	assertTrue(listOfTasks.size() == 1);
 	assertTrue(result);
     }
-    
+
     @Test
     void returnFalseIfTaskDoesNotExist() {
 	// Arrange
 	TaskDAO SUT = new TaskDAO(ConnectionEnvironment.TESTING);
-	
+
 	// Act
 	boolean result = SUT.finishTask(25);
 	ArrayList<Task> listOfTasks = SUT.getUncompletedTasks(0, false);
-	
+
 	// Assert
 	assertTrue(listOfTasks.size() == 2);
 	assertFalse(result);
     }
-    
+
     @Test
     void taskIsSavedCorrectly() {
 	// Arrange
 	TaskDAO SUT = new TaskDAO(ConnectionEnvironment.TESTING);
-	
+
 	// Act
 	Date deadLine = new Date(1000);
 	Date startDate = new Date(5000000);
 	Receptionist receptionist = new Receptionist(1, "", "", "", "", "", "");
 	Janitor janitor = new Janitor(2, "", "", "", "", "", "");
-	
+
 	Task task = new Task(5, "", 2, deadLine, receptionist, startDate);
 	task.setJanitors(janitor);
 	SUT.saveTask(task);
 	ArrayList<Task> listOfTasks = SUT.getUncompletedTasks(0, false);
-	
+
 	// Assert
 	assertTrue(listOfTasks.size() == 3);
     }
