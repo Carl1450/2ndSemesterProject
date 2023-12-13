@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -32,6 +33,8 @@ public class MainMenuGUI extends JFrame {
 	private JButton orderButton;
 	private JButton bookingButton;
 	private ProductTableModel productTableModel;
+	private JButton taskButton;
+	private JButton editCustomerButton;
 
 	/**
 	 * Launch the application.
@@ -69,9 +72,9 @@ public class MainMenuGUI extends JFrame {
 		JPanel panel = new JPanel();
 		contentPane.add(panel, BorderLayout.CENTER);
 		GridBagLayout gbl_panel = new GridBagLayout();
-		gbl_panel.columnWidths = new int[]{0, 0};
+		gbl_panel.columnWidths = new int[] {125, 125, 125};
 		gbl_panel.rowHeights = new int[]{35, 0, 0, 0, 0};
-		gbl_panel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+		gbl_panel.columnWeights = new double[]{0.0, 1.0, 0.0};
 		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		panel.setLayout(gbl_panel);
 		
@@ -85,9 +88,9 @@ public class MainMenuGUI extends JFrame {
 		});
 		GridBagConstraints gbc_bookingButton = new GridBagConstraints();
 		gbc_bookingButton.anchor = GridBagConstraints.NORTH;
-		gbc_bookingButton.insets = new Insets(0, 0, 5, 0);
+		gbc_bookingButton.insets = new Insets(0, 0, 5, 5);
 		gbc_bookingButton.gridx = 0;
-		gbc_bookingButton.gridy = 0;
+		gbc_bookingButton.gridy = 1;
 		panel.add(bookingButton, gbc_bookingButton);
 		
 		orderButton = new JButton("Create Order");
@@ -98,30 +101,42 @@ public class MainMenuGUI extends JFrame {
 		});
 		orderButton.setVisible(false);
 		GridBagConstraints gbc_orderButton = new GridBagConstraints();
-		gbc_orderButton.insets = new Insets(0, 0, 5, 0);
-		gbc_orderButton.gridx = 0;
+		gbc_orderButton.insets = new Insets(0, 0, 5, 5);
+		gbc_orderButton.gridx = 1;
 		gbc_orderButton.gridy = 1;
 		panel.add(orderButton, gbc_orderButton);
 		
-		JButton taskButton = new JButton("Tasks");
+		taskButton = new JButton("Tasks");
 		taskButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				taskButtonClicked();
 			}
 		});
+		taskButton.setVisible(false);
+		
 		GridBagConstraints gbc_taskButton = new GridBagConstraints();
 		gbc_taskButton.insets = new Insets(0, 0, 5, 0);
-		gbc_taskButton.gridx = 0;
-		gbc_taskButton.gridy = 2;
+		gbc_taskButton.gridx = 2;
+		gbc_taskButton.gridy = 1;
 		panel.add(taskButton, gbc_taskButton);
 		
-		JButton editCustomerButton = new JButton("Edit Customer");
+		editCustomerButton = new JButton("Edit Customer");
 		editCustomerButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				editCustomerButtonClicked();
 			}
 		});
+		editCustomerButton.setVisible(false);
+		
+		JPanel panel_3 = new JPanel();
+		GridBagConstraints gbc_panel_3 = new GridBagConstraints();
+		gbc_panel_3.insets = new Insets(0, 0, 5, 5);
+		gbc_panel_3.fill = GridBagConstraints.BOTH;
+		gbc_panel_3.gridx = 1;
+		gbc_panel_3.gridy = 2;
+		panel.add(panel_3, gbc_panel_3);
 		GridBagConstraints gbc_editCustomerButton = new GridBagConstraints();
+		gbc_editCustomerButton.insets = new Insets(0, 0, 0, 5);
 		gbc_editCustomerButton.gridx = 0;
 		gbc_editCustomerButton.gridy = 3;
 		panel.add(editCustomerButton, gbc_editCustomerButton);
@@ -167,12 +182,16 @@ public class MainMenuGUI extends JFrame {
 		if (employee instanceof Admin) { 
 			bookingButton.setVisible(true);
 			orderButton.setVisible(true);
+			taskButton.setVisible(true);
+			editCustomerButton.setVisible(true);
 		} else if (employee instanceof Receptionist) {
 			bookingButton.setVisible(true);
+			orderButton.setVisible(true);
+			taskButton.setVisible(true);
 		} else if (employee instanceof SalesAssistant) {
 			orderButton.setVisible(true);
 		} else if (employee instanceof Janitor) {
-			
+			taskButton.setVisible(true);
 		}
 	}
 	
