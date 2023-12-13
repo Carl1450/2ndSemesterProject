@@ -23,6 +23,7 @@ class TestTaskDAO {
 
     @BeforeEach
     void setUp() throws Exception {
+	deleteMockDataFromDatabase();
 	insertMockDataInDatabase();
     }
 

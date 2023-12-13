@@ -17,9 +17,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestBookingDAO {
 
-
     @BeforeEach
-    void  	() {
+    void setUp() {
         deleteMockDataFromDatabase();
         insertMockDataInDatabase();
     }
