@@ -1,5 +1,6 @@
 package Model;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class Order {
 	
 	public Order(Employee employee) {
 		this.employee = employee;
+		this.customer = new Customer(9999, null, null, null, null);
 		this.orderLines = new ArrayList<>();
 		this.date = new Timestamp(System.currentTimeMillis());
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -43,12 +45,12 @@ public class Order {
 		return orderLines;
 	}
 
-	public Timestamp getDate() {
-		return date;
+	public Date getDate() {
+		return new java.sql.Date(date.getTime());
 	}
 
 	public float getTotalPrice() {
-		return totalPrice;
+		return calculateTotalPrice();
 	}
 
 	public void setTotalPrice(float totalPrice) {
@@ -71,5 +73,12 @@ public class Order {
 		this.customer = customer;
 	}
 	
-	
+	public float calculateTotalPrice() {
+		for(OrderLine orderLine : orderLines) {
+			float singlePrice = orderLine.getProduct().getPrice().getPrice();
+			totalPrice += singlePrice;
+		}
+		return totalPrice;
+		
+	}
 }

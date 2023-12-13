@@ -6,8 +6,9 @@ import java.awt.EventQueue;
 import java.awt.Rectangle;
 import java.awt.event.InputMethodEvent;
 import java.awt.event.InputMethodListener;
-import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.Calendar;
+import java.util.Date;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -22,6 +23,8 @@ import javax.swing.border.EmptyBorder;
 import net.miginfocom.swing.MigLayout;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
 
 public class CreateTaskGUI extends JFrame {
 
@@ -32,7 +35,7 @@ public class CreateTaskGUI extends JFrame {
 	private JDatePickerImpl datePicker; 
 	private JPanel pnlEventTime; 
 	private JPanel contentPanel; 
-	private JPanel eventPanelModel;
+	private UtilDateModel eventPanelModel;
 	/**
 	 * Launch the application.
 	 */
@@ -53,15 +56,20 @@ public class CreateTaskGUI extends JFrame {
 	 * Create the frame.
 	 * @param eventDateModel 
 	 * @param eventDateModel 
-	 * @param eventDateModel 
-	 * @param datePanel 
 	 * @param datePanel 
 	 */
-	public CreateTaskGUI(UtilDateModel eventDateModel, UtilDateModel datePanel, Date date) {
+	@SuppressWarnings("unchecked")
+	public CreateTaskGUI() {
 	
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 510, 361);
 		contentPane = new JPanel();
+		contentPane.addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent evt) {
+
+				
+			}
+		});
 		contentPane.addInputMethodListener(new InputMethodListener() {
 			public void caretPositionChanged(InputMethodEvent event) {
 			}
@@ -109,30 +117,36 @@ public class CreateTaskGUI extends JFrame {
 		contentPane.add(lblNewLabel_4, "cell 0 6");
 		
 		
-		eventDateModel = new UtilDateModel(); 
-		eventDateModel.setSelected(true); 
-		pnlEventTime.setLayout(null);
-		datePicker = new JDatePickerImpl(null);
-		datePicker.setBounds(20,35,202,21);
-		pnlEventTime.add(datePicker);
-		Date currentDate = new Date (); 
-		Calendar calendar = Calendar.getInstance(); 
-		calendar.setTime(currentDate);
-		int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
-		eventDateModel.setDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),calendar.get (Calendar.DAY_OF_MONTH)+1);
-		pnlEventTime.add(datePicker);
-		
 		
 		JComboBox comboBox_1 = new JComboBox();
+		comboBox_1.addInputMethodListener(new InputMethodListener() {
+			public void caretPositionChanged(InputMethodEvent event) {
+			}
+			public void inputMethodTextChanged(InputMethodEvent event) {
+				eventPanelModel = new UtilDateModel(); 
+				eventPanelModel.setSelected(true); 
+				pnlEventTime.setLayout(null);
+				datePicker = new JDatePickerImpl(null);
+				datePicker.setBounds(20,35,202,21);
+				pnlEventTime.add(datePicker);
+				Date currentDate = LocalDateTime();
+				Calendar calendar = Calendar.getInstance(); 
+				calendar.setTime(currentDate);
+				int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
+				eventPanelModel.setDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),calendar.get (Calendar.DAY_OF_MONTH)+1);
+				pnlEventTime.add(datePicker);
+			}
+			private Date LocalDateTime() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		});
 		comboBox_1.setModel(new DefaultComboBoxModel(new String[] {""}));
 		contentPane.add(comboBox_1, "cell 2 6,growx");
 		
 		JButton btnNewButton_1 = new JButton("New button");
 		btnNewButton_1.setAlignmentY(Component.BOTTOM_ALIGNMENT);
 		contentPane.add(btnNewButton_1, "flowx,cell 4 8,alignx right");
-		
-		JButton btnNewButton = new JButton("New button");
-		contentPane.add(btnNewButton, "cell 4 8,alignx right");
 		
 		
 

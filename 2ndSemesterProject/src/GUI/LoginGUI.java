@@ -62,7 +62,7 @@ public class LoginGUI extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(450, 300);
 		setLocationRelativeTo(null);
-		
+
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -159,19 +159,25 @@ public class LoginGUI extends JFrame {
 	}
 
 	private void loginButtonClicked() {
-		String employeeId = employeeIdTextField.getText();
+		String employeeId = employeeIdTextField.getText().trim();
 		String employeePassword = new String(employeePasswordTextField.getPassword());
-		Employee employee = employeeController.findEmployeeById(Integer.parseInt(employeeId));
+
 		try {
-			if (employeeController.validateLogin(employee, employeePassword) == true) {
-				MainMenuGUI mainMenuGUI = new MainMenuGUI(employee);
-				mainMenuGUI.setVisible(true);
-				dispose();
-			} else {
-				employeeIdTextField.setText("");
-				employeePasswordTextField.setText("");
-				JOptionPane.showMessageDialog(this, "Invalid Employee ID or Password", "Error",
+			if (employeeId.isEmpty() || employeePassword.isEmpty()) {
+				JOptionPane.showMessageDialog(this, "Type in Employee ID and Password", "Error",
 						JOptionPane.ERROR_MESSAGE);
+			} else {
+				Employee employee = employeeController.findEmployeeById(Integer.parseInt(employeeId));
+				if (employeeController.validateLogin(employee, employeePassword) == true) {
+					MainMenuGUI mainMenuGUI = new MainMenuGUI(employee);
+					mainMenuGUI.setVisible(true);
+					dispose();
+				} else {
+					employeeIdTextField.setText("");
+					employeePasswordTextField.setText("");
+					JOptionPane.showMessageDialog(this, "Invalid Employee ID or Password", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		} catch (NumberFormatException e) {
 			employeeIdTextField.setText("");
@@ -179,6 +185,7 @@ public class LoginGUI extends JFrame {
 			JOptionPane.showMessageDialog(this, "Invalid Employee ID", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
+
 	private void enterKey() {
 		employeePasswordTextField.addKeyListener(new KeyListener() {
 
@@ -188,7 +195,7 @@ public class LoginGUI extends JFrame {
 
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 					loginButtonClicked();
 				}
 			}
@@ -196,7 +203,7 @@ public class LoginGUI extends JFrame {
 			@Override
 			public void keyReleased(KeyEvent e) {
 			}
-	});
+		});
 	}
 
 }

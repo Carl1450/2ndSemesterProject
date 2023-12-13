@@ -134,5 +134,41 @@ public class TestCustomerDAO {
 		// Assert
 		assertNull(updatedCustomer);
 	}
+	
+	@Test
+    void saveCustomer_SuccessfulInsertion() {
+        // Arrange
+		CustomerDAO SUT = new CustomerDAO(ConnectionEnvironment.TESTING);
+        String name = "John Doe";
+        String address = "Danmarksgade 22";
+        String phoneNumber = "+45 22384742";
+        String email = "john.doe@example.com";
+        int zipCode = 9000;
+        String city = "TestCity";
+
+        // Act
+        boolean result = SUT.saveCustomer(name, address, phoneNumber, email, zipCode, city);
+
+        // Assert
+        assertTrue(result, "Customer insertion should be successful");
+    }
+
+    @Test
+    void saveCustomer_FailedCustomerInsertion() {
+        // Arrange
+    	CustomerDAO SUT = new CustomerDAO(ConnectionEnvironment.TESTING);
+        String name = "John Doe";
+        String address = "Danmarksgade 23";
+        String phoneNumber = "+45 22384742";
+        String email = "invalid-email"; // Intentionally set an invalid email to trigger a failure in customer insertion
+        int zipCode = 9000;
+        String city = "TestCity";
+
+        // Act
+        boolean result = SUT.saveCustomer(name, address, phoneNumber, email, zipCode, city);
+
+        // Assert
+        assertFalse(result, "Customer insertion should fail");
+    }
 
 }

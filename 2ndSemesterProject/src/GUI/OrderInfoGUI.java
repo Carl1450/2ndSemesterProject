@@ -1,7 +1,6 @@
- package GUI;
+package GUI;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -22,6 +21,7 @@ import javax.swing.border.EmptyBorder;
 
 import Control.OrderController;
 import Database.ConnectionEnvironment;
+import Model.Customer;
 import Model.Employee;
 import Model.Order;
 import Model.OrderLine;
@@ -34,25 +34,20 @@ public class OrderInfoGUI extends JFrame {
 	private JTable productTable;
 	private JTextField barcodeTextField;
 	private JTextField quantityTextField;
-	private static Employee employee;
+	private Employee employee;
 	private ProductTableModel productTableModel;
 	private ArrayList<OrderLine> orderLines;
 	private OrderController orderController;
 	private ConnectionEnvironment env = ConnectionEnvironment.PRODUCTION;
-	private Order currentOrder;
 
 	/**
 	 * Launch the application.
 	 */
-	
 
 	/**
 	 * Create the frame.
 	 */
-	public OrderInfoGUI(Order currentOrder) {
-		this.currentOrder = currentOrder;
-		orderController = new OrderController(employee, env);
-		orderLines = new ArrayList<>();
+	public OrderInfoGUI(Order currentOrder, ProductTableModel productTableModel, Employee employee) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(750, 600);
 		setLocationRelativeTo(null);
@@ -61,12 +56,12 @@ public class OrderInfoGUI extends JFrame {
 
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
-		
+
 		JPanel panel = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) panel.getLayout();
 		flowLayout.setAlignment(FlowLayout.RIGHT);
 		contentPane.add(panel, BorderLayout.SOUTH);
-		
+
 		JButton cancelButton = new JButton("Cancel");
 		cancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -74,7 +69,7 @@ public class OrderInfoGUI extends JFrame {
 			}
 		});
 		panel.add(cancelButton);
-		
+
 		JButton confirmButton = new JButton("Confirm order");
 		confirmButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -82,22 +77,23 @@ public class OrderInfoGUI extends JFrame {
 			}
 		});
 		panel.add(confirmButton);
-		
+
 		JScrollPane scrollPane = new JScrollPane();
 		contentPane.add(scrollPane, BorderLayout.EAST);
-		
+
 		productTable = new JTable();
+		productTable.setEnabled(false);
 		scrollPane.setViewportView(productTable);
-		
+
 		JPanel panel_1 = new JPanel();
 		contentPane.add(panel_1, BorderLayout.NORTH);
 		GridBagLayout gbl_panel_1 = new GridBagLayout();
-		gbl_panel_1.columnWidths = new int[]{273, 45, 0};
-		gbl_panel_1.rowHeights = new int[]{13, 0};
-		gbl_panel_1.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gbl_panel_1.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+		gbl_panel_1.columnWidths = new int[] { 273, 45, 0 };
+		gbl_panel_1.rowHeights = new int[] { 13, 0 };
+		gbl_panel_1.columnWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
+		gbl_panel_1.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
 		panel_1.setLayout(gbl_panel_1);
-		
+
 		JLabel addProductLabel = new JLabel("Add product");
 		GridBagConstraints gbc_addProductLabel = new GridBagConstraints();
 		gbc_addProductLabel.anchor = GridBagConstraints.WEST;
@@ -105,23 +101,23 @@ public class OrderInfoGUI extends JFrame {
 		gbc_addProductLabel.gridx = 0;
 		gbc_addProductLabel.gridy = 0;
 		panel_1.add(addProductLabel, gbc_addProductLabel);
-		
+
 		JLabel productListLabel = new JLabel("Product list");
 		GridBagConstraints gbc_productListLabel = new GridBagConstraints();
 		gbc_productListLabel.anchor = GridBagConstraints.NORTHWEST;
 		gbc_productListLabel.gridx = 1;
 		gbc_productListLabel.gridy = 0;
 		panel_1.add(productListLabel, gbc_productListLabel);
-		
+
 		JPanel panel_2 = new JPanel();
 		contentPane.add(panel_2, BorderLayout.CENTER);
 		GridBagLayout gbl_panel_2 = new GridBagLayout();
-		gbl_panel_2.columnWidths = new int[]{0, 0, 0, 0};
-		gbl_panel_2.rowHeights = new int[]{0, 0, 0, 0, 0};
-		gbl_panel_2.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
-		gbl_panel_2.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel_2.columnWidths = new int[] { 0, 0, 0, 0 };
+		gbl_panel_2.rowHeights = new int[] { 0, 0, 0, 0, 0 };
+		gbl_panel_2.columnWeights = new double[] { 0.0, 1.0, 0.0, Double.MIN_VALUE };
+		gbl_panel_2.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		panel_2.setLayout(gbl_panel_2);
-		
+
 		JPanel panel_3 = new JPanel();
 		GridBagConstraints gbc_panel_3 = new GridBagConstraints();
 		gbc_panel_3.insets = new Insets(0, 0, 5, 5);
@@ -129,7 +125,7 @@ public class OrderInfoGUI extends JFrame {
 		gbc_panel_3.gridx = 0;
 		gbc_panel_3.gridy = 0;
 		panel_2.add(panel_3, gbc_panel_3);
-		
+
 		JLabel barcodeLabel = new JLabel("Barcode");
 		GridBagConstraints gbc_barcodeLabel = new GridBagConstraints();
 		gbc_barcodeLabel.insets = new Insets(0, 0, 5, 5);
@@ -137,7 +133,7 @@ public class OrderInfoGUI extends JFrame {
 		gbc_barcodeLabel.gridx = 0;
 		gbc_barcodeLabel.gridy = 1;
 		panel_2.add(barcodeLabel, gbc_barcodeLabel);
-		
+
 		barcodeTextField = new JTextField();
 		GridBagConstraints gbc_barcodeTextField = new GridBagConstraints();
 		gbc_barcodeTextField.fill = GridBagConstraints.HORIZONTAL;
@@ -146,7 +142,7 @@ public class OrderInfoGUI extends JFrame {
 		gbc_barcodeTextField.gridy = 1;
 		panel_2.add(barcodeTextField, gbc_barcodeTextField);
 		barcodeTextField.setColumns(10);
-		
+
 		JLabel quantitylabel = new JLabel("Quantity");
 		GridBagConstraints gbc_quantitylabel = new GridBagConstraints();
 		gbc_quantitylabel.anchor = GridBagConstraints.NORTHWEST;
@@ -154,7 +150,7 @@ public class OrderInfoGUI extends JFrame {
 		gbc_quantitylabel.gridx = 0;
 		gbc_quantitylabel.gridy = 2;
 		panel_2.add(quantitylabel, gbc_quantitylabel);
-		
+
 		quantityTextField = new JTextField();
 		GridBagConstraints gbc_quantityTextField = new GridBagConstraints();
 		gbc_quantityTextField.insets = new Insets(0, 0, 5, 5);
@@ -163,7 +159,7 @@ public class OrderInfoGUI extends JFrame {
 		gbc_quantityTextField.gridy = 2;
 		panel_2.add(quantityTextField, gbc_quantityTextField);
 		quantityTextField.setColumns(10);
-		
+
 		JButton addButton = new JButton("Add");
 		addButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -176,49 +172,85 @@ public class OrderInfoGUI extends JFrame {
 		gbc_addButton.gridx = 1;
 		gbc_addButton.gridy = 3;
 		panel_2.add(addButton, gbc_addButton);
-		
-		init();
+
+		init(productTableModel, currentOrder, employee);
 	}
-	
-	private void init() {
-		productTableModel = new ProductTableModel(orderLines);
+
+	private void init(ProductTableModel productTableModel, Order currentOrder, Employee employee) {
+		this.employee = employee;
+		orderController = new OrderController(employee, env, currentOrder);
+		currentOrder.setCustomer(new Customer(9999, null, null, null, null));
+		orderLines = new ArrayList<>();
+		if (productTableModel == null) {
+			productTableModel = new ProductTableModel(orderLines);
+		} else {
+			this.productTableModel = productTableModel;
+			this.orderLines.addAll(productTableModel.getData());
+		}
 		productTable.setModel(productTableModel);
 	}
-	
-	
-	private void cancelButtonClicked(){
+
+	private void cancelButtonClicked() {
 		MainMenuGUI mainMenuGUI = new MainMenuGUI(employee);
 		mainMenuGUI.setVisible(true);
 		dispose();
 	}
-	
+
 	private void addButtonClicked(Order currentOrder) {
-		int barcode = Integer.parseInt(barcodeTextField.getText());
-		int quantity = Integer.parseInt(quantityTextField.getText());
-		Product product = orderController.findProductByBarcode(barcode);
-		if(product != null) {
-			OrderLine orderLine = new OrderLine(product, quantity); 
-			orderController.addOrderLine(currentOrder, orderLine);
-			barcodeTextField.setText("");
-			quantityTextField.setText("");
-			orderLines.add(orderLine);
-			productTableModel.fireTableDataChanged();
+		String barcodeText = barcodeTextField.getText().trim();
+		String quantityText = quantityTextField.getText().trim();
+
+		if (barcodeText.isEmpty() || quantityText.isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Error: Barcode and quantity must be provided");
+			return;
 		}
-		else {
-			JOptionPane.showMessageDialog(this, "Error: No product found");
+
+		try {
+			int barcode = Integer.parseInt(barcodeTextField.getText());
+			int quantity = Integer.parseInt(quantityTextField.getText());
+
+			Product product = orderController.findProductByBarcode(barcode);
+
+			OrderLine orderLine = new OrderLine(product, quantity);
+			
+			if (product != null) {
+				boolean updated = false;
+				for (OrderLine existingOrderLine : orderLines) {
+					if (existingOrderLine.getProduct().getBarcode() == product.getBarcode()) {
+						existingOrderLine.setQuantity(existingOrderLine.getQuantity() + quantity);
+						updated = true;
+						break;
+					}
+				}
+				if (!updated) {
+					orderController.addOrderLine(currentOrder, orderLine);
+					orderLines.add(orderLine);
+				}
+				barcodeTextField.setText("");
+				quantityTextField.setText("");
+				updateProductTableModel();
+			} else {
+				JOptionPane.showMessageDialog(this, "Error: No product found");
+			}
+		} catch (NumberFormatException e) {
+			JOptionPane.showMessageDialog(this, "Error: Invalid input for barcode or quantity");
 		}
 	}
-	
-	private void tableModel() {
+
+	private void updateProductTableModel() {
 		productTableModel = new ProductTableModel(orderLines);
 		productTableModel.setData(orderLines);
 		productTable.setModel(productTableModel);
 	}
-	
+
 	private void confirmOrderClicked(Order currentOrder) {
-		FinishOrderGUI finishOrderGUI = new FinishOrderGUI(currentOrder);
-		finishOrderGUI.setVisible(true);
-		dispose();
+		if (productTableModel == null) {
+			JOptionPane.showMessageDialog(this, "Error: Add product to order");
+		} else {
+			FinishOrderGUI finishOrderGUI = new FinishOrderGUI(currentOrder, productTableModel, employee);
+			finishOrderGUI.setVisible(true);
+			dispose();
+		}
 	}
 
 }

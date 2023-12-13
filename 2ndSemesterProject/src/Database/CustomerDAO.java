@@ -4,6 +4,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+<<<<<<< HEAD
+=======
+import java.sql.Statement;
+import java.util.List;
+import java.util.ArrayList;
+>>>>>>> branch 'main' of https://github.com/Carl1450/2ndSemesterProject.git
 
 import Model.*;
 
@@ -51,9 +57,14 @@ public class CustomerDAO {
             e.printStackTrace();
         }
 
+<<<<<<< HEAD
         return customer;
     }
+=======
+	public boolean saveCustomer(String name, String address, String phoneNumber, String email, int zipCode, String city) {
+>>>>>>> branch 'main' of https://github.com/Carl1450/2ndSemesterProject.git
 
+<<<<<<< HEAD
     public boolean saveCustomer(String name, String address, String phoneNumber, String email) {
 
         Connection conn = DBConnection.getConnection(env);
@@ -68,8 +79,77 @@ public class CustomerDAO {
             prepStat.setString(3, email);
             prepStat.setString(4, phoneNumber);
             prepStat.setString(5, address);
+=======
+		Connection conn = DBConnection.getConnection(env);
+		String insertCustomerQ = "INSERT INTO Customer( fname, lname, email, phoneno, addressId) VALUES (?, ?, ?, ?, ?);";
+		String insertAddressQ = "INSERT INTO Address( street, streetno, zipcode) VALUES (?, ?, ?);";
+		String insertCityQ = "INSERT INTO City( city, zipcode) VALUES (?, ?);";
+		int rowsAffected = 0;
+		String[] splitName = name.split("\\s+");
+		String[] splitAddress = address.split("\\s+");
+		
+		
+		try {
+			
+			conn.setAutoCommit(false);
+			
+			//Insert into city table
+			PreparedStatement cityStatement = conn.prepareStatement(insertCityQ);
+			cityStatement.setString(1, city);
+			cityStatement.setInt(2, zipCode);
+			
+			int cityRowsAffected = cityStatement.executeUpdate();
+			
+			if(cityRowsAffected > 0) {
+				PreparedStatement addressStatement = conn.prepareStatement(insertAddressQ, Statement.RETURN_GENERATED_KEYS);
+				addressStatement.setString(1, splitAddress[0]);
+				addressStatement.setString(2, splitAddress[1]);
+				addressStatement.setInt(3, zipCode);
+				
+				int addressRowsAffected = addressStatement.executeUpdate();
+				
+				if(addressRowsAffected > 0) {
+					ResultSet addressResultSet = addressStatement.getGeneratedKeys();
+					int addressId = -1;
+					if(addressResultSet.next()) {
+						addressId = addressResultSet.getInt(1);
+					}
+					
+					PreparedStatement customerStatement = conn.prepareStatement(insertCustomerQ);
+					customerStatement.setString(1, splitName[0]);
+					customerStatement.setString(2, splitName[1]);
+					customerStatement.setString(3, email);
+					customerStatement.setString(4, phoneNumber);
+					customerStatement.setInt(5, addressId);
+					
+					rowsAffected = customerStatement.executeUpdate();
+					
+				}
+			}
+			
+			conn.commit();
+>>>>>>> branch 'main' of https://github.com/Carl1450/2ndSemesterProject.git
 
+<<<<<<< HEAD
             rowsAffected = prepStat.executeUpdate();
+=======
+		} catch (SQLException e) {
+			
+			try {
+				conn.rollback();
+			} catch (SQLException rollbackException) {
+				rollbackException.printStackTrace();
+			}
+			e.printStackTrace();
+		} finally {
+			try {
+				conn.setAutoCommit(true);
+				DBConnection.closeConnection(conn);
+			} catch (SQLException closeException) {
+				closeException.printStackTrace();
+			}
+		}
+>>>>>>> branch 'main' of https://github.com/Carl1450/2ndSemesterProject.git
 
         } catch (SQLException e) {
             e.printStackTrace();

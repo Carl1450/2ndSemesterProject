@@ -88,4 +88,7 @@ public class ProductTableModel extends AbstractTableModel {
 		super.fireTableDataChanged();
 	}
 
+	public List<OrderLine> getData(){
+		return data;
+	}
 }
