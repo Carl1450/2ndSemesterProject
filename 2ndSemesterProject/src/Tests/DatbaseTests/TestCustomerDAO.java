@@ -18,11 +18,11 @@ public class TestCustomerDAO {
 
     @BeforeEach
     void setUp() {
-	deleteMockData();
-	insertMockData();
+        deleteMockDataFromDatabase();
+        insertMockDataInDatabase();
     }
 
-    private void insertMockData() {
+    private void insertMockDataInDatabase() {
 	String insertMockCity = "INSERT INTO City (zipCode, city) VALUES (1000, 'Copenhagen');";
 
 	String insertMockAddress = "INSERT INTO [Address] (id, street, streetno, zipcode) VALUES (1, 'Bredgade', 30, 1000);";
@@ -45,10 +45,10 @@ public class TestCustomerDAO {
 
     @AfterEach
     void tearDown() {
-	deleteMockData();
+	deleteMockDataFromDatabase();
     }
 
-    private void deleteMockData() {
+    private void deleteMockDataFromDatabase() {
 
 	String deleteMockData = "DELETE FROM Customer; DELETE FROM [Address]; DELETE FROM City;";
 

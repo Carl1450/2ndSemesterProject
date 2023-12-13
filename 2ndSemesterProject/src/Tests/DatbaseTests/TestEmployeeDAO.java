@@ -20,11 +20,11 @@ class TestEmployeeDAO {
 
     @BeforeEach
     void setUp() {
-        deleteMockData();
-        insertMockData();
+        deleteMockDataFromDatabase();
+        insertMockDataInDatabase();
     }
 
-    void insertMockData() {
+    void insertMockDataInDatabase() {
         Connection connection = DBConnection.getConnection(ConnectionEnvironment.TESTING);
 
         String mockAddressInsertQuery = "INSERT INTO [Address] (id, street, streetno, zipcode) VALUES (1, 'Bredgade', 30, 1000);";
@@ -62,11 +62,11 @@ class TestEmployeeDAO {
 
     @AfterEach
     void tearDown() {
-        deleteMockData();
+        deleteMockDataFromDatabase();
 
     }
 
-    void deleteMockData() {
+    void deleteMockDataFromDatabase() {
         String deleteMockDataQuery = "DELETE FROM Employee; DELETE FROM [Address]; DELETE FROM [City];";
 
         Connection connection = DBConnection.getConnection(ConnectionEnvironment.TESTING);
