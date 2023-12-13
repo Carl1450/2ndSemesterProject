@@ -35,6 +35,9 @@ public class MainMenuGUI extends JFrame {
 	private ProductTableModel productTableModel;
 	private JButton taskButton;
 	private JButton editCustomerButton;
+	private JButton editCampsiteButton;
+	private JButton editProductButton;
+	private JButton editEmployeesButton;
 
 	/**
 	 * Launch the application.
@@ -73,9 +76,9 @@ public class MainMenuGUI extends JFrame {
 		contentPane.add(panel, BorderLayout.CENTER);
 		GridBagLayout gbl_panel = new GridBagLayout();
 		gbl_panel.columnWidths = new int[] {125, 125, 125};
-		gbl_panel.rowHeights = new int[]{35, 0, 0, 0, 0};
+		gbl_panel.rowHeights = new int[]{35, 0, 0, 0, 15, 0, 0, 0};
 		gbl_panel.columnWeights = new double[]{0.0, 1.0, 0.0};
-		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		panel.setLayout(gbl_panel);
 		
 		bookingButton = new JButton("Booking");
@@ -136,10 +139,60 @@ public class MainMenuGUI extends JFrame {
 		gbc_panel_3.gridy = 2;
 		panel.add(panel_3, gbc_panel_3);
 		GridBagConstraints gbc_editCustomerButton = new GridBagConstraints();
-		gbc_editCustomerButton.insets = new Insets(0, 0, 0, 5);
+		gbc_editCustomerButton.insets = new Insets(0, 0, 5, 5);
 		gbc_editCustomerButton.gridx = 0;
 		gbc_editCustomerButton.gridy = 3;
 		panel.add(editCustomerButton, gbc_editCustomerButton);
+		
+		editProductButton = new JButton("Edit Products");
+		editProductButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				editProductButtonClicked();
+			}
+		});
+		editProductButton.setVisible(false);
+		
+		GridBagConstraints gbc_editProductButton = new GridBagConstraints();
+		gbc_editProductButton.insets = new Insets(0, 0, 5, 5);
+		gbc_editProductButton.gridx = 1;
+		gbc_editProductButton.gridy = 3;
+		panel.add(editProductButton, gbc_editProductButton);
+		
+		editCampsiteButton = new JButton("Edit Campsites");
+		editCampsiteButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				editCampsiteButtonClicked();
+			}
+		});
+		editCampsiteButton.setVisible(false);
+		
+		GridBagConstraints gbc_editCampsiteButton = new GridBagConstraints();
+		gbc_editCampsiteButton.insets = new Insets(0, 0, 5, 0);
+		gbc_editCampsiteButton.gridx = 2;
+		gbc_editCampsiteButton.gridy = 3;
+		panel.add(editCampsiteButton, gbc_editCampsiteButton);
+		
+		JPanel panel_4 = new JPanel();
+		GridBagConstraints gbc_panel_4 = new GridBagConstraints();
+		gbc_panel_4.insets = new Insets(0, 0, 5, 5);
+		gbc_panel_4.fill = GridBagConstraints.BOTH;
+		gbc_panel_4.gridx = 1;
+		gbc_panel_4.gridy = 4;
+		panel.add(panel_4, gbc_panel_4);
+		
+		editEmployeesButton = new JButton("Edit Employees");
+		editEmployeesButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				editEmployeesButtonClicked();
+			}
+		});
+		editEmployeesButton.setVisible(false);
+		
+		GridBagConstraints gbc_editEmployeesButton = new GridBagConstraints();
+		gbc_editEmployeesButton.insets = new Insets(0, 0, 5, 5);
+		gbc_editEmployeesButton.gridx = 1;
+		gbc_editEmployeesButton.gridy = 5;
+		panel.add(editEmployeesButton, gbc_editEmployeesButton);
 		
 		JPanel panel_1 = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) panel_1.getLayout();
@@ -184,6 +237,10 @@ public class MainMenuGUI extends JFrame {
 			orderButton.setVisible(true);
 			taskButton.setVisible(true);
 			editCustomerButton.setVisible(true);
+			editCampsiteButton.setVisible(true);
+			editProductButton.setVisible(true);
+			editEmployeesButton.setVisible(true);
+			
 		} else if (employee instanceof Receptionist) {
 			bookingButton.setVisible(true);
 			orderButton.setVisible(true);
@@ -219,5 +276,21 @@ public class MainMenuGUI extends JFrame {
 		}
 
 		dispose();
+	}
+	
+	private void editProductButtonClicked() {
+		EditProductsGUI editProductsGUI = new EditProductsGUI(employee);
+		editProductsGUI.setVisible(true);
+		dispose();
+	}
+	
+	private void editEmployeesButtonClicked() {
+		
+	}
+	
+	private void editCampsiteButtonClicked() {
+//		CreateCampsiteGUI editCampsiteGUI = new CreateCampsiteGUI(employee);
+//		editCampsiteGUI.setVisible(true);
+//		dispose();
 	}
 }
