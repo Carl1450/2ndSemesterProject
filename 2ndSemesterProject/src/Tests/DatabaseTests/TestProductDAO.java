@@ -1,4 +1,4 @@
-package Tests.DatbaseTests;
+package Tests.DatabaseTests;
 
 import Database.ConnectionEnvironment;
 import Database.DBConnection;
