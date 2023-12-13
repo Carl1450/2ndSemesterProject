@@ -1,4 +1,4 @@
-package Tests.DatbaseTests;
+package Tests.DatabaseTests;
 
 import Model.*;
 import Database.BookingDAO;
@@ -16,7 +16,6 @@ import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestBookingDAO {
-
 
     @BeforeEach
     void setUp() {

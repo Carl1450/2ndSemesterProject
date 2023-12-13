@@ -1,4 +1,4 @@
-package Tests.DatbaseTests;
+package Tests.DatabaseTests;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

@@ -22,11 +22,11 @@ public class TestTaskController {
 
     @BeforeEach
     void setUp() {
-        deleteMockData();
-        insertMockData();
+        deleteMockDataFromDatabase();
+        insertMockDataInDatabase();
     }
 
-    void insertMockData() {
+    void insertMockDataInDatabase() {
         String mockCityInsertQuery = "INSERT INTO City (zipCode, city) VALUES (1000, 'Copenhagen');";
         String mockAddressInsertQuery = "INSERT INTO [Address] (id, street, streetno, zipcode) VALUES (1, 'Bredgade', 30, 1000);";
         String mockEmployeeInsertQuery = "INSERT INTO Employee (id, fname, lname, email, phoneno, [role], cprNo, password, addressId) VALUES (1, 'Anne', 'Nielsen', 'anne.nielsen@email.com', '+45 87654321', 'Receptionist', '0101901234', 'password1', 1), (2, 'Bo', 'Nielsen', 'anne.nielsen@email.com', '+45 87654321', 'Janitor', '0101901235', 'password2', 1), (3, 'Poul', 'Nielsen', 'anne.nielsen@email.com', '+45 87654321', 'Janitor', '0101901235', 'password2', 1);";
@@ -55,10 +55,10 @@ public class TestTaskController {
 
     @AfterEach
     void tearDown() {
-        deleteMockData();
+        deleteMockDataFromDatabase();
     }
 
-    void deleteMockData() {
+    void deleteMockDataFromDatabase() {
         String deleteQuery = "DELETE FROM Task; DELETE FROM Booking; DELETE FROM Employee; DELETE FROM [Address]; DELETE FROM City;";
 
         Connection connection = DBConnection.getConnection(ConnectionEnvironment.TESTING);
