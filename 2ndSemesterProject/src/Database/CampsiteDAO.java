@@ -1,18 +1,15 @@
 package Database;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import Model.*;
+import Model.Campsite;
+import Model.Employee;
 
 public class CampsiteDAO {
 
@@ -20,6 +17,25 @@ public class CampsiteDAO {
 
 	public CampsiteDAO(ConnectionEnvironment env) {
 		this.env = env;
+	}
+	
+	public List<Campsite> getCampsites(){
+		String getCampsiteQ = "SELECT c.siteNo, c.section, c.road, c.[type], c.fee, cab.maxpeople, cab.deposit, pr.price, pr.effectiveDate "
+				+ "FROM Campsite c " + "LEFT JOIN Cabin cab ON c.siteNo = cab.siteNo "
+				+ "LEFT JOIN Pitch p ON c.siteNo = p.siteNo " + "LEFT JOIN Price pr ON c.siteNo = pr.campsiteSiteNo ";
+		List<Campsite> campsites = new ArrayList<>();
+		Connection conn = DBConnection.getConnection(env);
+		ResultSet resultSet = DBConnection.executeQuery(conn, getCampsiteQ);
+		try {
+			while(resultSet.next()) {
+				Campsite campsite = CampsiteFactory.getCampsite(resultSet);
+				campsites.add(campsite);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		DBConnection.closeConnection(conn);
+		return campsites;
 	}
 
 	public List<Campsite> getAvailableCampsites(Date startDate, Date endDate, boolean searchForCabin,
@@ -163,11 +179,12 @@ public class CampsiteDAO {
 	}
 
 	public boolean saveCampsite(int siteNo, String section, String road, String type, int maxPeople, float deposit,
-			float fee) {
+			float fee, Date effectiveDate, float price) {
 		Connection conn = DBConnection.getConnection(env);
 		String insertCampsiteQ = "INSERT INTO Campsite(siteNo, section, road, type) VALUES (?, ?, ?, ?);";
 		String insertCabinQ = "INSERT INTO Cabin(siteNo, maxPeople, deposit) VALUES (?, ?, ?);";
 		String insertPitchQ = "INSERT INTO Pitch(siteNo, fee) VALUES (?, ?)";
+		String insertPriceQ = "INSERT INTO Price(effectiveDate, price, campsiteSiteNo) VALUES (?, ?, ?);";
 
 		int rowsAffected = 0;
 
@@ -201,6 +218,15 @@ public class CampsiteDAO {
 				int pitchRowsAffected = pitchStatement.executeUpdate();
 				rowsAffected += pitchRowsAffected;
 			}
+			
+			PreparedStatement priceStatement = conn.prepareStatement(insertPriceQ);
+			priceStatement.setDate(1, effectiveDate);
+			priceStatement.setFloat(2, price);
+			priceStatement.setInt(3, siteNo);
+
+			int priceRowsAffected = priceStatement.executeUpdate();
+			rowsAffected += priceRowsAffected;
+
 			conn.commit();
 
 		} catch (SQLException e) {
@@ -224,12 +250,13 @@ public class CampsiteDAO {
 	}
 
 	public boolean updateCampsiteBySiteNo(int siteNo, String section, String road, String type, int maxPeople,
-			float deposit, float fee) {
+			float deposit, float fee, Date effectiveDate, float price) {
 		Connection conn = DBConnection.getConnection(env);
 
-		String updateCampsiteQ = "UPDATE Campsite SET siteNo = ?, section = ?, road = ?, type = ? WHERE siteNo = ? WHERE siteNo";
+		String updateCampsiteQ = "UPDATE Campsite SET siteNo = ?, section = ?, road = ?, type = ? WHERE siteNo = ? WHERE siteNo =  ?";
 		String updateCabinQ = "UPDATE Cabin SET siteNo = ?, maxPeople = ?, deposit = ? WHERE siteNo = ?";
 		String updatePitchQ = "UPDATE Pitch SET siteNo = ?, fee = ? WHERE siteNo = ?";
+		String updatePriceQ = "UPDATE Price SET effectiveDate = ?, price = ?, campsiteSiteNo = ? WHERE campsiteSiteNo = ?";
 
 		int rowsAffected = 0;
 
@@ -262,6 +289,15 @@ public class CampsiteDAO {
 				int pitchRowsAffected = pitchStatement.executeUpdate();
 				rowsAffected += pitchRowsAffected;
 			}
+			
+			PreparedStatement priceStatement = conn.prepareStatement(updatePriceQ);
+			priceStatement.setDate(1, effectiveDate);
+			priceStatement.setFloat(2, price);
+			priceStatement.setInt(3, siteNo);
+
+			int priceRowsAffected = priceStatement.executeUpdate();
+			rowsAffected += priceRowsAffected;
+			
 			conn.commit();
 
 		} catch (SQLException e) {

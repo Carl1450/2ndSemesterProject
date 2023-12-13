@@ -45,4 +45,23 @@ public class CampsiteController {
 		}
 		return validDates;
 	}
+	
+	public List<Campsite> getCampsites(){
+		return campsiteDAO.getCampsites();
+	}
+	
+	public boolean saveCampsite(int siteNo, String section, String road, String type, int maxPeople,
+			float deposit, float fee, Date effectiveDate, float price) {
+		return campsiteDAO.saveCampsite(maxPeople, section, road, type, maxPeople, deposit, fee, effectiveDate, price);
+	}
+	
+	public boolean updateCampsite(int siteNo, String section, String road, String type, int maxPeople,
+			float deposit, float fee, Date effectiveDate, float price) {
+		return campsiteDAO.updateCampsiteBySiteNo(maxPeople, section, road, type, maxPeople, deposit, fee, effectiveDate, price);
+	}
+	
+	public boolean deleteCampsite(int siteNo, String section, String road, String type, int maxPeople,
+			float deposit, float fee, Date effectiveDate, float price, int campsiteSiteNo) {
+		return campsiteDAO.saveCampsite(maxPeople, section, road, type, maxPeople, deposit, fee, effectiveDate, price);
+	}
 }
