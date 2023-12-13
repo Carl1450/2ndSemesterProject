@@ -23,12 +23,10 @@ public class TestBookingController {
     @BeforeEach
     void setUp() {
         deleteMockDataFromDatabase();
-
-        insertMockDataToDatabase();
-
+        insertMockDataInDatabase();
     }
 
-    void insertMockDataToDatabase() {
+    void insertMockDataInDatabase() {
 
         String mockCityInsertQuery = "INSERT INTO City (zipCode, city) VALUES (1000, 'Copenhagen');";
         String mockAddressInsertQuery = "INSERT INTO [Address] (id, street, streetno, zipcode) VALUES (1, 'Bredgade', 30, 1000);";
