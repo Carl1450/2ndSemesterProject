@@ -238,6 +238,9 @@ public class CreateCustomerGUI extends JFrame {
 
 		if (saved) {
 			showMessageDialog("Customer successfully saved.");
+			editCustomerGUI = new EditCustomerGUI(employee);
+			editCustomerGUI.setVisible(true);
+			dispose();
 		} else {
 			showErrorMessage("Failed to save customer.");
 		}
