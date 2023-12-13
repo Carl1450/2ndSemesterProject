@@ -21,7 +21,6 @@ import javax.swing.border.EmptyBorder;
 
 import Control.OrderController;
 import Database.ConnectionEnvironment;
-import Model.Customer;
 import Model.Employee;
 import Model.Order;
 import Model.OrderLine;
@@ -35,7 +34,7 @@ public class OrderInfoGUI extends JFrame {
 	private JTextField barcodeTextField;
 	private JTextField quantityTextField;
 	private Employee employee;
-	private ProductTableModel productTableModel;
+	private OrderLineTableModel productTableModel;
 	private ArrayList<OrderLine> orderLines;
 	private OrderController orderController;
 	private ConnectionEnvironment env = ConnectionEnvironment.PRODUCTION;
@@ -47,7 +46,7 @@ public class OrderInfoGUI extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public OrderInfoGUI(Order currentOrder, ProductTableModel productTableModel, Employee employee) {
+	public OrderInfoGUI(Order currentOrder, OrderLineTableModel productTableModel, Employee employee) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(750, 600);
 		setLocationRelativeTo(null);
@@ -176,13 +175,12 @@ public class OrderInfoGUI extends JFrame {
 		init(productTableModel, currentOrder, employee);
 	}
 
-	private void init(ProductTableModel productTableModel, Order currentOrder, Employee employee) {
+	private void init(OrderLineTableModel productTableModel, Order currentOrder, Employee employee) {
 		this.employee = employee;
 		orderController = new OrderController(employee, env, currentOrder);
-		currentOrder.setCustomer(new Customer(9999, null, null, null, null));
 		orderLines = new ArrayList<>();
 		if (productTableModel == null) {
-			productTableModel = new ProductTableModel(orderLines);
+			productTableModel = new OrderLineTableModel(orderLines);
 		} else {
 			this.productTableModel = productTableModel;
 			this.orderLines.addAll(productTableModel.getData());
@@ -238,7 +236,7 @@ public class OrderInfoGUI extends JFrame {
 	}
 
 	private void updateProductTableModel() {
-		productTableModel = new ProductTableModel(orderLines);
+		productTableModel = new OrderLineTableModel(orderLines);
 		productTableModel.setData(orderLines);
 		productTable.setModel(productTableModel);
 	}

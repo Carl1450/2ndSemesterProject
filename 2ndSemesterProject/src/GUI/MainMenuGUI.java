@@ -10,7 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -32,7 +31,7 @@ public class MainMenuGUI extends JFrame {
 	private Employee employee;
 	private JButton orderButton;
 	private JButton bookingButton;
-	private ProductTableModel productTableModel;
+	private OrderLineTableModel productTableModel;
 	private JButton taskButton;
 	private JButton editCustomerButton;
 	private JButton editCampsiteButton;
@@ -270,9 +269,9 @@ public class MainMenuGUI extends JFrame {
 			CompleteTaskGUI completeTaskGUI = new CompleteTaskGUI(employee);
 			completeTaskGUI.setVisible(true);
 		} else {
-			CreateTaskGUI createTaskGUI = new CreateTaskGUI();
-			createTaskGUI.setVisible(true);
-			dispose();
+//			CreateTaskGUI createTaskGUI = new CreateTaskGUI();
+//			createTaskGUI.setVisible(true);
+//			dispose();
 		}
 
 		dispose();
