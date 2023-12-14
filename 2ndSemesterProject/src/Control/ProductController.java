@@ -46,8 +46,32 @@ public class ProductController {
     }
 
 
-    public boolean saveProduct(int barcode, String name, int stockNumber) {
-        return productDAO.saveProduct(barcode, name, stockNumber);
+    public boolean saveProduct(String barcode, String name, String stockNumber, String price) {
+
+        boolean success = false;
+        if (!barcode.trim().equals("") || !name.trim().equals("") || !stockNumber.trim().equals("") || !price.trim().equals("")) {
+
+            int barcodeInt = -1;
+            int stockNumberInt = -1;
+            float priceFloat = -1;
+
+            try {
+                barcodeInt = Integer.parseInt(barcode);
+                stockNumberInt = Integer.parseInt(stockNumber);
+                priceFloat = Float.parseFloat(price);
+            } catch (NumberFormatException  e) {
+                e.printStackTrace();
+            }
+
+
+            success = productDAO.saveProduct(barcodeInt, name, stockNumberInt, priceFloat);
+
+        }
+
+
+        return success;
+
+
     }
 
     public boolean updateProduct(int oldBarcode, String newBarcode, String newName, String newStockNumber) {
