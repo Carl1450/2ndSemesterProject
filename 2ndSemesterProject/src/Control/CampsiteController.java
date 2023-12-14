@@ -92,6 +92,7 @@ public class CampsiteController {
 		return campsiteDAO.savePitch(siteNo);
 	}
 	
+
 	public boolean updateCampsite(int siteNo, String section, String road, String type, float fee, float price) {
 		return campsiteDAO.updateCampsite(siteNo, section, road, type, fee, price);
 	}
@@ -102,6 +103,7 @@ public class CampsiteController {
 	
 	public boolean updatePitch(int siteNo) {
 		return campsiteDAO.updatePitch(siteNo);
+
 	}
 	
 	public boolean deleteCampsite(int siteNo) {

@@ -588,3 +588,4 @@ public class CreateCampsiteGUI extends JFrame {
 	}
 
 }
+
