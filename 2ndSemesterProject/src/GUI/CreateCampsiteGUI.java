@@ -68,26 +68,11 @@ public class CreateCampsiteGUI extends JFrame {
 	private CampsiteCRUDTableModel campsiteCRUDTableModel;
 	private JButton createUpdateButton;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					CreateCampsiteGUI frame = new CreateCampsiteGUI();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the frame.
 	 */
-	public CreateCampsiteGUI() {
+	public CreateCampsiteGUI(Employee employee) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(750, 600);
 		setLocationRelativeTo(null);
