@@ -64,7 +64,7 @@ public class CampsiteController {
 	
 	public boolean updateCampsite(int siteNo, String section, String road, String type, int maxPeople,
 			float deposit, float fee, Date effectiveDate, float price) {
-		return campsiteDAO.updateCampsiteBySiteNo(maxPeople, section, road, type, maxPeople, deposit, fee, effectiveDate, price);
+		return campsiteDAO.updateCampsiteBySiteNo(maxPeople, section, road, type, maxPeople, deposit, fee, price);
 	}
 	
 	public boolean deleteCampsite(int siteNo) {
