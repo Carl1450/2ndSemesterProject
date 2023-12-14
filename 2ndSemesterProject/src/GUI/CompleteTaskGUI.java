@@ -119,7 +119,7 @@ public class CompleteTaskGUI extends JFrame {
 	}
 
 	private void updateTaskTabelModel() {
-		List<Task> tasks = taskController.getUncompletedTasks(employee.getId());
+		List<Task> tasks = taskController.getUncompletedTasks(employee.getId(), true);
 		taskTableModel = new TaskTableModel(tasks);
 		taskTableModel.setData(tasks);
 		taskTable.setModel(taskTableModel);
