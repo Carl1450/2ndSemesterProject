@@ -6,4 +6,9 @@ public class Admin extends Employee{
 		super(id, name, address, phoneNumber, email, cpr, password); 
 	}
 
+	@Override
+	public String toString() {
+		return "Admin";
+	}
+
 }

@@ -17,9 +17,12 @@ public class EmployeeController {
     private ConnectionEnvironment env;
     private EmployeeDAO employeeDAO;
 
+    private List<Employee> allEmployees;
+
     public EmployeeController(ConnectionEnvironment env) {
         this.env = env;
         employeeDAO = new EmployeeDAO(env);
+        allEmployees = new ArrayList<>();
     }
 
     public Employee findEmployeeById(int id) {
@@ -33,7 +36,7 @@ public class EmployeeController {
     public boolean validateLogin(Employee employee, String password) {
 
         if (employee != null) {
-            String enteredPasswordHash = hashPassword(password);
+            String enteredPasswordHash = hashinput(password);
             if (enteredPasswordHash.equals(employee.getPassword())) {
                 return true;
             }
@@ -41,10 +44,10 @@ public class EmployeeController {
         return false;
     }
 
-    public String hashPassword(String password) {
+    public String hashinput(String input) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hashedPassword = md.digest(password.getBytes(StandardCharsets.UTF_8));
+            byte[] hashedPassword = md.digest(input.getBytes(StandardCharsets.UTF_8));
             StringBuilder sb = new StringBuilder();
 
             for (byte b : hashedPassword) {
@@ -57,20 +60,29 @@ public class EmployeeController {
         }
     }
 
-    public List<Employee> getAllEmployees() {
-        return employeeDAO.getAllEmployees();
+    public List<Employee> getAllEmployees(boolean refresh) {
+        if (allEmployees.isEmpty() || refresh) {
+            allEmployees = employeeDAO.getAllEmployees();
+        }
+        return allEmployees;
     }
 
-    public boolean saveEmployee() {
+    public int saveEmployee(String name, String phoneNumber, String email, String address, String zipcode, String city, String role, String cprNo, String password) {
 
-        String employeeName = "";
-        String address = "";
-        String phoneNumber = "";
-        String email = "";
-        int employeeZipcode = 0;
+        String hashedCpr = hashinput(cprNo);
+        String hashedPassword = hashinput(password);
 
-        return false;
-//        return employeeDAO.saveEmployee();
+        return employeeDAO.saveEmployee(name, address, phoneNumber, email, Integer.parseInt(zipcode), city, role, hashedCpr, hashedPassword);
+
+    }
+
+    public boolean deleteEmployee(int employeeId) {
+        return employeeDAO.deleteEmployee(employeeId);
+    }
+
+    public boolean updateEmployee(int employeeId, String name, String address, int zipCode, String city, String phoneNumber, String email, String role) {
+
+        return employeeDAO.UpdateEmployee(employeeId, name, address, zipCode, city, phoneNumber, email, role);
     }
 
 }

@@ -67,11 +67,12 @@ public class EmployeeDAO {
     }
 
 
-
-    public boolean saveEmployee(String name, String address, String phoneNumber, String email, int zipCode,
-                                String city, String role, String cprNo, String password) {
+    public int saveEmployee(String name, String address, String phoneNumber, String email, int zipCode,
+                            String city, String role, String cprNo, String password) {
 
         int rowsAffected = 0;
+
+        int employeeId = -1;
 
         String insertEmployee = "INSERT INTO Employee (fname, lname, email, phoneno, addressId, [role], cprNo, [password]) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -84,13 +85,11 @@ public class EmployeeDAO {
             DBConnection.startTransaction(connection);
 
             boolean savedCity = saveCity(city, zipCode);
-            if (!savedCity) {
-                savedCity = updateCity(city, zipCode);
-            }
+
 
             int addressId = saveAddress(splitAddress[0], Integer.parseInt(splitAddress[1]), zipCode);
 
-            PreparedStatement preparedStatement = connection.prepareStatement(insertEmployee);
+            PreparedStatement preparedStatement = connection.prepareStatement(insertEmployee, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setNString(1, splitName[0]);
             preparedStatement.setNString(2, splitName[1]);
             preparedStatement.setNString(3, email);
@@ -102,9 +101,19 @@ public class EmployeeDAO {
 
             rowsAffected = preparedStatement.executeUpdate();
 
-            if (savedCity && rowsAffected > 0) {
-                DBConnection.commitTransaction(connection);
+            if (rowsAffected > 0) {
+                try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        employeeId = generatedKeys.getInt(1);
+
+                    } else {
+                        System.err.println("Failed to retrieve the generated ID for the address.");
+                    }
+                }
             }
+
+            DBConnection.commitTransaction(connection);
+
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -117,7 +126,8 @@ public class EmployeeDAO {
             DBConnection.closeConnection(connection);
         }
 
-        return rowsAffected > 0;
+        return employeeId;
+
     }
 
     private boolean saveCity(String city, int zipcode) {
@@ -136,7 +146,6 @@ public class EmployeeDAO {
 
         } catch (SQLException e) {
             if (e.getSQLState().equals("23000") && e.getErrorCode() == 2627) {
-                System.err.println("Primary key violation: The record with the specified primary key already exists.");
             } else {
                 e.printStackTrace();
             }
@@ -195,28 +204,34 @@ public class EmployeeDAO {
 
     }
 
-    public boolean UpdateEmployee(int employeeId, String name, String address, String phoneNumber, String email, int zipCode,
-                                  String city, String role) {
+    public boolean UpdateEmployee(int employeeId, String name, String address, int zipCode, String city, String phoneNumber, String email, String role) {
         int rowsAffected = 0;
 
-        String updateEmployeeQuery = "UPDATE Employee SET fname = ?, SET lname = ?, SET email = ?, SET phoneno = ?, SET AddressId = ?, SET [role] = ? WHERE id = ?;";
+        String updateEmployeeQuery = "UPDATE Employee SET fname = ?, lname = ?, email = ?, phoneno = ?, AddressId = ?, [role] = ? WHERE id = ?;";
 
         Connection connection = DBConnection.getConnection(env);
 
 
         String[] splitName = name.split("\\s+");
+        String firstName = splitName[0];
+        String lastName = splitName[1];
+
         String[] splitAddress = address.split("\\s+");
+
+        String street = splitAddress[0];
+        int streetNumber = Integer.parseInt(splitAddress[1]);
+
 
         try {
             DBConnection.startTransaction(connection);
 
             boolean updatedCity = updateCity(city, zipCode);
 
-            int addressId = saveAddress(splitAddress[0], Integer.parseInt(splitAddress[1]), zipCode);
+            int addressId = saveAddress(street, streetNumber, zipCode);
 
             PreparedStatement preparedStatement = connection.prepareStatement(updateEmployeeQuery);
-            preparedStatement.setNString(1, splitName[0]);
-            preparedStatement.setNString(2, splitName[1]);
+            preparedStatement.setNString(1, firstName);
+            preparedStatement.setNString(2, lastName);
             preparedStatement.setNString(3, email);
             preparedStatement.setNString(4, phoneNumber);
             preparedStatement.setInt(5, addressId);
@@ -229,6 +244,7 @@ public class EmployeeDAO {
 
         } catch (SQLException e) {
             try {
+                e.printStackTrace();
                 DBConnection.rollbackTransaction(connection);
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
@@ -242,7 +258,7 @@ public class EmployeeDAO {
 
 
     public boolean deleteEmployee(int employeeId) {
-        String deleteCustomerQ = "DELETE FROM Employee WHERE id = =";
+        String deleteCustomerQ = "DELETE FROM Employee WHERE id = ?";
         int rowsAffected = 0;
 
         try (Connection connection = DBConnection.getConnection(env);

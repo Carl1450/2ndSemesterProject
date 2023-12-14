@@ -19,7 +19,7 @@ public class UpdateDeleteEmployeesGUI extends JFrame {
     private JTextField phoneNumberTextField;
     private JPanel panel_1;
     private JButton backButton;
-    private JButton createUpdateButton;
+    private JButton updateButton;
     private JPanel panel_2;
     private JLabel searchForEmployeeLabel;
     private JTextField employeeSearchTextField;
@@ -43,9 +43,7 @@ public class UpdateDeleteEmployeesGUI extends JFrame {
     private JLabel roleLabel;
     private JComboBox roleComboBox;
 
-    /**
-     * Create the frame.
-     */
+
     public UpdateDeleteEmployeesGUI(Employee employee) {
 
         setSize(800, 600);
@@ -128,13 +126,14 @@ public class UpdateDeleteEmployeesGUI extends JFrame {
         panel.add(phoneNumberTextField, gbc_phoneNumberTextField);
         phoneNumberTextField.setColumns(10);
 
-        createUpdateButton = new JButton("Create");
-        createUpdateButton.addActionListener(new ActionListener() {
+        updateButton = new JButton("Update");
+        updateButton.setEnabled(false);
+        updateButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                createUpdateButtonClicked();
+                updateButtonClicked();
             }
         });
-        
+
         addressLabel = new JLabel("Address:");
         GridBagConstraints gbc_addressLabel = new GridBagConstraints();
         gbc_addressLabel.anchor = GridBagConstraints.WEST;
@@ -142,7 +141,7 @@ public class UpdateDeleteEmployeesGUI extends JFrame {
         gbc_addressLabel.gridx = 0;
         gbc_addressLabel.gridy = 3;
         panel.add(addressLabel, gbc_addressLabel);
-        
+
         addressTextField = new JTextField();
         GridBagConstraints gbc_addressTextField = new GridBagConstraints();
         gbc_addressTextField.insets = new Insets(0, 0, 5, 0);
@@ -151,7 +150,7 @@ public class UpdateDeleteEmployeesGUI extends JFrame {
         gbc_addressTextField.gridy = 3;
         panel.add(addressTextField, gbc_addressTextField);
         addressTextField.setColumns(10);
-        
+
         zipCodeLabel = new JLabel("Zipcode: ");
         GridBagConstraints gbc_zipCodeLabel = new GridBagConstraints();
         gbc_zipCodeLabel.anchor = GridBagConstraints.WEST;
@@ -159,7 +158,7 @@ public class UpdateDeleteEmployeesGUI extends JFrame {
         gbc_zipCodeLabel.gridx = 0;
         gbc_zipCodeLabel.gridy = 4;
         panel.add(zipCodeLabel, gbc_zipCodeLabel);
-        
+
         zipcodeTextField = new JTextField();
         GridBagConstraints gbc_zipcodeTextField = new GridBagConstraints();
         gbc_zipcodeTextField.insets = new Insets(0, 0, 5, 0);
@@ -168,7 +167,7 @@ public class UpdateDeleteEmployeesGUI extends JFrame {
         gbc_zipcodeTextField.gridy = 4;
         panel.add(zipcodeTextField, gbc_zipcodeTextField);
         zipcodeTextField.setColumns(10);
-        
+
         cityLabel = new JLabel("City");
         GridBagConstraints gbc_cityLabel = new GridBagConstraints();
         gbc_cityLabel.anchor = GridBagConstraints.WEST;
@@ -176,7 +175,7 @@ public class UpdateDeleteEmployeesGUI extends JFrame {
         gbc_cityLabel.gridx = 0;
         gbc_cityLabel.gridy = 5;
         panel.add(cityLabel, gbc_cityLabel);
-        
+
         cityTextField = new JTextField();
         GridBagConstraints gbc_cityTextField = new GridBagConstraints();
         gbc_cityTextField.insets = new Insets(0, 0, 5, 0);
@@ -185,7 +184,7 @@ public class UpdateDeleteEmployeesGUI extends JFrame {
         gbc_cityTextField.gridy = 5;
         panel.add(cityTextField, gbc_cityTextField);
         cityTextField.setColumns(10);
-        
+
         roleLabel = new JLabel("Role:");
         GridBagConstraints gbc_roleLabel = new GridBagConstraints();
         gbc_roleLabel.anchor = GridBagConstraints.WEST;
@@ -193,7 +192,7 @@ public class UpdateDeleteEmployeesGUI extends JFrame {
         gbc_roleLabel.gridx = 0;
         gbc_roleLabel.gridy = 6;
         panel.add(roleLabel, gbc_roleLabel);
-        
+
         roleComboBox = new JComboBox();
         GridBagConstraints gbc_roleComboBox = new GridBagConstraints();
         gbc_roleComboBox.insets = new Insets(0, 0, 5, 0);
@@ -201,11 +200,11 @@ public class UpdateDeleteEmployeesGUI extends JFrame {
         gbc_roleComboBox.gridx = 1;
         gbc_roleComboBox.gridy = 6;
         panel.add(roleComboBox, gbc_roleComboBox);
-        GridBagConstraints gbc_createUpdateButton = new GridBagConstraints();
-        gbc_createUpdateButton.insets = new Insets(0, 0, 5, 0);
-        gbc_createUpdateButton.gridx = 1;
-        gbc_createUpdateButton.gridy = 7;
-        panel.add(createUpdateButton, gbc_createUpdateButton);
+        GridBagConstraints gbc_updateButton = new GridBagConstraints();
+        gbc_updateButton.insets = new Insets(0, 0, 5, 0);
+        gbc_updateButton.gridx = 1;
+        gbc_updateButton.gridy = 7;
+        panel.add(updateButton, gbc_updateButton);
 
         deleteButton = new JButton("Delete");
         deleteButton.setEnabled(false);
@@ -318,15 +317,15 @@ public class UpdateDeleteEmployeesGUI extends JFrame {
 
                 if (selectedRow == lastSelectedRow) {
                     employeeTable.getSelectionModel().clearSelection();
-                    clearProductTextFields();
+                    clearemployeeTextFields();
                     lastSelectedRow = -1;
-                    setUpdateCreateButtonTo("Create");
                     deleteButton.setEnabled(false);
+                    updateButton.setEnabled(false);
                 } else {
                     lastSelectedRow = selectedRow;
-                    fillOutProductInfo();
-                    setUpdateCreateButtonTo("Update");
+                    fillOutEmployeeInfo();
                     deleteButton.setEnabled(true);
+                    updateButton.setEnabled(true);
                 }
             }
         });
@@ -352,6 +351,9 @@ public class UpdateDeleteEmployeesGUI extends JFrame {
         this.currentEmployee = employee;
         employeeController = new EmployeeController(ConnectionEnvironment.PRODUCTION);
         updateEmployeeTable(false);
+
+        fillOutRoleComboBox();
+
     }
 
     private void updateEmployeeTable(boolean retrieveNewData) {
@@ -361,21 +363,56 @@ public class UpdateDeleteEmployeesGUI extends JFrame {
             employeeNameString = "";
         }
 
-        List<Employee> employees = employeeController.getAllEmployees();
+        List<Employee> employees = employeeController.getAllEmployees(true);
 
         employeeTableModel = new EmployeeTableModel(employees);
         employeeTable.setModel(employeeTableModel);
     }
 
-    private void createUpdateButtonClicked() {
+    private void updateButtonClicked() {
 
 
+        // int employeeId, String name, String address, String phoneNumber, String email, int zipCode,
+        //                                  String city, String role
+        Employee employee = getSelectEmployee();
+
+        int employeeId = employee.getId();
+        String name = nameTextField.getText();
+        String address = addressTextField.getText();
+        int zipCode = Integer.parseInt(zipcodeTextField.getText());
+        String city = cityTextField.getText();
+        String phoneNumber = phoneNumberTextField.getText();
+        String email = emailTextField.getText();
+        String role = employee.toString();
+
+        if (employeeController.updateEmployee(employeeId, name, address, zipCode, city, phoneNumber, email, role)) {
+            JOptionPane.showMessageDialog(null, "Employee updated successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+            updateEmployeeTable(true);
+        } else {
+            JOptionPane.showMessageDialog(null, "Cannot update employee", "Error", JOptionPane.ERROR_MESSAGE);
+        }
 
     }
 
     private void deleteButtonClicked() {
 
+        if (employeeController.deleteEmployee(getSelectEmployee().getId())) {
+            JOptionPane.showMessageDialog(null, "Employee deleted successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+            updateEmployeeTable(true);
+            clearemployeeTextFields();
+            updateButton.setEnabled(false);
+            deleteButton.setEnabled(false);
 
+        } else {
+            JOptionPane.showMessageDialog(null, "Cannot delete employee", "Error", JOptionPane.ERROR_MESSAGE);
+
+        }
+
+
+    }
+
+    private Employee getSelectEmployee() {
+        return employeeTableModel.getEmployee(employeeTable.getSelectedRow());
     }
 
     private void backButtonClicked() {
@@ -385,17 +422,42 @@ public class UpdateDeleteEmployeesGUI extends JFrame {
     }
 
 
-    private void fillOutProductInfo() {
+    private void fillOutEmployeeInfo() {
 
+        Employee selectedEmployee = employeeTableModel.getEmployee(employeeTable.getSelectedRow());
+
+        nameTextField.setText(selectedEmployee.getName());
+        emailTextField.setText(selectedEmployee.getEmail());
+        phoneNumberTextField.setText(selectedEmployee.getPhoneNumber());
+
+        String[] addressSplit = selectedEmployee.getAddress().split(" ");
+        addressTextField.setText(addressSplit[0] + " " + addressSplit[1]);
+
+        cityTextField.setText(addressSplit[2]);
+        zipcodeTextField.setText(addressSplit[3]);
+
+        roleComboBox.setSelectedItem(selectedEmployee.toString());
 
     }
 
-    private void setUpdateCreateButtonTo(String buttonText) {
-        createUpdateButton.setText(buttonText);
+
+    private void clearemployeeTextFields() {
+        nameTextField.setText("");
+        emailTextField.setText("");
+        phoneNumberTextField.setText("");
+
+        addressTextField.setText("");
+
+        zipcodeTextField.setText("");
+        cityTextField.setText("");
+
     }
 
-    private void clearProductTextFields() {
-
+    private void fillOutRoleComboBox() {
+        String[] roles = {"SalesAssistant", "Receptionist", "Janitor", "Admin"};
+        for (String role : roles) {
+            roleComboBox.addItem(role);
+        }
     }
 
 }
