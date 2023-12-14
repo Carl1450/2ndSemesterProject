@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import com.microsoft.sqlserver.jdbc.SQLServerException;
+
 import Model.Customer;
 
 public class CustomerDAO {
@@ -57,71 +59,99 @@ public class CustomerDAO {
 
 		Connection conn = DBConnection.getConnection(env);
 		String insertCustomerQ = "INSERT INTO Customer( fname, lname, email, phoneno, addressId) VALUES (?, ?, ?, ?, ?);";
-		String insertAddressQ = "INSERT INTO Address( street, streetno, zipcode) VALUES (?, ?, ?);";
-		String insertCityQ = "INSERT INTO City( city, zipcode) VALUES (?, ?);";
+
 		int rowsAffected = 0;
 		String[] splitName = name.split("\\s+");
 		String[] splitAddress = address.split("\\s+");
 
 		try {
+			boolean savedCity = saveCity(city, zipCode);
 
-			conn.setAutoCommit(false);
+			int addressId = saveAddress(splitAddress[0], Integer.parseInt(splitAddress[1]), zipCode);
 
-			// Insert into city table
-			PreparedStatement cityStatement = conn.prepareStatement(insertCityQ);
-			cityStatement.setString(1, city);
-			cityStatement.setInt(2, zipCode);
+			PreparedStatement preparedStatement = conn.prepareStatement(insertCustomerQ);
+			preparedStatement.setNString(1, splitName[0]);
+			preparedStatement.setNString(2, splitName[1]);
+			preparedStatement.setNString(3, email);
+			preparedStatement.setNString(4, phoneNumber);
+			preparedStatement.setInt(5, addressId);
 
-			int cityRowsAffected = cityStatement.executeUpdate();
+			rowsAffected = preparedStatement.executeUpdate();
 
-			if (cityRowsAffected > 0) {
-				PreparedStatement addressStatement = conn.prepareStatement(insertAddressQ,
-						Statement.RETURN_GENERATED_KEYS);
-				addressStatement.setString(1, splitAddress[0]);
-				addressStatement.setString(2, splitAddress[1]);
-				addressStatement.setInt(3, zipCode);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
-				int addressRowsAffected = addressStatement.executeUpdate();
+		DBConnection.closeConnection(conn);
 
-				if (addressRowsAffected > 0) {
-					ResultSet addressResultSet = addressStatement.getGeneratedKeys();
-					int addressId = -1;
-					if (addressResultSet.next()) {
-						addressId = addressResultSet.getInt(1);
+		return rowsAffected > 0;
+	}
+
+	private boolean saveCity(String city, int zipcode) {
+		int rowsAffected = 0;
+
+		String insertCityQ = "INSERT INTO City( city, zipcode) VALUES (?, ?);";
+
+		Connection connection = DBConnection.getConnection(env);
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(insertCityQ);
+			preparedStatement.setNString(1, city);
+			preparedStatement.setInt(2, zipcode);
+
+			rowsAffected = preparedStatement.executeUpdate();
+
+		} catch (SQLException e) {
+			if (e.getSQLState().equals("23000") && e.getErrorCode() == 2627) {
+                    System.err.println("Primary key violation: The record with the specified primary key already exists.");
+                } else {
+                    e.printStackTrace();
+                }
+		} 
+
+		DBConnection.closeConnection(connection);
+
+		return rowsAffected > 0;
+
+	}
+
+	private int saveAddress(String street, int streetno, int zipcode) {
+		int rowsAffected = 0;
+
+		int addressID = -1;
+
+		String insertAddressQ = "INSERT INTO Address(street, streetno, zipcode) VALUES (?, ?, ?);";
+
+		Connection connection = DBConnection.getConnection(env);
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(insertAddressQ, Statement.RETURN_GENERATED_KEYS);
+			preparedStatement.setNString(1, street);
+			preparedStatement.setInt(2, streetno);
+			preparedStatement.setInt(3, zipcode);
+
+			rowsAffected = preparedStatement.executeUpdate();
+
+			if (rowsAffected > 0) {
+				try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+					if (generatedKeys.next()) {
+						addressID = generatedKeys.getInt(1);
+
+					} else {
+						System.err.println("Failed to retrieve the generated ID for the address.");
 					}
-
-					PreparedStatement customerStatement = conn.prepareStatement(insertCustomerQ);
-					customerStatement.setString(1, splitName[0]);
-					customerStatement.setString(2, splitName[1]);
-					customerStatement.setString(3, email);
-					customerStatement.setString(4, phoneNumber);
-					customerStatement.setInt(5, addressId);
-
-					rowsAffected = customerStatement.executeUpdate();
-
 				}
 			}
 
-			conn.commit();
-
 		} catch (SQLException e) {
-
-			try {
-				conn.rollback();
-			} catch (SQLException rollbackException) {
-				rollbackException.printStackTrace();
-			}
 			e.printStackTrace();
 		} finally {
-			try {
-				conn.setAutoCommit(true);
-				DBConnection.closeConnection(conn);
-			} catch (SQLException closeException) {
-				closeException.printStackTrace();
-			}
+			DBConnection.closeConnection(connection);
+
 		}
 
-		return rowsAffected > 0;
+		return addressID;
+
 	}
 
 	public void updateCustomer(Customer customer) throws SQLException {
@@ -161,6 +191,9 @@ public class CustomerDAO {
 					updateCityStmt.setInt(2, Integer.parseInt(splitAddress[3]));
 					updateCityStmt.executeUpdate();
 				}
+
+				// Commit the changes to the city information
+				connection.commit();
 
 				boolean customerExists = findCustomerByPhoneNumber(customer.getPhoneNumber()) != null;
 
