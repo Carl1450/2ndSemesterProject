@@ -110,9 +110,15 @@ public class TestCustomerDAO {
 	String newEmail = "new.email@example.com";
 	String newName = "Paul Johnson";
 
+	Customer customer = new Customer(1, newName, null, phoneNumber, newEmail);
+
 	// Act
-	SUT.updateCustomerByPhoneNumber(phoneNumber, newName, null, null, newEmail);
-	Customer updatedCustomer = SUT.findCustomerByPhoneNumber(phoneNumber);
+        try {
+            SUT.updateCustomer(customer);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        Customer updatedCustomer = SUT.findCustomerByPhoneNumber(phoneNumber);
 
 	// Assert
 	assertNotNull(updatedCustomer);
@@ -126,10 +132,15 @@ public class TestCustomerDAO {
 	CustomerDAO SUT = new CustomerDAO(ConnectionEnvironment.TESTING);
 	String invalidPhoneNumber = "00000";
 	String newEmail = "new.email@email.com";
+Customer customer = new Customer(1, null, null, null, null);
 
 	// Act
-	SUT.updateCustomerByPhoneNumber(invalidPhoneNumber, null, null, null, newEmail);
-	Customer updatedCustomer = SUT.findCustomerByPhoneNumber(invalidPhoneNumber);
+        try {
+            SUT.updateCustomer(customer);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        Customer updatedCustomer = SUT.findCustomerByPhoneNumber(invalidPhoneNumber);
 
 	// Assert
 	assertNull(updatedCustomer);
