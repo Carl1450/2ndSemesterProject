@@ -229,25 +229,40 @@ public class UpdateCustomerGUI extends JFrame {
 		String newName = nameTextField.getText();
 		String newPhoneNumber = phoneNumberTextField.getText();
 		String newEmail = emailTextField.getText();
-		String newAddress = addressTextField.getText();
+		String newStreet = addressTextField.getText();
 		String newZipCode = zipCodeTextField.getText();
 		String newCity = cityTextField.getText();
+
+		String newAddress = newStreet + " " + newCity + " " + newZipCode;
 
 		if (!newName.equals(oldName) || !newPhoneNumber.equals(oldPhoneNumber) || !newEmail.equals(oldEmail)
 				|| !newAddress.equals(oldAddress)) {
 
-			// Assuming you have an instance of CustomerController named customerController
-			customerController.updateCustomer(customer);
+			// Debugging: Print values before setting
+			System.out.println("Before setting values:");
+			System.out.println("newName: " + newName);
+			System.out.println("newPhoneNumber: " + newPhoneNumber);
+			System.out.println("newEmail: " + newEmail);
+			System.out.println("newAddress: " + newAddress);
 
 			customer.setName(newName);
 			customer.setPhoneNumber(newPhoneNumber);
 			customer.setEmail(newEmail);
-			customer.setAddress(newAddress + " " + newCity + " " + newZipCode);
+			customer.setAddress(newAddress);
+
+			// Debugging: Print values after setting
+			System.out.println("After setting values:");
+			System.out.println("customer.getName(): " + customer.getName());
+			System.out.println("customer.getPhoneNumber(): " + customer.getPhoneNumber());
+			System.out.println("customer.getEmail(): " + customer.getEmail());
+			System.out.println("customer.getAddress(): " + customer.getAddress());
+
+			customerController.updateCustomer(customer);
 
 			System.out.println("Customer information successfully updated.");
 		} else {
 			System.out.println("No changes to update.");
 		}
-	}
 
+	}
 }
