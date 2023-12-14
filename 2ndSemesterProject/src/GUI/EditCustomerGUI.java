@@ -1,23 +1,22 @@
 package GUI;
 
+import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import Model.Employee;
-
-import java.awt.BorderLayout;
-import javax.swing.JLabel;
-import java.awt.GridBagLayout;
-import javax.swing.JButton;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import java.awt.FlowLayout;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.Font;
 
 public class EditCustomerGUI extends JFrame {
 
@@ -25,6 +24,7 @@ public class EditCustomerGUI extends JFrame {
 	private JPanel contentPane;
 	private MainMenuGUI mainMenuGUI;
 	private Employee employee;
+	private FindUpdateCustomerGUI findUpdateCustomerGUI;
 
 	/**
 	 * Launch the application.
@@ -86,6 +86,11 @@ public class EditCustomerGUI extends JFrame {
 		panel_1.add(createCustomerButton, gbc_createCustomerButton);
 
 		JButton updateCustomerButton = new JButton("Update Customer");
+		updateCustomerButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				updateCustomerButtonClicked();
+			}
+		});
 		GridBagConstraints gbc_updateCustomerButton = new GridBagConstraints();
 		gbc_updateCustomerButton.insets = new Insets(0, 0, 5, 0);
 		gbc_updateCustomerButton.gridx = 0;
@@ -130,7 +135,9 @@ public class EditCustomerGUI extends JFrame {
 	}
 
 	private void updateCustomerButtonClicked() {
-
+		findUpdateCustomerGUI = new FindUpdateCustomerGUI();
+		findUpdateCustomerGUI.setVisible(true);
+		dispose();
 	}
 
 	private void deleteCustomerButtonClicked() {

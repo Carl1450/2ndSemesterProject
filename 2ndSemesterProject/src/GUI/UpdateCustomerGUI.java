@@ -1,28 +1,28 @@
 package GUI;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import Control.CustomerController;
 import Database.ConnectionEnvironment;
-import Model.Employee;
+import Model.Customer;
 
-public class CreateCustomerGUI extends JFrame {
+import java.awt.BorderLayout;
+import javax.swing.JLabel;
+import javax.swing.JButton;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import javax.swing.JTextField;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+public class UpdateCustomerGUI extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -33,15 +33,8 @@ public class CreateCustomerGUI extends JFrame {
 	private JTextField zipCodeTextField;
 	private JTextField cityTextField;
 
+	private Customer customer;
 	private CustomerController customerController;
-	private String name;
-	private String phoneNumber;
-	private String email;
-	private String address;
-	private int zipCode;
-	private String city;
-	private Employee employee;
-	private EditCustomerGUI editCustomerGUI;
 
 	/**
 	 * Launch the application.
@@ -50,7 +43,7 @@ public class CreateCustomerGUI extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					CreateCustomerGUI frame = new CreateCustomerGUI(null);
+					UpdateCustomerGUI frame = new UpdateCustomerGUI(null);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -62,13 +55,12 @@ public class CreateCustomerGUI extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public CreateCustomerGUI(Employee employee) {
-		this.employee = employee;
+	public UpdateCustomerGUI(Customer customer) {
+		this.customer = customer;
 		customerController = new CustomerController(ConnectionEnvironment.PRODUCTION);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(450, 300);
-		setLocationRelativeTo(null);
+		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -78,26 +70,42 @@ public class CreateCustomerGUI extends JFrame {
 		JPanel panel = new JPanel();
 		contentPane.add(panel, BorderLayout.NORTH);
 
-		JLabel createCustomerLabel = new JLabel("Create Customer");
-		createCustomerLabel.setFont(new Font("Lucida Grande", Font.BOLD, 16));
-		panel.add(createCustomerLabel);
+		JLabel updateCustomerLabel = new JLabel("Update Customer");
+		updateCustomerLabel.setFont(new Font("Lucida Grande", Font.BOLD, 16));
+		panel.add(updateCustomerLabel);
 
 		JPanel panel_1 = new JPanel();
-		contentPane.add(panel_1, BorderLayout.CENTER);
-		GridBagLayout gbl_panel_1 = new GridBagLayout();
-		gbl_panel_1.columnWidths = new int[] { 0, 0, 0 };
-		gbl_panel_1.rowHeights = new int[] { 25, 25, 25, 25, 25, 25, 25 };
-		gbl_panel_1.columnWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
-		gbl_panel_1.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
-		panel_1.setLayout(gbl_panel_1);
+		FlowLayout flowLayout = (FlowLayout) panel_1.getLayout();
+		flowLayout.setAlignment(FlowLayout.RIGHT);
+		contentPane.add(panel_1, BorderLayout.SOUTH);
+
+		JButton backButton = new JButton("Back");
+		panel_1.add(backButton);
+
+		JButton updateButton = new JButton("Update");
+		updateButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				updateButtonClicked();
+			}
+		});
+		panel_1.add(updateButton);
+
+		JPanel panel_2 = new JPanel();
+		contentPane.add(panel_2, BorderLayout.CENTER);
+		GridBagLayout gbl_panel_2 = new GridBagLayout();
+		gbl_panel_2.columnWidths = new int[] { 0, 0, 0 };
+		gbl_panel_2.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0 };
+		gbl_panel_2.columnWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
+		gbl_panel_2.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		panel_2.setLayout(gbl_panel_2);
 
 		JLabel nameLabel = new JLabel("Name:");
 		GridBagConstraints gbc_nameLabel = new GridBagConstraints();
-		gbc_nameLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_nameLabel.anchor = GridBagConstraints.WEST;
+		gbc_nameLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_nameLabel.gridx = 0;
 		gbc_nameLabel.gridy = 0;
-		panel_1.add(nameLabel, gbc_nameLabel);
+		panel_2.add(nameLabel, gbc_nameLabel);
 
 		nameTextField = new JTextField();
 		GridBagConstraints gbc_nameTextField = new GridBagConstraints();
@@ -105,7 +113,7 @@ public class CreateCustomerGUI extends JFrame {
 		gbc_nameTextField.fill = GridBagConstraints.HORIZONTAL;
 		gbc_nameTextField.gridx = 1;
 		gbc_nameTextField.gridy = 0;
-		panel_1.add(nameTextField, gbc_nameTextField);
+		panel_2.add(nameTextField, gbc_nameTextField);
 		nameTextField.setColumns(10);
 
 		JLabel phoneNumberLabel = new JLabel("Phone Number:");
@@ -114,7 +122,7 @@ public class CreateCustomerGUI extends JFrame {
 		gbc_phoneNumberLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_phoneNumberLabel.gridx = 0;
 		gbc_phoneNumberLabel.gridy = 1;
-		panel_1.add(phoneNumberLabel, gbc_phoneNumberLabel);
+		panel_2.add(phoneNumberLabel, gbc_phoneNumberLabel);
 
 		phoneNumberTextField = new JTextField();
 		GridBagConstraints gbc_phoneNumberTextField = new GridBagConstraints();
@@ -122,7 +130,7 @@ public class CreateCustomerGUI extends JFrame {
 		gbc_phoneNumberTextField.fill = GridBagConstraints.HORIZONTAL;
 		gbc_phoneNumberTextField.gridx = 1;
 		gbc_phoneNumberTextField.gridy = 1;
-		panel_1.add(phoneNumberTextField, gbc_phoneNumberTextField);
+		panel_2.add(phoneNumberTextField, gbc_phoneNumberTextField);
 		phoneNumberTextField.setColumns(10);
 
 		JLabel emailLabel = new JLabel("Email:");
@@ -131,7 +139,7 @@ public class CreateCustomerGUI extends JFrame {
 		gbc_emailLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_emailLabel.gridx = 0;
 		gbc_emailLabel.gridy = 2;
-		panel_1.add(emailLabel, gbc_emailLabel);
+		panel_2.add(emailLabel, gbc_emailLabel);
 
 		emailTextField = new JTextField();
 		GridBagConstraints gbc_emailTextField = new GridBagConstraints();
@@ -139,7 +147,7 @@ public class CreateCustomerGUI extends JFrame {
 		gbc_emailTextField.fill = GridBagConstraints.HORIZONTAL;
 		gbc_emailTextField.gridx = 1;
 		gbc_emailTextField.gridy = 2;
-		panel_1.add(emailTextField, gbc_emailTextField);
+		panel_2.add(emailTextField, gbc_emailTextField);
 		emailTextField.setColumns(10);
 
 		JLabel addressLabel = new JLabel("Address:");
@@ -148,7 +156,7 @@ public class CreateCustomerGUI extends JFrame {
 		gbc_addressLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_addressLabel.gridx = 0;
 		gbc_addressLabel.gridy = 3;
-		panel_1.add(addressLabel, gbc_addressLabel);
+		panel_2.add(addressLabel, gbc_addressLabel);
 
 		addressTextField = new JTextField();
 		GridBagConstraints gbc_addressTextField = new GridBagConstraints();
@@ -156,7 +164,7 @@ public class CreateCustomerGUI extends JFrame {
 		gbc_addressTextField.fill = GridBagConstraints.HORIZONTAL;
 		gbc_addressTextField.gridx = 1;
 		gbc_addressTextField.gridy = 3;
-		panel_1.add(addressTextField, gbc_addressTextField);
+		panel_2.add(addressTextField, gbc_addressTextField);
 		addressTextField.setColumns(10);
 
 		JLabel zipCodeLabel = new JLabel("Zip Code:");
@@ -165,7 +173,7 @@ public class CreateCustomerGUI extends JFrame {
 		gbc_zipCodeLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_zipCodeLabel.gridx = 0;
 		gbc_zipCodeLabel.gridy = 4;
-		panel_1.add(zipCodeLabel, gbc_zipCodeLabel);
+		panel_2.add(zipCodeLabel, gbc_zipCodeLabel);
 
 		zipCodeTextField = new JTextField();
 		GridBagConstraints gbc_zipCodeTextField = new GridBagConstraints();
@@ -173,7 +181,7 @@ public class CreateCustomerGUI extends JFrame {
 		gbc_zipCodeTextField.fill = GridBagConstraints.HORIZONTAL;
 		gbc_zipCodeTextField.gridx = 1;
 		gbc_zipCodeTextField.gridy = 4;
-		panel_1.add(zipCodeTextField, gbc_zipCodeTextField);
+		panel_2.add(zipCodeTextField, gbc_zipCodeTextField);
 		zipCodeTextField.setColumns(10);
 
 		JLabel cityLabel = new JLabel("City:");
@@ -182,80 +190,64 @@ public class CreateCustomerGUI extends JFrame {
 		gbc_cityLabel.insets = new Insets(0, 0, 0, 5);
 		gbc_cityLabel.gridx = 0;
 		gbc_cityLabel.gridy = 5;
-		panel_1.add(cityLabel, gbc_cityLabel);
+		panel_2.add(cityLabel, gbc_cityLabel);
 
 		cityTextField = new JTextField();
 		GridBagConstraints gbc_cityTextField = new GridBagConstraints();
 		gbc_cityTextField.fill = GridBagConstraints.HORIZONTAL;
 		gbc_cityTextField.gridx = 1;
 		gbc_cityTextField.gridy = 5;
-		panel_1.add(cityTextField, gbc_cityTextField);
+		panel_2.add(cityTextField, gbc_cityTextField);
 		cityTextField.setColumns(10);
 
-		JPanel panel_2 = new JPanel();
-		FlowLayout flowLayout = (FlowLayout) panel_2.getLayout();
-		flowLayout.setAlignment(FlowLayout.RIGHT);
-		contentPane.add(panel_2, BorderLayout.SOUTH);
-
-		JButton cancelButton = new JButton("Cancel");
-		cancelButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				cancelButtonClicked();
-			}
-		});
-		panel_2.add(cancelButton);
-
-		JButton createButton = new JButton("Create");
-		createButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				createButtonClicked();
-			}
-		});
-		panel_2.add(createButton);
-	}
-
-	private void getTextFieldData() {
-		name = nameTextField.getText();
-		phoneNumber = phoneNumberTextField.getText();
-		email = emailTextField.getText();
-		address = addressTextField.getText();
-
-		try {
-			zipCode = Integer.parseInt(zipCodeTextField.getText());
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		}
-		city = cityTextField.getText();
+		init();
 
 	}
 
-	private void createButtonClicked() {
-		getTextFieldData();
+	private void init() {
+		setTextFields();
+	}
 
-		boolean saved = customerController.saveCustomerToDB(name, address, phoneNumber, email, zipCode, city);
+	private void setTextFields() {
+		nameTextField.setText(customer.getName());
+		phoneNumberTextField.setText(customer.getPhoneNumber());
+		emailTextField.setText(customer.getEmail());
 
-		if (saved) {
-			showMessageDialog("Customer successfully saved.");
-			editCustomerGUI = new EditCustomerGUI(employee);
-			editCustomerGUI.setVisible(true);
-			dispose();
+		String[] splitAddress = customer.getAddress().split("\\s+");
+
+		addressTextField.setText(splitAddress[0] + " " + splitAddress[1]);
+		zipCodeTextField.setText(splitAddress[3]);
+		cityTextField.setText(splitAddress[2]);
+	}
+
+	private void updateButtonClicked() {
+		String oldName = customer.getName();
+		String oldPhoneNumber = customer.getPhoneNumber();
+		String oldEmail = customer.getEmail();
+		String oldAddress = customer.getAddress();
+
+		String newName = nameTextField.getText();
+		String newPhoneNumber = phoneNumberTextField.getText();
+		String newEmail = emailTextField.getText();
+		String newAddress = addressTextField.getText();
+		String newZipCode = zipCodeTextField.getText();
+		String newCity = cityTextField.getText();
+
+		if (!newName.equals(oldName) || !newPhoneNumber.equals(oldPhoneNumber) || !newEmail.equals(oldEmail)
+				|| !newAddress.equals(oldAddress)) {
+
+			// Assuming you have an instance of CustomerController named customerController
+			customerController.updateCustomer(customer);
+
+			customer.setName(newName);
+			customer.setPhoneNumber(newPhoneNumber);
+			customer.setEmail(newEmail);
+			customer.setAddress(newAddress + " " + newCity + " " + newZipCode);
+
+			System.out.println("Customer information successfully updated.");
 		} else {
-			showErrorMessage("Failed to save customer.");
+			System.out.println("No changes to update.");
 		}
-	}
-
-	private void showMessageDialog(String message) {
-		JOptionPane.showMessageDialog(this, message, "Success", JOptionPane.INFORMATION_MESSAGE);
-	}
-
-	private void showErrorMessage(String message) {
-		JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
-	}
-
-	private void cancelButtonClicked() {
-		editCustomerGUI = new EditCustomerGUI(employee);
-		editCustomerGUI.setVisible(true);
-		dispose();
 	}
 
 }
