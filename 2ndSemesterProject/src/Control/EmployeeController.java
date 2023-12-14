@@ -56,4 +56,21 @@ public class EmployeeController {
             return null;
         }
     }
+
+    public List<Employee> getAllEmployees() {
+        return employeeDAO.getAllEmployees();
+    }
+
+    public boolean saveEmployee() {
+
+        String employeeName = "";
+        String address = "";
+        String phoneNumber = "";
+        String email = "";
+        int employeeZipcode = 0;
+
+        return false;
+//        return employeeDAO.saveEmployee();
+    }
+
 }
