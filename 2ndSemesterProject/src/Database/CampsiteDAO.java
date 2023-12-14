@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,8 +19,8 @@ public class CampsiteDAO {
 	public CampsiteDAO(ConnectionEnvironment env) {
 		this.env = env;
 	}
-	
-	public List<Campsite> getCampsites(){
+
+	public List<Campsite> getCampsites() {
 		String getCampsiteQ = "SELECT c.siteNo, c.section, c.road, c.[type], c.fee, cab.maxpeople, cab.deposit, pr.price, pr.effectiveDate "
 				+ "FROM Campsite c " + "LEFT JOIN Cabin cab ON c.siteNo = cab.siteNo "
 				+ "LEFT JOIN Pitch p ON c.siteNo = p.siteNo " + "LEFT JOIN Price pr ON c.siteNo = pr.campsiteSiteNo ";
@@ -27,7 +28,7 @@ public class CampsiteDAO {
 		Connection conn = DBConnection.getConnection(env);
 		ResultSet resultSet = DBConnection.executeQuery(conn, getCampsiteQ);
 		try {
-			while(resultSet.next()) {
+			while (resultSet.next()) {
 				Campsite campsite = CampsiteFactory.getCampsite(resultSet);
 				campsites.add(campsite);
 			}
@@ -178,13 +179,10 @@ public class CampsiteDAO {
 		}
 	}
 
-	public boolean saveCampsite(int siteNo, String section, String road, String type, int maxPeople, float deposit,
-			float fee, Date effectiveDate, float price) {
+	public boolean saveCampsite(int siteNo, String section, String road, String type, float price) {
 		Connection conn = DBConnection.getConnection(env);
 		String insertCampsiteQ = "INSERT INTO Campsite(siteNo, section, road, type) VALUES (?, ?, ?, ?);";
-		String insertCabinQ = "INSERT INTO Cabin(siteNo, maxPeople, deposit) VALUES (?, ?, ?);";
-		String insertPitchQ = "INSERT INTO Pitch(siteNo, fee) VALUES (?, ?)";
-		String insertPriceQ = "INSERT INTO Price(effectiveDate, price, campsiteSiteNo) VALUES (?, ?, ?);";
+		String insertPriceQ = "INSERT INTO Price(price, campsiteSiteNo) VALUES (?, ?);";
 
 		int rowsAffected = 0;
 
@@ -200,35 +198,92 @@ public class CampsiteDAO {
 			int campsiteRowsAffected = campsiteStatement.executeUpdate();
 			rowsAffected += campsiteRowsAffected;
 
-			if (campsiteRowsAffected > 0 && type.equals("Cabin")) {
-				PreparedStatement cabinStatement = conn.prepareStatement(insertCabinQ);
-				cabinStatement.setInt(1, siteNo);
-				cabinStatement.setInt(2, maxPeople);
-				cabinStatement.setFloat(3, deposit);
 
-				int cabinRowsAffected = cabinStatement.executeUpdate();
-				rowsAffected += cabinRowsAffected;
+			PreparedStatement priceStatement = conn.prepareStatement(insertPriceQ);
+			priceStatement.setFloat(1, price);
+			priceStatement.setInt(2, siteNo);
+			
+			
+			int priceRowsAffected = priceStatement.executeUpdate();
+			
+			rowsAffected += priceRowsAffected;
+
+			conn.commit();
+
+		} catch (SQLException e) {
+
+			try {
+				conn.rollback();
+			} catch (SQLException rollbackException) {
+				rollbackException.printStackTrace();
 			}
+			e.printStackTrace();
+		} finally {
+			try {
+				conn.setAutoCommit(true);
+				DBConnection.closeConnection(conn);
+			} catch (SQLException closeException) {
+				closeException.printStackTrace();
+			}
+		}
 
-			if (campsiteRowsAffected > 0 && type.equals("Pitch")) {
+		return rowsAffected > 0;
+	}
+	
+	public boolean savePitch(int siteNo, float fee) {
+		Connection conn = DBConnection.getConnection(env);
+		String insertPitchQ = "INSERT INTO Pitch(siteNo, fee) VALUES (?, ?)";
+
+		int rowsAffected = 0;
+
+		try {
+			conn.setAutoCommit(false);
 				PreparedStatement pitchStatement = conn.prepareStatement(insertPitchQ);
 				pitchStatement.setInt(1, siteNo);
 				pitchStatement.setFloat(2, fee);
 
 				int pitchRowsAffected = pitchStatement.executeUpdate();
 				rowsAffected += pitchRowsAffected;
-			}
-			
-			PreparedStatement priceStatement = conn.prepareStatement(insertPriceQ);
-			priceStatement.setDate(1, effectiveDate);
-			priceStatement.setFloat(2, price);
-			priceStatement.setInt(3, siteNo);
-
-			int priceRowsAffected = priceStatement.executeUpdate();
-			rowsAffected += priceRowsAffected;
-
 			conn.commit();
 
+		} catch (SQLException e) {
+
+			try {
+				conn.rollback();
+			} catch (SQLException rollbackException) {
+				rollbackException.printStackTrace();
+			}
+			e.printStackTrace();
+		} finally {
+			try {
+				conn.setAutoCommit(true);
+				DBConnection.closeConnection(conn);
+			} catch (SQLException closeException) {
+				closeException.printStackTrace();
+			}
+		}
+
+		return rowsAffected > 0;
+	}
+
+	public boolean saveCabin(int siteNo, int maxPeople, float deposit) {
+		Connection conn = DBConnection.getConnection(env);
+		String insertCabinQ = "INSERT INTO Cabin(siteNo, maxPeople, deposit) VALUES (?, ?, ?);";
+		int rowsAffected = 0;
+
+		try {
+			conn.setAutoCommit(false);
+
+			PreparedStatement cabinStatement = conn.prepareStatement(insertCabinQ);
+			cabinStatement.setInt(1, siteNo);
+			cabinStatement.setInt(2, maxPeople);
+			cabinStatement.setFloat(3, deposit);
+
+			int cabinRowsAffected = cabinStatement.executeUpdate();
+			rowsAffected += cabinRowsAffected;
+
+			conn.commit();
+			
 		} catch (SQLException e) {
 
 			try {
@@ -289,7 +344,7 @@ public class CampsiteDAO {
 				int pitchRowsAffected = pitchStatement.executeUpdate();
 				rowsAffected += pitchRowsAffected;
 			}
-			
+
 			PreparedStatement priceStatement = conn.prepareStatement(updatePriceQ);
 			priceStatement.setDate(1, effectiveDate);
 			priceStatement.setFloat(2, price);
@@ -297,7 +352,7 @@ public class CampsiteDAO {
 
 			int priceRowsAffected = priceStatement.executeUpdate();
 			rowsAffected += priceRowsAffected;
-			
+
 			conn.commit();
 
 		} catch (SQLException e) {
