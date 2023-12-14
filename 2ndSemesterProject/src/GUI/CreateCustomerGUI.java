@@ -232,6 +232,16 @@ public class CreateCustomerGUI extends JFrame {
 	private void createButtonClicked() {
 		getTextFieldData();
 
+		if (!isValidName(name)) {
+			showErrorMessage("Please enter a valid name with both first name and last name.");
+			return;
+		}
+
+		if (!isValidAddress(address)) {
+			showErrorMessage("Please enter valid address with street name and number.");
+			return;
+		}
+
 		boolean saved = customerController.saveCustomerToDB(name, address, phoneNumber, email, zipCode, city);
 
 		if (saved) {
@@ -250,6 +260,16 @@ public class CreateCustomerGUI extends JFrame {
 
 	private void showErrorMessage(String message) {
 		JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+	}
+
+	private boolean isValidName(String fullName) {
+		String[] nameParts = fullName.split(" ");
+		return nameParts.length == 2 && !nameParts[0].isEmpty() && !nameParts[1].isEmpty();
+	}
+
+	private boolean isValidAddress(String fullAddress) {
+		String[] addressParts = fullAddress.split(" ");
+		return addressParts.length == 2 && !addressParts[0].isEmpty() && !addressParts[1].isEmpty();
 	}
 
 	private void cancelButtonClicked() {

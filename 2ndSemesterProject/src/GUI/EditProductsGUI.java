@@ -37,13 +37,18 @@ public class EditProductsGUI extends JFrame {
     private ProductController productController;
 
     private int lastSelectedRow;
+    private JLabel priceLabel;
+    private JTextField priceTextField;
 
     /**
      * Create the frame.
      */
     public EditProductsGUI(Employee employee) {
+
+        setSize(800, 600);
+        setLocationRelativeTo(null);
+
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 100, 450, 300);
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -64,12 +69,12 @@ public class EditProductsGUI extends JFrame {
         contentPane.add(panel, gbc_panel);
         GridBagLayout gbl_panel = new GridBagLayout();
         gbl_panel.columnWidths = new int[]{0, 0, 0};
-        gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
+        gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0};
         gbl_panel.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-        gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+        gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
         panel.setLayout(gbl_panel);
 
-        JLabel BarcodeLabel = new JLabel("Barcode");
+        JLabel BarcodeLabel = new JLabel("Barcode:");
         GridBagConstraints gbc_BarcodeLabel = new GridBagConstraints();
         gbc_BarcodeLabel.insets = new Insets(0, 0, 5, 5);
         gbc_BarcodeLabel.anchor = GridBagConstraints.WEST;
@@ -86,7 +91,7 @@ public class EditProductsGUI extends JFrame {
         panel.add(barcodeTextField, gbc_barcodeTextField);
         barcodeTextField.setColumns(10);
 
-        JLabel NameLabel = new JLabel("Name");
+        JLabel NameLabel = new JLabel("Name:");
         GridBagConstraints gbc_NameLabel = new GridBagConstraints();
         gbc_NameLabel.anchor = GridBagConstraints.WEST;
         gbc_NameLabel.insets = new Insets(0, 0, 5, 5);
@@ -103,7 +108,7 @@ public class EditProductsGUI extends JFrame {
         panel.add(nameTextField, gbc_nameTextField);
         nameTextField.setColumns(10);
 
-        JLabel stockNumberLabel = new JLabel("Stock number");
+        JLabel stockNumberLabel = new JLabel("Stock number:");
         GridBagConstraints gbc_stockNumberLabel = new GridBagConstraints();
         gbc_stockNumberLabel.anchor = GridBagConstraints.WEST;
         gbc_stockNumberLabel.insets = new Insets(0, 0, 5, 5);
@@ -126,10 +131,27 @@ public class EditProductsGUI extends JFrame {
                 createUpdateButtonClicked();
             }
         });
+        
+        priceLabel = new JLabel("Price:");
+        GridBagConstraints gbc_priceLabel = new GridBagConstraints();
+        gbc_priceLabel.anchor = GridBagConstraints.WEST;
+        gbc_priceLabel.insets = new Insets(0, 0, 5, 5);
+        gbc_priceLabel.gridx = 0;
+        gbc_priceLabel.gridy = 3;
+        panel.add(priceLabel, gbc_priceLabel);
+        
+        priceTextField = new JTextField();
+        GridBagConstraints gbc_priceTextField = new GridBagConstraints();
+        gbc_priceTextField.insets = new Insets(0, 0, 5, 0);
+        gbc_priceTextField.fill = GridBagConstraints.HORIZONTAL;
+        gbc_priceTextField.gridx = 1;
+        gbc_priceTextField.gridy = 3;
+        panel.add(priceTextField, gbc_priceTextField);
+        priceTextField.setColumns(10);
         GridBagConstraints gbc_createUpdateButton = new GridBagConstraints();
         gbc_createUpdateButton.insets = new Insets(0, 0, 5, 0);
         gbc_createUpdateButton.gridx = 1;
-        gbc_createUpdateButton.gridy = 3;
+        gbc_createUpdateButton.gridy = 4;
         panel.add(createUpdateButton, gbc_createUpdateButton);
 
         deleteButton = new JButton("Delete");
@@ -141,7 +163,7 @@ public class EditProductsGUI extends JFrame {
         });
         GridBagConstraints gbc_deleteButton = new GridBagConstraints();
         gbc_deleteButton.gridx = 1;
-        gbc_deleteButton.gridy = 4;
+        gbc_deleteButton.gridy = 5;
         panel.add(deleteButton, gbc_deleteButton);
 
         panel_1 = new JPanel();
@@ -246,6 +268,7 @@ public class EditProductsGUI extends JFrame {
                     clearProductTextFields();
                     lastSelectedRow = -1;
                     setUpdateCreateButtonTo("Create");
+                    deleteButton.setEnabled(false);
                 } else {
                     lastSelectedRow = selectedRow;
                     fillOutProductInfo();
@@ -296,9 +319,10 @@ public class EditProductsGUI extends JFrame {
         String barcode = barcodeTextField.getText();
         String productName = nameTextField.getText();
         String stockNumber = stockNumberTextField.getText();
+        String price = priceTextField.getText();
 
         if (createUpdateButton.getText().equals("Create")) {
-            productController.saveProduct(Integer.parseInt(barcode), productName, Integer.parseInt(stockNumber));
+            productController.saveProduct(barcode, productName, stockNumber, price);
         } else if (createUpdateButton.getText().equals("Update")) {
             Product product = productTableModel.getProduct(productTable.getSelectedRow());
             productController.updateProduct(product.getBarcode(), barcode, productName, stockNumber);
@@ -333,6 +357,7 @@ public class EditProductsGUI extends JFrame {
         barcodeTextField.setText(Integer.toString(product.getBarcode()));
         nameTextField.setText(product.getName());
         stockNumberTextField.setText(Integer.toString(product.getStockNumber()));
+        priceTextField.setText(Float.toString(product.getPrice().getPrice()));
 
     }
 
@@ -344,6 +369,7 @@ public class EditProductsGUI extends JFrame {
         barcodeTextField.setText("");
         nameTextField.setText("");
         stockNumberTextField.setText("");
+        priceTextField.setText("");
     }
 
 }

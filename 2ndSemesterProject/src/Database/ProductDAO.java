@@ -92,23 +92,34 @@ public class ProductDAO {
     }
 
 
-	public boolean saveProduct(int barcode, String name, int stockNumber) {
+	public boolean saveProduct(int barcode, String name, int stockNumber, float price) {
 		
 		Connection conn = DBConnection.getConnection(env);
-		String insertProductQ = "INSERT INTO Product(barcode, name, stockNO) VALUES (?, ?, ?);";
+
+		String insertProductQuery = "INSERT INTO Product(barcode, name, stockNO) VALUES (?, ?, ?);";
+
+		String insertPriceQuery = "INSERT INTO Price (price, productId) Values (?, ?);";
+
+		String insertProductAndPriceQuery = insertProductQuery + insertPriceQuery;
+
 		int rowsAffected = 0;
 		
 		try {
-			PreparedStatement prepStat = conn.prepareStatement(insertProductQ);
+			PreparedStatement prepStat = conn.prepareStatement(insertProductAndPriceQuery);
             prepStat.setInt(1, barcode);
             prepStat.setString(2, name);
             prepStat.setInt(3, stockNumber);
+
+			prepStat.setFloat(4, price);
+			prepStat.setInt(5, barcode);
             
             rowsAffected = prepStat.executeUpdate();
 		} catch (SQLException e) {
             e.printStackTrace();
         }
-		
+
+		DBConnection.closeConnection(conn);
+
 		return rowsAffected > 0;
 	}
 
