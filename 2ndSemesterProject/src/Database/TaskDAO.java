@@ -63,10 +63,13 @@ public class TaskDAO {
 
     public ArrayList<Task> getUncompletedTasks(int janitorId, boolean useJanitorId) {
 	String getUncompletedTasksQuery = "SELECT task.id, [priority], [description], startDate, deadLine, receptionistId, "
-		+ "fname, lname, email, phoneno, cprNo, " + "street, streetno, [address].zipcode, city " + "FROM task "
-		+ "LEFT JOIN employee ON task.janitorId = employee.id "
+		+ "fname, lname, email, phoneno, cprNo, "
+		+ "street, streetno, [address].zipcode, city "
+		+ "FROM task "
+		+ "LEFT JOIN employee ON task.receptionistId = employee.id "
 		+ "LEFT JOIN [address] ON addressId = [address].id "
-		+ "LEFT JOIN City ON [address].zipcode = city.zipcode " + "WHERE completed = 0";
+		+ "LEFT JOIN City ON [address].zipcode = city.zipcode "
+		+ "WHERE completed = 0";
 
 	if (useJanitorId) {
 	    getUncompletedTasksQuery += " AND JanitorId = ?";
@@ -89,7 +92,7 @@ public class TaskDAO {
 		Date startDate = rs.getDate("startDate");
 		Date deadLine = rs.getDate("deadLine");
 		int receptionistId = rs.getInt("receptionistId");
-		String employeeName = rs.getString("fname") + rs.getString("lname");
+		String employeeName = rs.getString("fname") + " " + rs.getString("lname");
 		String email = rs.getString("email");
 		String phoneNumber = rs.getString("phoneno");
 		String cpr = rs.getString("cprno");

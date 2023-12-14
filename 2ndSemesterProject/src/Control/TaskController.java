@@ -30,6 +30,11 @@ public class TaskController {
         currentTask = new Task(0, description, priority, deadline, receptionist, null);
         return currentTask;
     }
+    
+    public boolean saveTask() {
+	return taskDAO.saveTask(currentTask);
+	
+    }
 
     public List<Janitor> getAllJanitors() {
         List<Janitor> janitors = null;
