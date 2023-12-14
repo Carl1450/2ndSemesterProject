@@ -55,8 +55,8 @@ public class TaskController {
         return result;
     }
 
-    public List<Task> getUncompletedTasks(int janitorId) {
-        return taskDAO.getUncompletedTasks(janitorId, true);
+    public List<Task> getUncompletedTasks(int janitorId, boolean useId) {
+	return taskDAO.getUncompletedTasks(janitorId, useId);
     }
 
     public boolean finishTask(Task task) {
