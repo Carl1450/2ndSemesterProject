@@ -67,6 +67,10 @@ public class CustomerDAO {
 		try {
 			boolean savedCity = saveCity(city, zipCode);
 
+			if (!savedCity) {
+				updateCity(city, zipCode);
+			}
+
 			int addressId = saveAddress(splitAddress[0], Integer.parseInt(splitAddress[1]), zipCode);
 
 			PreparedStatement preparedStatement = conn.prepareStatement(insertCustomerQ);
@@ -103,11 +107,11 @@ public class CustomerDAO {
 
 		} catch (SQLException e) {
 			if (e.getSQLState().equals("23000") && e.getErrorCode() == 2627) {
-                    System.err.println("Primary key violation: The record with the specified primary key already exists.");
-                } else {
-                    e.printStackTrace();
-                }
-		} 
+				System.err.println("Primary key violation: The record with the specified primary key already exists.");
+			} else {
+				e.printStackTrace();
+			}
+		}
 
 		DBConnection.closeConnection(connection);
 
@@ -120,12 +124,13 @@ public class CustomerDAO {
 
 		int addressID = -1;
 
-		String insertAddressQ = "INSERT INTO Address(street, streetno, zipcode) VALUES (?, ?, ?);";
+		String insertAddressQ = "INSERT INTO [Address](street, streetno, zipcode) VALUES (?, ?, ?);";
 
 		Connection connection = DBConnection.getConnection(env);
 
 		try {
-			PreparedStatement preparedStatement = connection.prepareStatement(insertAddressQ, Statement.RETURN_GENERATED_KEYS);
+			PreparedStatement preparedStatement = connection.prepareStatement(insertAddressQ,
+					Statement.RETURN_GENERATED_KEYS);
 			preparedStatement.setNString(1, street);
 			preparedStatement.setInt(2, streetno);
 			preparedStatement.setInt(3, zipcode);
@@ -154,97 +159,69 @@ public class CustomerDAO {
 
 	}
 
-	public void updateCustomer(Customer customer) throws SQLException {
-		String updateCityQuery = "UPDATE City SET city=? WHERE zipCode=?";
-		String checkCityQuery = "SELECT COUNT(*) FROM City WHERE zipCode=? AND city=?";
-		String updateAddressQuery = "UPDATE Address SET street=?, streetno=?, zipcode=? WHERE zipcode=?";
-		String insertAddressQuery = "INSERT INTO Address(street, streetno, zipcode) VALUES (?, ?, ?)";
-		String updateCustomerQuery = "UPDATE Customer SET fname=?, lname=?, email=? WHERE phoneno=?";
-		String insertCustomerQuery = "INSERT INTO Customer(fname, lname, email, phoneno, addressId) VALUES (?, ?, ?, ?, ?)";
+	public boolean updateCustomer(String name, String address, String phoneNumber, String email, String city, int zipcode) {
 
-		try (Connection connection = DBConnection.getConnection(env);
-				PreparedStatement updateCityStmt = connection.prepareStatement(updateCityQuery);
-				PreparedStatement checkCityStmt = connection.prepareStatement(checkCityQuery);
-				PreparedStatement updateAddressStmt = connection.prepareStatement(updateAddressQuery);
-				PreparedStatement insertAddressStmt = connection.prepareStatement(insertAddressQuery,
-						Statement.RETURN_GENERATED_KEYS);
-				PreparedStatement updateCustomerStmt = connection.prepareStatement(updateCustomerQuery);
-				PreparedStatement insertCustomerStmt = connection.prepareStatement(insertCustomerQuery,
-						Statement.RETURN_GENERATED_KEYS)) {
+		Connection conn = DBConnection.getConnection(env);
+		String updateCustomerQ = "UPDATE Customer SET fname = ?, lname = ?, email = ?, phoneno = ?, addressId = ? WHERE phoneno = ?;";
 
-			// Start a transaction
-			connection.setAutoCommit(false);
+		int rowsAffected = 0;
+		String[] splitName = name.split("\\s+");
+		String[] splitAddress = address.split("\\s+");
 
-			try {
-				// Update city information
-				String[] splitAddress = customer.getAddress().split("\\s+");
-				String[] splitName = customer.getName().split("\\s+");
-				checkCityStmt.setInt(1, Integer.parseInt(splitAddress[3]));
-				checkCityStmt.setString(2, splitAddress[2]);
-				ResultSet resultSet = checkCityStmt.executeQuery();
-				resultSet.next();
-				int cityCount = resultSet.getInt(1);
+		try {
+			// Update or create city
+			boolean updatedCity = updateCity(city, zipcode);
 
-				// Update city information if it doesn't exist
-				if (cityCount == 0) {
-					updateCityStmt.setString(1, splitAddress[2]);
-					updateCityStmt.setInt(2, Integer.parseInt(splitAddress[3]));
-					updateCityStmt.executeUpdate();
-				}
-
-				// Commit the changes to the city information
-				connection.commit();
-
-				boolean customerExists = findCustomerByPhoneNumber(customer.getPhoneNumber()) != null;
-
-				// Update or insert into the Address table
-				if (customerExists) {
-					// Customer exists, update the existing address
-					updateAddressStmt.setString(1, splitAddress[0]);
-					updateAddressStmt.setInt(2, Integer.parseInt(splitAddress[1]));
-					updateAddressStmt.setInt(3, Integer.parseInt(splitAddress[3]));
-					updateAddressStmt.setInt(4, Integer.parseInt(splitAddress[3]));
-					updateAddressStmt.executeUpdate();
-
-					// Update the customer information
-					updateCustomerStmt.setString(1, splitName[0]);
-					updateCustomerStmt.setString(2, splitName[1]);
-					updateCustomerStmt.setString(3, customer.getEmail());
-					updateCustomerStmt.setString(4, customer.getPhoneNumber());
-					updateCustomerStmt.executeUpdate();
-
-				} else {
-					// Customer is new, insert a new address
-					insertAddressStmt.setString(1, splitAddress[0]);
-					insertAddressStmt.setInt(2, Integer.parseInt(splitAddress[1]));
-					insertAddressStmt.setInt(3, Integer.parseInt(splitAddress[3]));
-					insertAddressStmt.executeUpdate();
-
-					// Retrieve the generated addressId
-					ResultSet addressKeys = insertAddressStmt.getGeneratedKeys();
-					if (addressKeys.next()) {
-						int addressId = addressKeys.getInt(1);
-
-						// Insert into the Customer table
-						insertCustomerStmt.setString(1, splitName[0]);
-						insertCustomerStmt.setString(2, splitName[1]);
-						insertCustomerStmt.setString(3, customer.getEmail());
-						insertCustomerStmt.setString(4, customer.getPhoneNumber());
-						insertCustomerStmt.setInt(5, addressId);
-						insertCustomerStmt.executeUpdate();
-					}
-				}
-
-				// Commit the transaction
-				connection.commit();
-			} catch (SQLException e) {
-				// Rollback the transaction in case of an exception
-				connection.rollback();
-				throw e;
-			} finally {
-				// Set auto-commit back to true
-				connection.setAutoCommit(true);
+			if (!updatedCity) {
+				saveCity(city, zipcode);
 			}
+
+			// Update or create address
+			String street = splitAddress[0];
+			int streetno = Integer.parseInt(splitAddress[1]);
+			
+			int addressId = saveAddress(street, streetno, zipcode);
+
+			PreparedStatement preparedStatement = conn.prepareStatement(updateCustomerQ);
+			preparedStatement.setNString(1, splitName[0]);
+			preparedStatement.setNString(2, splitName[1]);
+			preparedStatement.setNString(3, email);
+			preparedStatement.setNString(4, phoneNumber);
+			preparedStatement.setInt(5, addressId);
+			preparedStatement.setNString(6, phoneNumber);
+
+			rowsAffected = preparedStatement.executeUpdate();
+
+			DBConnection.closeConnection(conn);
+
+			return rowsAffected > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			DBConnection.closeConnection(conn);
+			return false;
+		}
+
+	}
+
+	private boolean updateCity(String city, int zipcode) {
+		Connection connection = DBConnection.getConnection(env);
+		String updateCityQ = "UPDATE City SET city = ?, zipcode = ? WHERE zipcode = ?;";
+
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(updateCityQ);
+			preparedStatement.setNString(1, city);
+			preparedStatement.setInt(2, zipcode);
+			preparedStatement.setInt(3, zipcode);
+
+			int rowsAffected = preparedStatement.executeUpdate();
+
+			DBConnection.closeConnection(connection);
+
+			return rowsAffected > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			DBConnection.closeConnection(connection);
+			return false;
 		}
 	}
 

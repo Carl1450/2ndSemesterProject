@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
@@ -17,6 +18,7 @@ import javax.swing.border.EmptyBorder;
 import Control.CustomerController;
 import Database.ConnectionEnvironment;
 import Model.Customer;
+import Model.Employee;
 
 public class FindUpdateCustomerGUI extends JFrame {
 
@@ -27,6 +29,7 @@ public class FindUpdateCustomerGUI extends JFrame {
 	private CustomerController customerController;
 	private Customer customer;
 	private UpdateCustomerGUI updateCustomerGUI;
+	private Employee employee;
 
 	/**
 	 * Launch the application.
@@ -50,7 +53,10 @@ public class FindUpdateCustomerGUI extends JFrame {
 	public FindUpdateCustomerGUI() {
 		customerController = new CustomerController(ConnectionEnvironment.PRODUCTION);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+
+		setSize(450, 300);
+		setLocationRelativeTo(null);
+
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -83,6 +89,11 @@ public class FindUpdateCustomerGUI extends JFrame {
 		contentPane.add(panel_2, BorderLayout.SOUTH);
 
 		JButton backButton = new JButton("Back");
+		backButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				backButtonClicked();
+			}
+		});
 		panel_2.add(backButton);
 
 		JButton findButton = new JButton("Find");
@@ -99,10 +110,24 @@ public class FindUpdateCustomerGUI extends JFrame {
 
 		customer = customerController.findCustomerByPhoneNumber(phoneNumber);
 
-		updateCustomerGUI = new UpdateCustomerGUI(customer);
-		updateCustomerGUI.setVisible(true);
-		dispose();
+		if (customer != null) {
+			updateCustomerGUI = new UpdateCustomerGUI(customer);
+			updateCustomerGUI.setVisible(true);
+			dispose();
+		} else {
+			showErrorMessage("Incorrect phone number");
+		}
 
+	}
+
+	private void backButtonClicked() {
+		EditCustomerGUI editCustomerGUI = new EditCustomerGUI(employee);
+		editCustomerGUI.setVisible(true);
+		dispose();
+	}
+
+	private void showErrorMessage(String message) {
+		JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
 	}
 
 }

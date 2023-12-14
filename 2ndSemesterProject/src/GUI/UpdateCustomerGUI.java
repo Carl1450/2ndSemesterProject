@@ -9,9 +9,11 @@ import javax.swing.border.EmptyBorder;
 import Control.CustomerController;
 import Database.ConnectionEnvironment;
 import Model.Customer;
+import Model.Employee;
 
 import java.awt.BorderLayout;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JButton;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -34,6 +36,7 @@ public class UpdateCustomerGUI extends JFrame {
 	private JTextField cityTextField;
 
 	private Customer customer;
+	private Employee employee;
 	private CustomerController customerController;
 
 	/**
@@ -60,7 +63,10 @@ public class UpdateCustomerGUI extends JFrame {
 		customerController = new CustomerController(ConnectionEnvironment.PRODUCTION);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		
+		setSize(450, 300);
+		setLocationRelativeTo(null);
+		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -80,6 +86,11 @@ public class UpdateCustomerGUI extends JFrame {
 		contentPane.add(panel_1, BorderLayout.SOUTH);
 
 		JButton backButton = new JButton("Back");
+		backButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				backButtonClicked();
+			}
+		});
 		panel_1.add(backButton);
 
 		JButton updateButton = new JButton("Update");
@@ -229,40 +240,59 @@ public class UpdateCustomerGUI extends JFrame {
 		String newName = nameTextField.getText();
 		String newPhoneNumber = phoneNumberTextField.getText();
 		String newEmail = emailTextField.getText();
-		String newStreet = addressTextField.getText();
+		String newAddress = addressTextField.getText();
 		String newZipCode = zipCodeTextField.getText();
 		String newCity = cityTextField.getText();
-
-		String newAddress = newStreet + " " + newCity + " " + newZipCode;
 
 		if (!newName.equals(oldName) || !newPhoneNumber.equals(oldPhoneNumber) || !newEmail.equals(oldEmail)
 				|| !newAddress.equals(oldAddress)) {
 
-			// Debugging: Print values before setting
-			System.out.println("Before setting values:");
-			System.out.println("newName: " + newName);
-			System.out.println("newPhoneNumber: " + newPhoneNumber);
-			System.out.println("newEmail: " + newEmail);
-			System.out.println("newAddress: " + newAddress);
+			String name = newName;
+			String address = newAddress;
+			String phoneNumber = newPhoneNumber;
+			String email = newEmail;
+			int zipcode = Integer.parseInt(newZipCode);
+			String city = newCity;
 
-			customer.setName(newName);
-			customer.setPhoneNumber(newPhoneNumber);
-			customer.setEmail(newEmail);
-			customer.setAddress(newAddress);
+			if (isValidName(name) || isValidAddress(address)) {
+				boolean updated = customerController.updateCustomer(name, address, phoneNumber, email, city, zipcode);
+				if (updated) {
+					showMessageDialog("Customer successfully updated.");
+					EditCustomerGUI editCustomerGUI = new EditCustomerGUI(employee);
+					editCustomerGUI.setVisible(true);
+					dispose();
+				}
+			} else {
+				showErrorMessage("Please enter correct name and address information");
+			}
 
-			// Debugging: Print values after setting
-			System.out.println("After setting values:");
-			System.out.println("customer.getName(): " + customer.getName());
-			System.out.println("customer.getPhoneNumber(): " + customer.getPhoneNumber());
-			System.out.println("customer.getEmail(): " + customer.getEmail());
-			System.out.println("customer.getAddress(): " + customer.getAddress());
-
-			customerController.updateCustomer(customer);
-
-			System.out.println("Customer information successfully updated.");
 		} else {
 			System.out.println("No changes to update.");
 		}
 
+	}
+
+	private boolean isValidName(String fullName) {
+		String[] nameParts = fullName.split(" ");
+		return nameParts.length == 2 && !nameParts[0].isEmpty() && !nameParts[1].isEmpty();
+	}
+
+	private boolean isValidAddress(String fullAddress) {
+		String[] addressParts = fullAddress.split(" ");
+		return addressParts.length == 2 && !addressParts[0].isEmpty() && !addressParts[1].isEmpty();
+	}
+
+	private void showMessageDialog(String message) {
+		JOptionPane.showMessageDialog(this, message, "Success", JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	private void showErrorMessage(String message) {
+		JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+	}
+
+	private void backButtonClicked() {
+		EditCustomerGUI editCustomerGUI = new EditCustomerGUI(employee);
+		editCustomerGUI.setVisible(true);
+		dispose();
 	}
 }

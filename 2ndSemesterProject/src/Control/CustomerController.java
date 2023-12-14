@@ -31,12 +31,8 @@ public class CustomerController {
 
 	}
 
-	public void updateCustomer(Customer customer) {
-		try {
-			customerDAO.updateCustomer(customer);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	public boolean updateCustomer(String name, String address, String phoneNumber, String email, String city, int zipcode) {
+		return customerDAO.updateCustomer(name, address, phoneNumber, email, city, zipcode);
 	}
 
 	public void deleteCustomer(String phoneNumber) {
