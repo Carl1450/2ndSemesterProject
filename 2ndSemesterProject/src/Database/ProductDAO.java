@@ -98,7 +98,7 @@ public class ProductDAO {
 
 		String insertProductQuery = "INSERT INTO Product(barcode, name, stockNO) VALUES (?, ?, ?);";
 
-		String insertPriceQuery = "INSERT INTO Price (price, prodcutId) Values (?, ?);";
+		String insertPriceQuery = "INSERT INTO Price (price, productId) Values (?, ?);";
 
 		String insertProductAndPriceQuery = insertProductQuery + insertPriceQuery;
 

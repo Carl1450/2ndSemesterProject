@@ -268,6 +268,7 @@ public class EditProductsGUI extends JFrame {
                     clearProductTextFields();
                     lastSelectedRow = -1;
                     setUpdateCreateButtonTo("Create");
+                    deleteButton.setEnabled(false);
                 } else {
                     lastSelectedRow = selectedRow;
                     fillOutProductInfo();
@@ -368,6 +369,7 @@ public class EditProductsGUI extends JFrame {
         barcodeTextField.setText("");
         nameTextField.setText("");
         stockNumberTextField.setText("");
+        priceTextField.setText("");
     }
 
 }
