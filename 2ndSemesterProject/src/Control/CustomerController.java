@@ -5,10 +5,12 @@ import Database.CustomerDAO;
 import Model.Customer;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 public class CustomerController {
 
 	private CustomerDAO customerDAO;
+	private Customer customer;
 
 	private ConnectionEnvironment env;
 
@@ -23,16 +25,20 @@ public class CustomerController {
 
 	}
 
-	public boolean saveCustomerToDB(String name, String address, String phoneNumber, String email, int zipCode, String city) {
+	public boolean saveCustomerToDB(String name, String address, String phoneNumber, String email, int zipCode,
+			String city) {
 		return customerDAO.saveCustomer(name, address, phoneNumber, email, zipCode, city);
 
 	}
 
-	public void updateCustomer(String oldPhoneNumber, String newName, String newAddress, String newPhoneNumber,
-			String newEmail) {
-		customerDAO.updateCustomerByPhoneNumber(oldPhoneNumber, newName, newAddress, newPhoneNumber, newEmail);
+	public void updateCustomer(Customer customer) {
+		try {
+			customerDAO.updateCustomer(customer);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
-	
+
 	public void deleteCustomer(String phoneNumber) {
 		customerDAO.deleteCustomer(phoneNumber);
 	}

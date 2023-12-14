@@ -376,8 +376,7 @@ public class CreateCampsiteGUI extends JFrame {
 
 	private void createButtonClicked() {
 		getTextFieldData();
-		boolean saved = campsiteController.saveCampsite(siteNo, section, road, type, maxPeople, deposit, fee,
-				effectiveDate, price);
+		boolean saved = campsiteController.saveCampsite(siteNo, section, road, type, price);
 		if (saved) {
 			JOptionPane.showMessageDialog(this, "Succesfully created campsite");
 		} else {

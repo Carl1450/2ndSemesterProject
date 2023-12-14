@@ -50,18 +50,24 @@ public class CampsiteController {
 		return campsiteDAO.getCampsites();
 	}
 	
-	public boolean saveCampsite(int siteNo, String section, String road, String type, int maxPeople,
-			float deposit, float fee, Date effectiveDate, float price) {
-		return campsiteDAO.saveCampsite(maxPeople, section, road, type, maxPeople, deposit, fee, effectiveDate, price);
+	public boolean saveCampsite(int siteNo, String section, String road, String type, float price) {
+		return campsiteDAO.saveCampsite(siteNo, section, road, type, price);
+	}
+	
+	public boolean saveCabin(int siteNo, int maxPeople, float deposit) {
+		return campsiteDAO.saveCabin(siteNo, maxPeople, deposit);
+	}
+	
+	public boolean savePitch(int siteNo, float fee) {
+		return campsiteDAO.savePitch(siteNo, fee);
 	}
 	
 	public boolean updateCampsite(int siteNo, String section, String road, String type, int maxPeople,
 			float deposit, float fee, Date effectiveDate, float price) {
-		return campsiteDAO.updateCampsiteBySiteNo(maxPeople, section, road, type, maxPeople, deposit, fee, effectiveDate, price);
+		return campsiteDAO.updateCampsiteBySiteNo(maxPeople, section, road, type, maxPeople, deposit, fee, price);
 	}
 	
-	public boolean deleteCampsite(int siteNo, String section, String road, String type, int maxPeople,
-			float deposit, float fee, Date effectiveDate, float price, int campsiteSiteNo) {
-		return campsiteDAO.saveCampsite(maxPeople, section, road, type, maxPeople, deposit, fee, effectiveDate, price);
+	public boolean deleteCampsite(int siteNo) {
+		return campsiteDAO.deleteCampsite(siteNo);
 	}
 }
