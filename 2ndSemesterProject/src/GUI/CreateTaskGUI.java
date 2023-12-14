@@ -11,6 +11,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -23,11 +24,13 @@ import com.github.lgooddatepicker.components.DatePickerSettings;
 
 import Control.TaskController;
 import Database.ConnectionEnvironment;
+import Model.Employee;
 import Model.Janitor;
 import Model.Task;
 
 import javax.swing.JTable;
 import java.awt.event.ActionListener;
+import java.sql.Date;
 import java.awt.event.ActionEvent;
 import java.awt.GridLayout;
 import javax.swing.JButton;
@@ -36,6 +39,8 @@ import java.awt.FlowLayout;
 import javax.swing.SwingConstants;
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
+
 import javax.swing.JScrollBar;
 
 public class CreateTaskGUI extends JFrame {
@@ -50,7 +55,7 @@ public class CreateTaskGUI extends JFrame {
     /**
      * Create the frame.
      */
-    public CreateTaskGUI() {
+    public CreateTaskGUI(Employee employee) {
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	setSize(750, 600);
 	setLocationRelativeTo(null);
@@ -101,6 +106,7 @@ public class CreateTaskGUI extends JFrame {
 	JTextArea textAreaDescription = new JTextArea();
 	textAreaDescription.setBounds(0, 0, 145, 470);
 	textAreaDescription.setLineWrap(true);
+	textAreaDescription.setWrapStyleWord(true); // Make words wrap, not just letters
 	panel_left.add(textAreaDescription);
 
 	JPanel panel_middle = new JPanel();
@@ -128,20 +134,12 @@ public class CreateTaskGUI extends JFrame {
 	gbc_panel_right.gridy = 1;
 	contentPane.add(panel_right, gbc_panel_right);
 
-	//tableTasks = new JTable();
-	//GridBagConstraints gbc_tableTasks = new GridBagConstraints();
-	//gbc_tableTasks.insets = new Insets(0, 0, 5, 0);
-	//gbc_tableTasks.fill = GridBagConstraints.BOTH;
-	//gbc_tableTasks.gridx = 0;
-	//gbc_tableTasks.gridy = 0;
-	//panel_right.add(tableTasks, gbc_tableTasks);
-	
-	JScrollPane scrollPane_1 = new JScrollPane();
-	scrollPane_1.setBounds(0, 0, 426, 470);
-	panel_right.add(scrollPane_1);
-	
+	JScrollPane scrollPaneTasks = new JScrollPane();
+	scrollPaneTasks.setBounds(0, 0, 426, 470);
+	panel_right.add(scrollPaneTasks);
+
 	tableTasks = new JTable();
-	scrollPane_1.setViewportView(tableTasks);
+	scrollPaneTasks.setViewportView(tableTasks);
 
 	JPanel panelPriority = new JPanel();
 	GridBagConstraints gbc_panelPriority = new GridBagConstraints();
@@ -174,7 +172,7 @@ public class CreateTaskGUI extends JFrame {
 	gbc_comboBoxPriority.gridx = 1;
 	gbc_comboBoxPriority.gridy = 0;
 	panelPriority.add(comboBoxPriority, gbc_comboBoxPriority);
-	
+
 	JPanel panelBottomRow = new JPanel();
 	GridBagConstraints gbc_panelBottomRow = new GridBagConstraints();
 	gbc_panelBottomRow.gridwidth = 3;
@@ -184,26 +182,66 @@ public class CreateTaskGUI extends JFrame {
 	gbc_panelBottomRow.gridy = 3;
 	contentPane.add(panelBottomRow, gbc_panelBottomRow);
 	panelBottomRow.setLayout(new BorderLayout(0, 0));
-	
-	JPanel panel = new JPanel();
-	panelBottomRow.add(panel, BorderLayout.WEST);
-	
+
+	JPanel panelDeadline = new JPanel();
+	panelBottomRow.add(panelDeadline, BorderLayout.WEST);
+
 	JLabel lblDeadline = new JLabel("Deadline");
-	panel.add(lblDeadline);
-	
-        DatePickerSettings dateSettings = new DatePickerSettings();
-	
-	DatePicker comboBox = new DatePicker(dateSettings);
-	panel.add(comboBox);
-	
-	JPanel panel_2 = new JPanel();
-	panelBottomRow.add(panel_2, BorderLayout.EAST);
-	
+	panelDeadline.add(lblDeadline);
+
+	DatePickerSettings dateSettings = new DatePickerSettings();
+
+	DatePicker deadlineDatePicker = new DatePicker(dateSettings);
+	panelDeadline.add(deadlineDatePicker);
+
+	JPanel panelBottomButtons = new JPanel();
+	panelBottomRow.add(panelBottomButtons, BorderLayout.EAST);
+
 	JButton btnBack = new JButton("Back");
-	panel_2.add(btnBack);
-	
+	btnBack.addActionListener(new ActionListener() {
+	    public void actionPerformed(ActionEvent e) {
+		backButtonClicked(employee);
+	    }
+
+	});
+	panelBottomButtons.add(btnBack);
+
 	JButton btnAddTask = new JButton("Add Task");
-	panel_2.add(btnAddTask);
+	panelBottomButtons.add(btnAddTask);
+	btnAddTask.addActionListener(new ActionListener() {
+	    public void actionPerformed(ActionEvent e) {
+		String description = textAreaDescription.getText();
+		int priority = Integer.parseInt(comboBoxPriority.getSelectedItem().toString());
+		Date deadline = null;
+		Janitor janitor = null;
+		int selectedIndex = listJanitors.getSelectedIndex();
+
+		System.out.println(description);
+
+		// Checks if the description has contents besides whitespace
+		if (description == null || description.trim().length() == 0) {
+		    JOptionPane.showMessageDialog(null, "You need to enter a description");
+		    return;
+		}
+
+		if (selectedIndex == -1) {
+		    JOptionPane.showMessageDialog(null, "You need to select a janitor");
+		    return;
+		}
+
+		if (deadlineDatePicker.getDate() == null) {
+		    JOptionPane.showMessageDialog(null, "You need to select a deadline");
+		    return;
+		}
+
+		deadline = Date.valueOf(deadlineDatePicker.getDate());
+		janitor = janitorList.get(selectedIndex);
+		createTaskButtonClicked(description, priority, deadline, employee, janitor);
+		textAreaDescription.setText("");
+		deadlineDatePicker.setText("");
+		listJanitors.clearSelection();
+	    }
+	});
 
 	init();
     }
@@ -215,11 +253,11 @@ public class CreateTaskGUI extends JFrame {
 	for (int i = 0; i < janitorList.size(); i++) {
 	    janitorArray[i] = janitorList.get(i).getName();
 	}
-	listJanitors.setListData(janitorArray);
 
+	listJanitors.setListData(janitorArray);
 	updateTableModel();
     }
-    
+
     private void updateTableModel() {
 	TaskController taskController = new TaskController(ConnectionEnvironment.PRODUCTION);
 	List<Task> taskList = taskController.getUncompletedTasks(0, false);
@@ -227,26 +265,44 @@ public class CreateTaskGUI extends JFrame {
 	tableTasks.setModel(taskTableModel);
 	tableTasks.setDefaultRenderer(Object.class, new MultilineCellRenderer());
 	tableTasks.setRowHeight(50);
-	
+
 	// Make the priority field to take up less space, making space for others
 	tableTasks.getColumnModel().getColumn(0).setPreferredWidth(20);
 	// Setting the size of the deadline field, making it readable for most scales
 	tableTasks.getColumnModel().getColumn(2).setMinWidth(60);
 	tableTasks.getColumnModel().getColumn(2).setPreferredWidth(60);
     }
-    
+
+    private void createTaskButtonClicked(String description, int priority, Date deadline, Employee employee,
+	    Janitor janitor) {
+	TaskController taskController = new TaskController(ConnectionEnvironment.PRODUCTION);
+	taskController.createTask(description, priority, employee, deadline);
+	taskController.assignJanitorToTask(janitor);
+	taskController.saveTask();
+	updateTableModel();
+    }
+
+    private void backButtonClicked(Employee employee) {
+	MainMenuGUI mainMenuGUI = new MainMenuGUI(employee);
+	mainMenuGUI.setVisible(true);
+	dispose();
+    }
+
     static class MultilineCellRenderer extends DefaultTableCellRenderer {
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            Component cellComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            if (value != null) {
-                JTextArea textArea = new JTextArea(value.toString());
-                textArea.setWrapStyleWord(true);
-                textArea.setLineWrap(true);
-                textArea.setOpaque(true);
-                textArea.setBackground(cellComponent.getBackground());
-                return textArea;
-            }
-            return cellComponent;
-        }
+	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+		int row, int column) {
+	    Component cellComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
+		    column);
+	    if (value != null) {
+
+		JTextArea textArea = new JTextArea(value.toString());
+		textArea.setWrapStyleWord(true);
+		textArea.setLineWrap(true);
+		textArea.setOpaque(true);
+		textArea.setBackground(cellComponent.getBackground());
+		return textArea;
+	    }
+	    return cellComponent;
+	}
     }
 }
