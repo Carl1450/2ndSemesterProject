@@ -179,9 +179,9 @@ public class CampsiteDAO {
 		}
 	}
 
-	public boolean saveCampsite(int siteNo, String section, String road, String type, float price) {
+	public boolean saveCampsite(int siteNo, String section, String road, String type, float fee, float price) {
 		Connection conn = DBConnection.getConnection(env);
-		String insertCampsiteQ = "INSERT INTO Campsite(siteNo, section, road, type) VALUES (?, ?, ?, ?);";
+		String insertCampsiteQ = "INSERT INTO Campsite(siteNo, section, road, type, fee) VALUES (?, ?, ?, ?, ?);";
 		String insertPriceQ = "INSERT INTO Price(price, campsiteSiteNo) VALUES (?, ?);";
 
 		int rowsAffected = 0;
@@ -194,6 +194,7 @@ public class CampsiteDAO {
 			campsiteStatement.setString(2, section);
 			campsiteStatement.setString(3, road);
 			campsiteStatement.setString(4, type);
+			campsiteStatement.setFloat(5, fee);
 
 			int campsiteRowsAffected = campsiteStatement.executeUpdate();
 			rowsAffected += campsiteRowsAffected;
@@ -208,31 +209,25 @@ public class CampsiteDAO {
 			
 			rowsAffected += priceRowsAffected;
 
-			conn.commit();
+			DBConnection.commitTransaction(conn);
 
 		} catch (SQLException e) {
-
 			try {
-				conn.rollback();
+				DBConnection.rollbackTransaction(conn);
 			} catch (SQLException rollbackException) {
 				rollbackException.printStackTrace();
 			}
 			e.printStackTrace();
 		} finally {
-			try {
-				conn.setAutoCommit(true);
-				DBConnection.closeConnection(conn);
-			} catch (SQLException closeException) {
-				closeException.printStackTrace();
-			}
+			DBConnection.closeConnection(conn);
 		}
 
 		return rowsAffected > 0;
 	}
 	
-	public boolean savePitch(int siteNo, float fee) {
+	public boolean savePitch(int siteNo) {
 		Connection conn = DBConnection.getConnection(env);
-		String insertPitchQ = "INSERT INTO Pitch(siteNo, fee) VALUES (?, ?)";
+		String insertPitchQ = "INSERT INTO Pitch(siteNo) VALUES (?)";
 
 		int rowsAffected = 0;
 
@@ -240,27 +235,21 @@ public class CampsiteDAO {
 			conn.setAutoCommit(false);
 				PreparedStatement pitchStatement = conn.prepareStatement(insertPitchQ);
 				pitchStatement.setInt(1, siteNo);
-				pitchStatement.setFloat(2, fee);
 
 				int pitchRowsAffected = pitchStatement.executeUpdate();
 				rowsAffected += pitchRowsAffected;
-			conn.commit();
+				
+				DBConnection.commitTransaction(conn);
 
 		} catch (SQLException e) {
-
 			try {
-				conn.rollback();
+				DBConnection.rollbackTransaction(conn);
 			} catch (SQLException rollbackException) {
 				rollbackException.printStackTrace();
 			}
 			e.printStackTrace();
 		} finally {
-			try {
-				conn.setAutoCommit(true);
-				DBConnection.closeConnection(conn);
-			} catch (SQLException closeException) {
-				closeException.printStackTrace();
-			}
+			DBConnection.closeConnection(conn);
 		}
 
 		return rowsAffected > 0;
@@ -282,36 +271,27 @@ public class CampsiteDAO {
 			int cabinRowsAffected = cabinStatement.executeUpdate();
 			rowsAffected += cabinRowsAffected;
 
-			conn.commit();
-			
-		} catch (SQLException e) {
+			DBConnection.commitTransaction(conn);
 
+		} catch (SQLException e) {
 			try {
-				conn.rollback();
+				DBConnection.rollbackTransaction(conn);
 			} catch (SQLException rollbackException) {
 				rollbackException.printStackTrace();
 			}
 			e.printStackTrace();
 		} finally {
-			try {
-				conn.setAutoCommit(true);
-				DBConnection.closeConnection(conn);
-			} catch (SQLException closeException) {
-				closeException.printStackTrace();
-			}
+			DBConnection.closeConnection(conn);
 		}
 
 		return rowsAffected > 0;
 	}
 
-	public boolean updateCampsiteBySiteNo(int siteNo, String section, String road, String type, int maxPeople,
-			float deposit, float fee, Date effectiveDate, float price) {
+	public boolean updateCampsite(int siteNo, String section, String road, String type, float fee, float price) {
 		Connection conn = DBConnection.getConnection(env);
 
-		String updateCampsiteQ = "UPDATE Campsite SET siteNo = ?, section = ?, road = ?, type = ? WHERE siteNo = ? WHERE siteNo =  ?";
-		String updateCabinQ = "UPDATE Cabin SET siteNo = ?, maxPeople = ?, deposit = ? WHERE siteNo = ?";
-		String updatePitchQ = "UPDATE Pitch SET siteNo = ?, fee = ? WHERE siteNo = ?";
-		String updatePriceQ = "UPDATE Price SET effectiveDate = ?, price = ?, campsiteSiteNo = ? WHERE campsiteSiteNo = ?";
+		String updateCampsiteQ = "UPDATE Campsite SET siteNo = ?, section = ?, road = ?, type = ?, fee = ? WHERE siteNo =  ?";
+		String updatePriceQ = "UPDATE Price SET price = ?, campsiteSiteNo = ? WHERE campsiteSiteNo = ?";
 
 		int rowsAffected = 0;
 
@@ -323,56 +303,100 @@ public class CampsiteDAO {
 			campsiteStatement.setString(2, section);
 			campsiteStatement.setString(3, road);
 			campsiteStatement.setString(4, type);
+			campsiteStatement.setFloat(5, fee);
+			campsiteStatement.setInt(6, siteNo);
 
 			rowsAffected += campsiteStatement.executeUpdate();
 
-			if (type.equals("Cabin")) {
-				PreparedStatement cabinStatement = conn.prepareStatement(updateCabinQ);
-				cabinStatement.setInt(1, siteNo);
-				cabinStatement.setInt(2, maxPeople);
-				cabinStatement.setFloat(3, deposit);
-
-				int cabinRowsAffected = cabinStatement.executeUpdate();
-				rowsAffected += cabinRowsAffected;
-			}
-
-			if (type.equals("Pitch")) {
-				PreparedStatement pitchStatement = conn.prepareStatement(updatePitchQ);
-				pitchStatement.setInt(1, siteNo);
-				pitchStatement.setFloat(2, fee);
-
-				int pitchRowsAffected = pitchStatement.executeUpdate();
-				rowsAffected += pitchRowsAffected;
-			}
-
 			PreparedStatement priceStatement = conn.prepareStatement(updatePriceQ);
-			priceStatement.setDate(1, effectiveDate);
-			priceStatement.setFloat(2, price);
+			priceStatement.setFloat(1, price);
+			priceStatement.setInt(2, siteNo);
 			priceStatement.setInt(3, siteNo);
 
 			int priceRowsAffected = priceStatement.executeUpdate();
 			rowsAffected += priceRowsAffected;
 
-			conn.commit();
+			DBConnection.commitTransaction(conn);
 
 		} catch (SQLException e) {
 
 			try {
-				conn.rollback();
+				DBConnection.rollbackTransaction(conn);
 			} catch (SQLException rollbackException) {
 				rollbackException.printStackTrace();
 			}
 			e.printStackTrace();
 		} finally {
-			try {
-				conn.setAutoCommit(true);
-				DBConnection.closeConnection(conn);
-			} catch (SQLException closeException) {
-				closeException.printStackTrace();
-			}
+			DBConnection.closeConnection(conn);
 		}
 		return rowsAffected > 0;
 	}
+	
+	public boolean updateCabin(int siteNo, int maxPeople, float deposit) {
+		Connection conn = DBConnection.getConnection(env);
+		
+		String updateCabinQ = "UPDATE Cabin SET siteNo = ?, maxPeople = ?, deposit = ? WHERE siteNo = ?";
+		int rowsAffected = 0;
+
+		try {
+			conn.setAutoCommit(false);
+
+			PreparedStatement cabinStatement = conn.prepareStatement(updateCabinQ);
+			cabinStatement.setInt(1, siteNo);
+			cabinStatement.setInt(2, maxPeople);
+			cabinStatement.setFloat(3, deposit);
+			cabinStatement.setInt(4, siteNo);
+
+			int cabinRowsAffected = cabinStatement.executeUpdate();
+			rowsAffected += cabinRowsAffected;
+
+			DBConnection.commitTransaction(conn);
+
+		} catch (SQLException e) {
+			try {
+				DBConnection.rollbackTransaction(conn);
+			} catch (SQLException rollbackException) {
+				rollbackException.printStackTrace();
+			}
+			e.printStackTrace();
+		} finally {
+			DBConnection.closeConnection(conn);
+		}
+
+		return rowsAffected > 0;
+	}
+	
+	public boolean updatePitch(int siteNo) {
+		Connection conn = DBConnection.getConnection(env);
+		
+		String updatePitchQ = "UPDATE Pitch SET siteNo = ? WHERE siteNo = ?";
+
+		int rowsAffected = 0;
+
+		try {
+			DBConnection.startTransaction(conn);
+				PreparedStatement pitchStatement = conn.prepareStatement(updatePitchQ);
+				pitchStatement.setInt(1, siteNo);
+				pitchStatement.setInt(2, siteNo);
+
+				int pitchRowsAffected = pitchStatement.executeUpdate();
+				rowsAffected += pitchRowsAffected;
+				DBConnection.commitTransaction(conn);
+
+		} catch (SQLException e) {
+			try {
+				DBConnection.rollbackTransaction(conn);
+			} catch (SQLException rollbackException) {
+				rollbackException.printStackTrace();
+			}
+			e.printStackTrace();
+		} finally {
+			DBConnection.closeConnection(conn);
+		}
+
+		return rowsAffected > 0;
+	}
+	
 
 	public boolean deleteCampsite(int siteNo) {
 		Connection conn = DBConnection.getConnection(env);
@@ -382,25 +406,22 @@ public class CampsiteDAO {
 		int rowsAffected = 0;
 
 		try {
+			DBConnection.startTransaction(conn);
 			PreparedStatement pitchStatement = conn.prepareStatement(deleteCampsiteQ);
 			pitchStatement.setInt(1, siteNo);
-			rowsAffected += pitchStatement.executeUpdate();
+			rowsAffected = pitchStatement.executeUpdate();
+			
+			DBConnection.commitTransaction(conn);
 
-			conn.commit();
 		} catch (SQLException e) {
 			try {
-				conn.rollback();
+				DBConnection.rollbackTransaction(conn);
 			} catch (SQLException rollbackException) {
 				rollbackException.printStackTrace();
 			}
 			e.printStackTrace();
 		} finally {
-			try {
-				conn.setAutoCommit(true);
-				DBConnection.closeConnection(conn);
-			} catch (SQLException closeException) {
-				closeException.printStackTrace();
-			}
+			DBConnection.closeConnection(conn);
 		}
 
 		return rowsAffected > 0;

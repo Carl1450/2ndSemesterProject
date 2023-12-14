@@ -12,7 +12,7 @@ import Model.Price;
 
 public class CampsiteCRUDTableModel extends AbstractTableModel{
 	private List<Campsite> data;
-	private static final String[] COL_NAMES = { "Site Number", "Section", "Road", "Type", "Max People", "Deposit", "Fee", "Price" };
+	private static final String[] COL_NAMES = { "Type", "Site Number", "Section", "Road", "Fee", "Price", "Max People", "Deposit"};
 
 	public CampsiteCRUDTableModel(List<Campsite> campsites) {
 		super();
@@ -47,21 +47,6 @@ public class CampsiteCRUDTableModel extends AbstractTableModel{
 		if (c != null) {
 			switch (columnIndex) {
 			case 0:
-				int siteNumber = c.getSiteNumber();
-				res = (siteNumber != 0) ? String.valueOf(siteNumber) : "N/A";
-				break;
-
-			case 1:
-				String section = c.getSection();
-				res = (section != null) ? String.valueOf(section) : "N/A";
-				break;
-
-			case 2:
-				String road = c.getRoad();
-				res = (road != null) ? String.valueOf(road) : "N/A";
-				break;
-				
-			case 3:
 				if (c instanceof Cabin) {
 					res = "Cabin";
 				}
@@ -69,27 +54,45 @@ public class CampsiteCRUDTableModel extends AbstractTableModel{
 					res = "Pitch";
 				}
 				break;
+
+			case 1:
+				int siteNumber = c.getSiteNumber();
+				res = (siteNumber != 0) ? String.valueOf(siteNumber) : "N/A";
+				break;
+
+			case 2:
+				String section = c.getSection();
+				res = (section != null) ? String.valueOf(section) : "N/A";
+				break;
+				
+			case 3:
+				String road = c.getRoad();
+				res = (road != null) ? String.valueOf(road) : "N/A";
+				break;
+				
 			case 4:
+				float fee = c.getFee();
+				res = (fee != 0) ? String.valueOf(fee) : "N/A";
+				
+				break;
+				
+			case 5:
+				Price price = c.getPrice();
+				res = (price != null) ? String.valueOf(price.getPrice()) : "N/A";
+				break;
+
+			case 6:
 				if(c instanceof Cabin) {
 					int maxPeople = ((Cabin) c).getMaxPeople();
 					res = (maxPeople != 0) ? String.valueOf(maxPeople) : "N/A";
 				}
 				break;
-			case 5:
+				
+			case 7:
 				if(c instanceof Cabin) {
 					float deposit = ((Cabin) c).getDeposit();
 					res = (deposit != 0) ? String.valueOf(deposit) : "N/A";
 				}
-				break;
-			case 6:
-				if(c instanceof Pitch) {
-					float fee = ((Pitch) c).getFee();
-					res = (fee != 0) ? String.valueOf(fee) : "N/A";
-				}
-				break;
-			case 7:
-				Price price = c.getPrice();
-				res = (price != null) ? String.valueOf(price.getPrice()) : "N/A";
 				break;
 
 			default:
