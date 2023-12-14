@@ -37,7 +37,6 @@ import Model.Cabin;
 import Model.Campsite;
 import Model.Employee;
 import Model.Pitch;
-import Model.Product;
 
 public class CreateCampsiteGUI extends JFrame {
 
@@ -62,7 +61,6 @@ public class CreateCampsiteGUI extends JFrame {
 	private ConnectionEnvironment env = ConnectionEnvironment.PRODUCTION;
 	private JTable campsiteTable;
 	private JTextField priceTextField;
-	private TableRowSorter<TableModel> rowSorter;
 	private JComboBox<String> typeComboBox;
 	private JButton deleteButton;
 	private int lastSelectedRow;
@@ -386,11 +384,12 @@ public class CreateCampsiteGUI extends JFrame {
 
 			}
 		});
-		init();
+		init(employee);
 	}
 
-	private void init() {
+	private void init(Employee employee) {
 		lastSelectedRow = -1;
+		this.employee = employee;
 		campsiteController = new CampsiteController(env);
 		updateTable(false);
 	}
