@@ -5,10 +5,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.microsoft.sqlserver.jdbc.SQLServerException;
 
 import Model.Customer;
+import Model.Employee;
 
 public class CustomerDAO {
 
@@ -52,6 +55,43 @@ public class CustomerDAO {
 		}
 
 		return customer;
+	}
+
+	public List<Customer> getAllCustomers() {
+
+		List<Customer> customers = new ArrayList<>();
+
+		String findAllCustomersQuery = "SELECT cust.id, cust.fname, cust.lname, cust.phoneno, cust.email, "
+				+ "[address].street, [address].streetno, [address].zipcode, city.city " + "FROM Customer cust "
+				+ "LEFT JOIN [address] ON cust.addressId = [address].id "
+				+ "LEFT JOIN city ON [address].zipcode = city.zipcode ";
+
+		try (Connection connection = DBConnection.getConnection(env);
+				PreparedStatement preparedStatement = connection.prepareStatement(findAllCustomersQuery);
+				ResultSet resultSet = preparedStatement.executeQuery()) {
+
+			while (resultSet.next()) {
+				int id = resultSet.getInt("id");
+				String fname = resultSet.getString("fname");
+				String lname = resultSet.getString("lname");
+				String street = resultSet.getString("street");
+				String streetno = resultSet.getString("streetno");
+				String zipcode = resultSet.getString("zipcode");
+				String city = resultSet.getString("city");
+				String phoneNumber = resultSet.getString("phoneno");
+				String email = resultSet.getString("email");
+
+				String name = fname + " " + lname;
+				String address = street + " " + streetno + " " + city + " " + zipcode;
+
+				Customer customer = new Customer(id, name, address, phoneNumber, email);
+				customers.add(customer);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return customers;
 	}
 
 	public boolean saveCustomer(String name, String address, String phoneNumber, String email, int zipCode,
@@ -159,7 +199,8 @@ public class CustomerDAO {
 
 	}
 
-	public boolean updateCustomer(String name, String address, String phoneNumber, String email, String city, int zipcode) {
+	public boolean updateCustomer(String name, String address, String phoneNumber, String email, String city,
+			int zipcode) {
 
 		Connection conn = DBConnection.getConnection(env);
 		String updateCustomerQ = "UPDATE Customer SET fname = ?, lname = ?, email = ?, phoneno = ?, addressId = ? WHERE phoneno = ?;";
@@ -179,7 +220,7 @@ public class CustomerDAO {
 			// Update or create address
 			String street = splitAddress[0];
 			int streetno = Integer.parseInt(splitAddress[1]);
-			
+
 			int addressId = saveAddress(street, streetno, zipcode);
 
 			PreparedStatement preparedStatement = conn.prepareStatement(updateCustomerQ);
@@ -225,7 +266,7 @@ public class CustomerDAO {
 		}
 	}
 
-	public void deleteCustomer(String phoneNumber) {
+	public boolean deleteCustomer(String phoneNumber) {
 
 		String deleteCustomerQ = "DELETE FROM Customer WHERE phoneNo = ?";
 		int rowsAffected = 0;
@@ -245,6 +286,8 @@ public class CustomerDAO {
 		} else {
 			System.out.println("Failed to delete customer. ");
 		}
+		
+		return rowsAffected > 0;
 
 	}
 }

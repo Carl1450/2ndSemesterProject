@@ -1,11 +1,10 @@
 package Control;
 
+import java.util.List;
+
 import Database.ConnectionEnvironment;
 import Database.CustomerDAO;
 import Model.Customer;
-
-import java.sql.Connection;
-import java.sql.SQLException;
 
 public class CustomerController {
 
@@ -13,6 +12,8 @@ public class CustomerController {
 	private Customer customer;
 
 	private ConnectionEnvironment env;
+	
+	private List<Customer> allCustomers;
 
 	public CustomerController(ConnectionEnvironment env) {
 		this.env = env;
@@ -24,6 +25,13 @@ public class CustomerController {
 		return customerDAO.findCustomerByPhoneNumber(phoneNumber);
 
 	}
+	
+	public List<Customer> findAllCustomers(boolean retrieveNewData) {
+		if (retrieveNewData || allCustomers == null) {
+            allCustomers = customerDAO.getAllCustomers();
+        }
+        return allCustomers;
+	}
 
 	public boolean saveCustomerToDB(String name, String address, String phoneNumber, String email, int zipCode,
 			String city) {
@@ -31,11 +39,12 @@ public class CustomerController {
 
 	}
 
-	public boolean updateCustomer(String name, String address, String phoneNumber, String email, String city, int zipcode) {
+	public boolean updateCustomer(String name, String address, String phoneNumber, String email, String city,
+			int zipcode) {
 		return customerDAO.updateCustomer(name, address, phoneNumber, email, city, zipcode);
 	}
 
-	public void deleteCustomer(String phoneNumber) {
-		customerDAO.deleteCustomer(phoneNumber);
+	public boolean deleteCustomer(String phoneNumber) {
+		return customerDAO.deleteCustomer(phoneNumber);
 	}
 }

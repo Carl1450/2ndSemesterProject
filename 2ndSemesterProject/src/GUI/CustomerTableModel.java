@@ -7,12 +7,13 @@ import javax.swing.table.AbstractTableModel;
 
 import Model.Cabin;
 import Model.Customer;
+import Model.Employee;
 import Model.Pitch;
 import Model.Price;
 
-public class CustomerTableModel extends AbstractTableModel{
+public class CustomerTableModel extends AbstractTableModel {
 	private List<Customer> data;
-	private static final String[] COL_NAMES = { "Name", "Phone Number", "Email", "Address", "Zip Code", "City"};
+	private static final String[] COL_NAMES = { "Name", "Phone Number", "Email", "Address" };
 
 	public CustomerTableModel(List<Customer> customers) {
 		super();
@@ -47,8 +48,17 @@ public class CustomerTableModel extends AbstractTableModel{
 		if (c != null) {
 			switch (columnIndex) {
 			case 0:
+				res = c.getName();
 				break;
-
+			case 1:
+				res = c.getPhoneNumber();
+				break;
+			case 2:
+				res = c.getEmail();
+				break;
+			case 3:
+				res = c.getAddress();
+				break;
 
 			default:
 				res = "Unknown";
@@ -68,5 +78,9 @@ public class CustomerTableModel extends AbstractTableModel{
 		this.data = data;
 		super.fireTableDataChanged();
 	}
+	
+	public List<Customer> getData(){
+        return data;
+    }
 
 }

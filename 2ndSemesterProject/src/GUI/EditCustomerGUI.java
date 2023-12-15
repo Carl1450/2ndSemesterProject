@@ -16,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import Model.Customer;
 import Model.Employee;
 
 public class EditCustomerGUI extends JFrame {
@@ -24,7 +25,8 @@ public class EditCustomerGUI extends JFrame {
 	private JPanel contentPane;
 	private MainMenuGUI mainMenuGUI;
 	private Employee employee;
-	private FindUpdateCustomerGUI findUpdateCustomerGUI;
+	private UpdateDeleteCustomerGUI updateDeleteCustomerGUI;
+	private Customer customer;
 
 	/**
 	 * Launch the application.
@@ -47,6 +49,7 @@ public class EditCustomerGUI extends JFrame {
 	 */
 	public EditCustomerGUI(Employee employee) {
 		this.employee = employee;
+		this.customer = customer;
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(450, 300);
@@ -73,7 +76,7 @@ public class EditCustomerGUI extends JFrame {
 		gbl_panel_1.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		panel_1.setLayout(gbl_panel_1);
 
-		JButton createCustomerButton = new JButton("New Customer");
+		JButton createCustomerButton = new JButton("Create Customer");
 		createCustomerButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				createCustomerButtonClicked();
@@ -96,17 +99,6 @@ public class EditCustomerGUI extends JFrame {
 		gbc_updateCustomerButton.gridx = 0;
 		gbc_updateCustomerButton.gridy = 2;
 		panel_1.add(updateCustomerButton, gbc_updateCustomerButton);
-
-		JButton deleteCustomerButton = new JButton("Delete Customer");
-		deleteCustomerButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				deleteCustomerButtonClicked();
-			}
-		});
-		GridBagConstraints gbc_deleteCustomerButton = new GridBagConstraints();
-		gbc_deleteCustomerButton.gridx = 0;
-		gbc_deleteCustomerButton.gridy = 3;
-		panel_1.add(deleteCustomerButton, gbc_deleteCustomerButton);
 
 		JPanel panel_2 = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) panel_2.getLayout();
@@ -135,13 +127,9 @@ public class EditCustomerGUI extends JFrame {
 	}
 
 	private void updateCustomerButtonClicked() {
-		findUpdateCustomerGUI = new FindUpdateCustomerGUI();
-		findUpdateCustomerGUI.setVisible(true);
+		updateDeleteCustomerGUI = new UpdateDeleteCustomerGUI(customer);
+		updateDeleteCustomerGUI.setVisible(true);
 		dispose();
-	}
-
-	private void deleteCustomerButtonClicked() {
-
 	}
 
 }
