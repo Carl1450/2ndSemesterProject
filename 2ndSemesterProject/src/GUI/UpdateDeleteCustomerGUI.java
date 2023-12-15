@@ -357,53 +357,59 @@ public class UpdateDeleteCustomerGUI extends JFrame {
 
 	private void updateCustomerTable(boolean retrieveNewData) {
 
-		String customerNameString = customerSearchTextField.getText();
-		if (customerNameString.equals("Search for name ...")) {
-			customerNameString = "";
-		}
+		String customerPhoneNumberString = customerSearchTextField.getText();
+	    if (customerPhoneNumberString.equals("Search for phone number ...")) {
+	        customerPhoneNumberString = "";
+	    }
 
-		List<Customer> customers = customerController.findAllCustomers(true);
+	    List<Customer> customers = customerController.findAllCustomers(customerPhoneNumberString, true);
 
-		customerTableModel = new CustomerTableModel(customers);
-		customerTable.setModel(customerTableModel);
+	    customerTableModel = new CustomerTableModel(customers);
+	    customerTable.setModel(customerTableModel);
 	}
 
 	private void updateButtonClicked() {
 
-		Customer customer = getSelectCustomer();
+		try {
+			Customer customer = getSelectCustomer();
 
-		String name = nameTextField.getText();
-		String address = addressTextField.getText();
-		int zipCode = Integer.parseInt(zipcodeTextField.getText());
-		String city = cityTextField.getText();
-		String phoneNumber = phoneNumberTextField.getText();
-		String email = emailTextField.getText();
+			String name = nameTextField.getText();
+			String address = addressTextField.getText();
+			int zipCode = Integer.parseInt(zipcodeTextField.getText());
+			String city = cityTextField.getText();
+			String phoneNumber = phoneNumberTextField.getText();
+			String email = emailTextField.getText();
 
-		if (customerController.updateCustomer(name, address, email, city, phoneNumber, zipCode)) {
-			JOptionPane.showMessageDialog(null, "Customer updated successfully", "Success",
-					JOptionPane.INFORMATION_MESSAGE);
-			updateCustomerTable(true);
-		} else {
-			JOptionPane.showMessageDialog(null, "Cannot update Customer", "Error", JOptionPane.ERROR_MESSAGE);
+			if (customerController.updateCustomer(name, address, email, city, phoneNumber, zipCode)) {
+				JOptionPane.showMessageDialog(null, "Customer updated successfully", "Success",
+						JOptionPane.INFORMATION_MESSAGE);
+				updateCustomerTable(true);
+			} else {
+				JOptionPane.showMessageDialog(null, "Cannot update Customer", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		} catch (NumberFormatException e) {
+			JOptionPane.showMessageDialog(null, "Invalid Zip Code", "Error", JOptionPane.ERROR_MESSAGE);
 		}
-
 	}
 
 	private void deleteButtonClicked() {
 
-		if (customerController.deleteCustomer(getSelectCustomer().getPhoneNumber())) {
-			JOptionPane.showMessageDialog(null, "Customer deleted successfully", "Success",
-					JOptionPane.INFORMATION_MESSAGE);
-			updateCustomerTable(true);
-			clearCustomerTextFields();
-			updateButton.setEnabled(false);
-			deleteButton.setEnabled(false);
+		try {
+			if (customerController.deleteCustomer(getSelectCustomer().getPhoneNumber())) {
+				JOptionPane.showMessageDialog(null, "Customer deleted successfully", "Success",
+						JOptionPane.INFORMATION_MESSAGE);
+				updateCustomerTable(true);
+				clearCustomerTextFields();
+				updateButton.setEnabled(false);
+				deleteButton.setEnabled(false);
 
-		} else {
-			JOptionPane.showMessageDialog(null, "Cannot delete customer", "Error", JOptionPane.ERROR_MESSAGE);
+			} else {
+				JOptionPane.showMessageDialog(null, "Cannot delete customer", "Error", JOptionPane.ERROR_MESSAGE);
 
+			}
+		} catch (NumberFormatException e) {
+			JOptionPane.showMessageDialog(null, "Invalid Zip Code", "Error", JOptionPane.ERROR_MESSAGE);
 		}
-
 	}
 
 	private Customer getSelectCustomer() {

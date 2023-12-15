@@ -26,11 +26,11 @@ public class CustomerController {
 
 	}
 	
-	public List<Customer> findAllCustomers(boolean retrieveNewData) {
+	public List<Customer> findAllCustomers(String phoneNumber, boolean retrieveNewData) {
 		if (retrieveNewData || allCustomers == null) {
-            allCustomers = customerDAO.getAllCustomers();
-        }
-        return allCustomers;
+	        allCustomers = customerDAO.getAllCustomers(phoneNumber);
+	    }
+	    return allCustomers;
 	}
 
 	public boolean saveCustomerToDB(String name, String address, String phoneNumber, String email, int zipCode,

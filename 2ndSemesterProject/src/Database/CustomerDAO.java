@@ -57,18 +57,21 @@ public class CustomerDAO {
 		return customer;
 	}
 
-	public List<Customer> getAllCustomers() {
+	public List<Customer> getAllCustomers(String searchPhoneNumber) {
 
 		List<Customer> customers = new ArrayList<>();
 
 		String findAllCustomersQuery = "SELECT cust.id, cust.fname, cust.lname, cust.phoneno, cust.email, "
-				+ "[address].street, [address].streetno, [address].zipcode, city.city " + "FROM Customer cust "
-				+ "LEFT JOIN [address] ON cust.addressId = [address].id "
-				+ "LEFT JOIN city ON [address].zipcode = city.zipcode ";
+	            + "[address].street, [address].streetno, [address].zipcode, city.city " + "FROM Customer cust "
+	            + "LEFT JOIN [address] ON cust.addressId = [address].id "
+	            + "LEFT JOIN city ON [address].zipcode = city.zipcode "
+	            + "WHERE cust.phoneno LIKE ?";
 
 		try (Connection connection = DBConnection.getConnection(env);
-				PreparedStatement preparedStatement = connection.prepareStatement(findAllCustomersQuery);
-				ResultSet resultSet = preparedStatement.executeQuery()) {
+		         PreparedStatement preparedStatement = connection.prepareStatement(findAllCustomersQuery)) {
+
+		        preparedStatement.setString(1, "%" + searchPhoneNumber + "%");
+				ResultSet resultSet = preparedStatement.executeQuery();
 
 			while (resultSet.next()) {
 				int id = resultSet.getInt("id");
@@ -225,7 +228,7 @@ public class CustomerDAO {
 
 			PreparedStatement preparedStatement = conn.prepareStatement(updateCustomerQ);
 			preparedStatement.setNString(1, splitName[0]);
-			preparedStatement.setNString(2, splitName[1]);
+			preparedStatement.setNString(2, splitName.length > 1 ? splitName[1] : "");
 			preparedStatement.setNString(3, email);
 			preparedStatement.setNString(4, phoneNumber);
 			preparedStatement.setInt(5, addressId);
