@@ -301,7 +301,7 @@ public class CampsiteDAO {
 		return rowsAffected > 0;
 	}
 
-	public boolean updateCampsite(int siteNo, String section, String road, String type, float fee, float price) {
+	public boolean updateCampsite(int newSiteNo, int siteNo, String section, String road, String type, float fee, float price) {
 		Connection conn = DBConnection.getConnection(env);
 
 		String updateCampsiteQ = "UPDATE Campsite SET siteNo = ?, section = ?, road = ?, type = ?, fee = ? WHERE siteNo =  ?";
@@ -313,7 +313,7 @@ public class CampsiteDAO {
 			conn.setAutoCommit(false);
 
 			PreparedStatement campsiteStatement = conn.prepareStatement(updateCampsiteQ);
-			campsiteStatement.setInt(1, siteNo);
+			campsiteStatement.setInt(1, newSiteNo);
 			campsiteStatement.setString(2, section);
 			campsiteStatement.setString(3, road);
 			campsiteStatement.setString(4, type);
@@ -346,7 +346,7 @@ public class CampsiteDAO {
 		return rowsAffected > 0;
 	}
 	
-	public boolean updateCabin(int siteNo, int maxPeople, float deposit) {
+	public boolean updateCabin(int newSiteNo, int siteNo, int maxPeople, float deposit) {
 		Connection conn = DBConnection.getConnection(env);
 		
 		String updateCabinQ = "UPDATE Cabin SET siteNo = ?, maxPeople = ?, deposit = ? WHERE siteNo = ?";
@@ -356,7 +356,7 @@ public class CampsiteDAO {
 			conn.setAutoCommit(false);
 
 			PreparedStatement cabinStatement = conn.prepareStatement(updateCabinQ);
-			cabinStatement.setInt(1, siteNo);
+			cabinStatement.setInt(1, newSiteNo);
 			cabinStatement.setInt(2, maxPeople);
 			cabinStatement.setFloat(3, deposit);
 			cabinStatement.setInt(4, siteNo);
@@ -380,7 +380,7 @@ public class CampsiteDAO {
 		return rowsAffected > 0;
 	}
 	
-	public boolean updatePitch(int siteNo) {
+	public boolean updatePitch(int newSiteNo, int siteNo) {
 		Connection conn = DBConnection.getConnection(env);
 		
 		String updatePitchQ = "UPDATE Pitch SET siteNo = ? WHERE siteNo = ?";
@@ -390,7 +390,7 @@ public class CampsiteDAO {
 		try {
 			DBConnection.startTransaction(conn);
 				PreparedStatement pitchStatement = conn.prepareStatement(updatePitchQ);
-				pitchStatement.setInt(1, siteNo);
+				pitchStatement.setInt(1, newSiteNo);
 				pitchStatement.setInt(2, siteNo);
 
 				int pitchRowsAffected = pitchStatement.executeUpdate();

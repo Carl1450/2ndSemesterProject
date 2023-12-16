@@ -1,15 +1,15 @@
 package Control;
 
-import java.sql.Connection;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
 import Database.CampsiteDAO;
 import Database.ConnectionEnvironment;
+import Model.Cabin;
 import Model.Campsite;
 import Model.Employee;
-import Model.Product;
+import Model.Pitch;
 
 public class CampsiteController {
 	private CampsiteDAO campsiteDAO;
@@ -80,30 +80,40 @@ public class CampsiteController {
 		return campsiteDAO.getCampsites();
 	}
 	
-	public boolean saveCampsite(int siteNo, String section, String road, String type, float fee, float price) {
-		return campsiteDAO.saveCampsite(siteNo, section, road, type, fee, price);
+	public boolean saveCampsite(int siteNo, String section, String road, String type, float fee, float price, int maxPeople, float deposit) {
+		List<Campsite> campsites = getCampsites();
+		boolean saved = false;
+		
+		campsiteDAO.saveCampsite(siteNo, section, road, type, fee, price);
+		
+		for(Campsite campsite : campsites) {
+			if(campsite instanceof Cabin) {
+				campsiteDAO.saveCabin(siteNo, maxPeople, deposit);
+			}
+			if(campsite instanceof Pitch) {
+				campsiteDAO.savePitch(siteNo);
+			}
+		}
+		saved = true;
+		return saved;
 	}
 	
-	public boolean saveCabin(int siteNo, int maxPeople, float deposit) {
-		return campsiteDAO.saveCabin(siteNo, maxPeople, deposit);
-	}
-	
-	public boolean savePitch(int siteNo) {
-		return campsiteDAO.savePitch(siteNo);
-	}
-	
-
-	public boolean updateCampsite(int siteNo, String section, String road, String type, float fee, float price) {
-		return campsiteDAO.updateCampsite(siteNo, section, road, type, fee, price);
-	}
-	
-	public boolean updateCabin(int siteNo, int maxPeople, float deposit) {
-		return campsiteDAO.updateCabin(siteNo, maxPeople, deposit);
-	}
-	
-	public boolean updatePitch(int siteNo) {
-		return campsiteDAO.updatePitch(siteNo);
-
+	public boolean updateCampsite(int newSiteNo, int siteNo, String section, String road, String type, float fee, float price, int maxPeople, float deposit) {
+		List<Campsite> campsites = getCampsites();
+		boolean updated = false;
+		
+		campsiteDAO.updateCampsite(newSiteNo, siteNo, section, road, type, fee, price);
+		
+		for(Campsite campsite : campsites) {
+			if(campsite instanceof Cabin) {
+				campsiteDAO.updateCabin(newSiteNo, siteNo, maxPeople, deposit);
+			}
+			if(campsite instanceof Pitch) {
+				campsiteDAO.updatePitch(newSiteNo, siteNo);
+			}
+		}
+		updated = true;
+		return updated;
 	}
 	
 	public boolean deleteCampsite(int siteNo) {
