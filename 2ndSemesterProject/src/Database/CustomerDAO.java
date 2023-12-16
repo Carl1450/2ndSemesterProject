@@ -202,7 +202,7 @@ public class CustomerDAO {
 
 	}
 
-	public boolean updateCustomer(String name, String address, String phoneNumber, String email, String city,
+	public boolean updateCustomer(String name, String address, String email, String city, String phoneNumber,
 			int zipcode) {
 
 		Connection conn = DBConnection.getConnection(env);
