@@ -170,8 +170,8 @@ class TestTaskDAO {
 	// Act
 	Date deadLine = new Date(1000);
 	Date startDate = new Date(5000000);
-	Receptionist receptionist = new Receptionist(1, "", "", "", "", "", "");
-	Janitor janitor = new Janitor(2, "", "", "", "", "", "");
+	Receptionist receptionist = new Receptionist(1, "", null, "", "", "", "");
+	Janitor janitor = new Janitor(2, "", null, "", "", "", "");
 
 	Task task = new Task(5, "", 2, deadLine, receptionist, startDate);
 	task.setJanitors(janitor);

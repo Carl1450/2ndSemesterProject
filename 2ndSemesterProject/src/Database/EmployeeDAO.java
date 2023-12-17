@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import Model.Address;
 import Model.Employee;
 import Model.Janitor;
 
@@ -19,8 +20,8 @@ public class EmployeeDAO {
 
 
     public Employee findEmployeeById(int id) {
-        String findEmployeeByIdQ = "SELECT emp.id, emp.fname, emp.lname, emp.password, emp.[role], emp.phoneno, emp.email, " +
-                "[address].street, [address].streetno, [address].zipcode, city.city " +
+        String findEmployeeByIdQ = "SELECT emp.id AS employeeId, emp.fname, emp.lname, emp.password, emp.[role], emp.phoneno, emp.email, " +
+                "[address].id AS addressId, [address].street, [address].streetno, [address].zipcode, city.city " +
                 "FROM Employee emp " +
                 "LEFT JOIN [address] ON emp.addressId = [address].id " +
                 "LEFT JOIN city ON [address].zipcode = city.zipcode " +
@@ -46,8 +47,8 @@ public class EmployeeDAO {
 
         List<Employee> employees = new ArrayList<>();
 
-        String findAllEmployeesQuery = "SELECT emp.id, emp.fname, emp.lname, emp.password, emp.[role], emp.phoneno, emp.email, " +
-                "[address].street, [address].streetno, [address].zipcode, city.city " +
+        String findAllEmployeesQuery = "SELECT emp.id as employeeId, emp.fname, emp.lname, emp.password, emp.[role], emp.phoneno, emp.email, " +
+                "[address].id as addressId, [address].street, [address].streetno, [address].zipcode, city.city " +
                 "FROM Employee emp " +
                 "LEFT JOIN [address] ON emp.addressId = [address].id " +
                 "LEFT JOIN city ON [address].zipcode = city.zipcode ";
@@ -67,7 +68,7 @@ public class EmployeeDAO {
     }
 
 
-    public int saveEmployee(String name, String address, String phoneNumber, String email, int zipCode,
+    public int saveEmployee(String firstName, String lastName, String phoneNumber, String email, String street, int streetNo, int zipCode,
                             String city, String role, String cprNo, String password) {
 
         int rowsAffected = 0;
@@ -78,8 +79,6 @@ public class EmployeeDAO {
 
         Connection connection = DBConnection.getConnection(env);
 
-        String[] splitName = name.split("\\s+");
-        String[] splitAddress = address.split("\\s+");
 
         try {
             DBConnection.startTransaction(connection);
@@ -87,11 +86,11 @@ public class EmployeeDAO {
             boolean savedCity = saveCity(city, zipCode);
 
 
-            int addressId = saveAddress(splitAddress[0], Integer.parseInt(splitAddress[1]), zipCode);
+            int addressId = saveAddress(street, streetNo, zipCode);
 
             PreparedStatement preparedStatement = connection.prepareStatement(insertEmployee, Statement.RETURN_GENERATED_KEYS);
-            preparedStatement.setNString(1, splitName[0]);
-            preparedStatement.setNString(2, splitName[1]);
+            preparedStatement.setNString(1, firstName);
+            preparedStatement.setNString(2, lastName);
             preparedStatement.setNString(3, email);
             preparedStatement.setNString(4, phoneNumber);
             preparedStatement.setInt(5, addressId);
@@ -156,13 +155,26 @@ public class EmployeeDAO {
         return rowsAffected > 0;
     }
 
-    public boolean updateCity(String city, int zipCode) {
+    private boolean updateCity(String city, int zipcode) {
+        Connection connection = DBConnection.getConnection(env);
+        String updateCityQ = "UPDATE City SET city = ?, zipcode = ? WHERE zipcode = ?;";
 
-        int rowsAffected = 0;
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(updateCityQ);
+            preparedStatement.setNString(1, city);
+            preparedStatement.setInt(2, zipcode);
+            preparedStatement.setInt(3, zipcode);
 
+            int rowsAffected = preparedStatement.executeUpdate();
 
-        return rowsAffected > 0;
+            DBConnection.closeConnection(connection);
 
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DBConnection.closeConnection(connection);
+            return false;
+        }
     }
 
     private int saveAddress(String street, int streetno, int zipcode) {
@@ -197,46 +209,69 @@ public class EmployeeDAO {
             e.printStackTrace();
         } finally {
             DBConnection.closeConnection(connection);
-
         }
 
         return addressID;
 
     }
 
-    public boolean UpdateEmployee(int employeeId, String name, String address, int zipCode, String city, String phoneNumber, String email, String role) {
+    private boolean updateAddress(int addressId, String street, int streetNo, int zipCode) {
+        Connection connection = DBConnection.getConnection(env);
+        String updateCityQ = "UPDATE [Address] SET street = ?, streetNo = ?, zipcode = ? WHERE id = ?;";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(updateCityQ);
+            preparedStatement.setString(1, street);
+            preparedStatement.setInt(2, streetNo);
+            preparedStatement.setInt(3, zipCode);
+            preparedStatement.setInt(4, addressId);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            DBConnection.closeConnection(connection);
+
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DBConnection.closeConnection(connection);
+            return false;
+        }
+    }
+
+    public boolean UpdateEmployee(Employee updatedEmployee) {
         int rowsAffected = 0;
 
         String updateEmployeeQuery = "UPDATE Employee SET fname = ?, lname = ?, email = ?, phoneno = ?, AddressId = ?, [role] = ? WHERE id = ?;";
 
         Connection connection = DBConnection.getConnection(env);
 
+        Address address = updatedEmployee.getAddress();
 
-        String[] splitName = name.split("\\s+");
-        String firstName = splitName[0];
-        String lastName = splitName[1];
-
-        String[] splitAddress = address.split("\\s+");
-
-        String street = splitAddress[0];
-        int streetNumber = Integer.parseInt(splitAddress[1]);
-
+        int addressId = address.getId();
 
         try {
             DBConnection.startTransaction(connection);
 
-            boolean updatedCity = updateCity(city, zipCode);
+            boolean updatedCity = updateCity(address.getCity(), address.getZipCode());
 
-            int addressId = saveAddress(street, streetNumber, zipCode);
+            if (!updatedCity) {
+                saveCity(address.getCity(), address.getZipCode());
+            }
+
+            boolean updatedAddress = updateAddress(address.getId(), address.getStreet(), address.getStreetNo(), address.getZipCode());
+
+            if (!updatedAddress) {
+                addressId = saveAddress(address.getStreet(), address.getStreetNo(), address.getZipCode());
+            }
 
             PreparedStatement preparedStatement = connection.prepareStatement(updateEmployeeQuery);
-            preparedStatement.setNString(1, firstName);
-            preparedStatement.setNString(2, lastName);
-            preparedStatement.setNString(3, email);
-            preparedStatement.setNString(4, phoneNumber);
+            preparedStatement.setNString(1, updatedEmployee.getFirstName());
+            preparedStatement.setNString(2, updatedEmployee.getLastName());
+            preparedStatement.setNString(3, updatedEmployee.getEmail());
+            preparedStatement.setNString(4, updatedEmployee.getPhoneNumber());
             preparedStatement.setInt(5, addressId);
-            preparedStatement.setNString(6, role);
-            preparedStatement.setInt(7, employeeId);
+            preparedStatement.setNString(6, updatedEmployee.toString());
+            preparedStatement.setInt(7, updatedEmployee.getId());
 
             rowsAffected = preparedStatement.executeUpdate();
 
@@ -280,8 +315,8 @@ public class EmployeeDAO {
     public List<Janitor> getAllJanitors() {
         List<Janitor> janitors = new ArrayList<>();
 
-        String findAllJanitorsQuery = "SELECT emp.id, emp.fname, emp.lname, emp.password, emp.[role], emp.phoneno, emp.email, " +
-                "[address].street, [address].streetno, [address].zipcode, city.city " +
+        String findAllJanitorsQuery = "SELECT emp.id as employeeId, emp.fname, emp.lname, emp.password, emp.[role], emp.phoneno, emp.email, " +
+                "[address].id as addressId, [address].street, [address].streetno, [address].zipcode, city.city " +
                 "FROM Employee emp " +
                 "LEFT JOIN [address] ON emp.addressId = [address].id " +
                 "LEFT JOIN city ON [address].zipcode = city.zipcode " +

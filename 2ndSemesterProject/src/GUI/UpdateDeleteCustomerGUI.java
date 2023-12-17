@@ -1,6 +1,5 @@
 package GUI;
 
-import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -15,7 +14,6 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -28,6 +26,7 @@ import javax.swing.border.EmptyBorder;
 
 import Control.CustomerController;
 import Database.ConnectionEnvironment;
+import Model.Address;
 import Model.Customer;
 import Model.Employee;
 
@@ -48,7 +47,6 @@ public class UpdateDeleteCustomerGUI extends JFrame {
 	private JScrollPane scrollPane;
 	private JTable customerTable;
 
-	private Customer currentCustomer;
 	private Employee employee;
 
 	private CustomerTableModel customerTableModel;
@@ -63,7 +61,7 @@ public class UpdateDeleteCustomerGUI extends JFrame {
 	private JTextField zipcodeTextField;
 	private JTextField cityTextField;
 
-	public UpdateDeleteCustomerGUI(Customer customer) {
+	public UpdateDeleteCustomerGUI(Employee employee) {
 
 		setSize(800, 600);
 		setLocationRelativeTo(null);
@@ -345,12 +343,12 @@ public class UpdateDeleteCustomerGUI extends JFrame {
 		gbc_backButton.gridy = 2;
 		contentPane.add(backButton, gbc_backButton);
 
-		init(customer);
+		init(employee);
 	}
 
-	private void init(Customer customer) {
+	private void init(Employee employee) {
 		lastSelectedRow = -1;
-		this.currentCustomer = customer;
+		this.employee = employee;
 		customerController = new CustomerController(ConnectionEnvironment.PRODUCTION);
 		updateCustomerTable(false);
 	}
@@ -371,16 +369,18 @@ public class UpdateDeleteCustomerGUI extends JFrame {
 	private void updateButtonClicked() {
 
 		try {
-			Customer customer = getSelectCustomer();
+
 
 			String name = nameTextField.getText();
+			String email = emailTextField.getText();
+			String phoneNumber = phoneNumberTextField.getText();
 			String address = addressTextField.getText();
 			int zipCode = Integer.parseInt(zipcodeTextField.getText());
 			String city = cityTextField.getText();
-			String phoneNumber = phoneNumberTextField.getText();
-			String email = emailTextField.getText();
 
-			if (customerController.updateCustomer(name, address, email, city, phoneNumber, zipCode)) {
+			// Customer oldCustomer, String name, String email, String phoneNumber, String street, int streetNo, int zipCode, String city
+
+			if (customerController.updateCustomer(getSelectedCustomer(), name, email, phoneNumber, address, zipCode, city)) {
 				JOptionPane.showMessageDialog(null, "Customer updated successfully", "Success",
 						JOptionPane.INFORMATION_MESSAGE);
 				updateCustomerTable(true);
@@ -395,7 +395,7 @@ public class UpdateDeleteCustomerGUI extends JFrame {
 	private void deleteButtonClicked() {
 
 		try {
-			if (customerController.deleteCustomer(getSelectCustomer().getPhoneNumber())) {
+			if (customerController.deleteCustomer(getSelectedCustomer().getCustomerId())) {
 				JOptionPane.showMessageDialog(null, "Customer deleted successfully", "Success",
 						JOptionPane.INFORMATION_MESSAGE);
 				updateCustomerTable(true);
@@ -412,7 +412,7 @@ public class UpdateDeleteCustomerGUI extends JFrame {
 		}
 	}
 
-	private Customer getSelectCustomer() {
+	private Customer getSelectedCustomer() {
 		return customerTableModel.getCustomer(customerTable.getSelectedRow());
 	}
 
@@ -430,12 +430,11 @@ public class UpdateDeleteCustomerGUI extends JFrame {
 		emailTextField.setText(selectedCustomer.getEmail());
 		phoneNumberTextField.setText(selectedCustomer.getPhoneNumber());
 
-		String[] addressSplit = selectedCustomer.getAddress().split(" ");
-		addressTextField.setText(addressSplit[0] + " " + addressSplit[1]);
+		Address customerAddress = selectedCustomer.getAddress();
+		addressTextField.setText(customerAddress.getStreet() + " " + customerAddress.getStreetNo());
 
-		cityTextField.setText(addressSplit[2]);
-		zipcodeTextField.setText(addressSplit[3]);
-
+		cityTextField.setText(customerAddress.getCity());
+		zipcodeTextField.setText(Integer.toString(customerAddress.getZipCode()));
 	}
 
 	private void clearCustomerTextFields() {

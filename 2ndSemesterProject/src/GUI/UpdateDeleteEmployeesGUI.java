@@ -2,6 +2,7 @@ package GUI;
 
 import Control.EmployeeController;
 import Database.ConnectionEnvironment;
+import Model.Address;
 import Model.Employee;
 
 import javax.swing.*;
@@ -374,18 +375,20 @@ public class UpdateDeleteEmployeesGUI extends JFrame {
 
         // int employeeId, String name, String address, String phoneNumber, String email, int zipCode,
         //                                  String city, String role
-        Employee employee = getSelectEmployee();
+        Employee employee = getSelectedEmployee();
 
         int employeeId = employee.getId();
-        String name = nameTextField.getText();
-        String address = addressTextField.getText();
-        int zipCode = Integer.parseInt(zipcodeTextField.getText());
-        String city = cityTextField.getText();
-        String phoneNumber = phoneNumberTextField.getText();
-        String email = emailTextField.getText();
-        String role = employee.toString();
+        String newName = nameTextField.getText();
+        String newAddress = addressTextField.getText();
+        int newZipCode = Integer.parseInt(zipcodeTextField.getText());
+        String newCity = cityTextField.getText();
+        String newPhoneNumber = phoneNumberTextField.getText();
+        String newEmail = emailTextField.getText();
+        String newRole = employee.toString();
 
-        if (employeeController.updateEmployee(employeeId, name, address, zipCode, city, phoneNumber, email, role)) {
+
+
+        if (employeeController.updateEmployee(employee, newName, newAddress, newZipCode, newCity, newPhoneNumber, newEmail, newRole)) {
             JOptionPane.showMessageDialog(null, "Employee updated successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
             updateEmployeeTable(true);
         } else {
@@ -396,7 +399,7 @@ public class UpdateDeleteEmployeesGUI extends JFrame {
 
     private void deleteButtonClicked() {
 
-        if (employeeController.deleteEmployee(getSelectEmployee().getId())) {
+        if (employeeController.deleteEmployee(getSelectedEmployee().getId())) {
             JOptionPane.showMessageDialog(null, "Employee deleted successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
             updateEmployeeTable(true);
             clearemployeeTextFields();
@@ -411,7 +414,7 @@ public class UpdateDeleteEmployeesGUI extends JFrame {
 
     }
 
-    private Employee getSelectEmployee() {
+    private Employee getSelectedEmployee() {
         return employeeTableModel.getEmployee(employeeTable.getSelectedRow());
     }
 
@@ -424,20 +427,19 @@ public class UpdateDeleteEmployeesGUI extends JFrame {
 
     private void fillOutEmployeeInfo() {
 
-        Employee selectedEmployee = employeeTableModel.getEmployee(employeeTable.getSelectedRow());
+        Employee selectedEmployee = getSelectedEmployee();
 
         nameTextField.setText(selectedEmployee.getName());
         emailTextField.setText(selectedEmployee.getEmail());
         phoneNumberTextField.setText(selectedEmployee.getPhoneNumber());
 
-        String[] addressSplit = selectedEmployee.getAddress().split(" ");
-        addressTextField.setText(addressSplit[0] + " " + addressSplit[1]);
+        Address employeeAddress = selectedEmployee.getAddress();
+        addressTextField.setText(employeeAddress.getStreet() + " " + employeeAddress.getStreetNo());
 
-        cityTextField.setText(addressSplit[2]);
-        zipcodeTextField.setText(addressSplit[3]);
+        cityTextField.setText(employeeAddress.getCity());
+        zipcodeTextField.setText(Integer.toString(employeeAddress.getZipCode()));
 
         roleComboBox.setSelectedItem(selectedEmployee.toString());
-
     }
 
 

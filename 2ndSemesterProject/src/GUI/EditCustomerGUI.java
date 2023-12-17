@@ -127,7 +127,7 @@ public class EditCustomerGUI extends JFrame {
 	}
 
 	private void updateCustomerButtonClicked() {
-		updateDeleteCustomerGUI = new UpdateDeleteCustomerGUI(customer);
+		updateDeleteCustomerGUI = new UpdateDeleteCustomerGUI(employee);
 		updateDeleteCustomerGUI.setVisible(true);
 		dispose();
 	}

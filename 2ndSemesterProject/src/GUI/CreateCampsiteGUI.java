@@ -435,11 +435,6 @@ public class CreateCampsiteGUI extends JFrame {
 			JOptionPane.showMessageDialog(this, "Error: Site Number is not valid");
 			return; 
 		}
-		
-		if (campsiteController.siteNumberExists(inputSiteNumber)) {
-			JOptionPane.showMessageDialog(this, "Error: Site Number already exists");
-			return;
-		}
 
 		Campsite campsite = campsiteCRUDTableModel.getCampsite(campsiteTable.getSelectedRow());
 		getTextFieldDataForCampsite();

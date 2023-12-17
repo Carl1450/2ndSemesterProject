@@ -5,13 +5,14 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
+import Model.Address;
 import Model.Employee;
 import Model.Product;
 
 public class EmployeeTableModel extends AbstractTableModel {
 
     private List<Employee> data;
-    private static final String[] COL_NAMES = {"Name", "Email", "Phone Number", "Address", "Role"};
+    private static final String[] COL_NAMES = {"Name", "Email", "Phone Number", "Address", "City", "Zip Code", "Role"};
 
     public EmployeeTableModel(List<Employee> employees) {
         super();
@@ -43,7 +44,8 @@ public class EmployeeTableModel extends AbstractTableModel {
         Employee employee = data.get(rowIndex);
         String res = "";
 
-        // "Name", "Email", "Phone Number", "Address", "Role"
+        Address employeeAddress = employee.getAddress();
+
         if (employee != null) {
             switch (columnIndex) {
                 case 0:
@@ -56,9 +58,15 @@ public class EmployeeTableModel extends AbstractTableModel {
                     res = employee.getPhoneNumber();
                     break;
                 case 3:
-                    res = employee.getAddress();
+                    res = employeeAddress.getStreet() + " " + employeeAddress.getStreetNo();
                     break;
                 case 4:
+                    res = employeeAddress.getCity();
+                    break;
+                case 5:
+                    res = Integer.toString(employeeAddress.getZipCode());
+                    break;
+                case 6:
                     res = employee.toString();
                     break;
                 default:
@@ -80,7 +88,7 @@ public class EmployeeTableModel extends AbstractTableModel {
         super.fireTableDataChanged();
     }
 
-    public List<Employee> getData(){
+    public List<Employee> getData() {
         return data;
     }
 }

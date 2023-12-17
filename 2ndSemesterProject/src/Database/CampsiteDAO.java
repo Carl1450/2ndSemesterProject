@@ -256,6 +256,7 @@ public class CampsiteDAO {
 				DBConnection.commitTransaction(conn);
 
 		} catch (SQLException e) {
+
 			try {
 				DBConnection.rollbackTransaction(conn);
 			} catch (SQLException rollbackException) {

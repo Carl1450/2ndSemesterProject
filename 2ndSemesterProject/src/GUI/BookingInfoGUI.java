@@ -8,6 +8,7 @@ import javax.swing.border.EmptyBorder;
 
 import Control.BookingController;
 import Database.ConnectionEnvironment;
+import Model.Address;
 import Model.Campsite;
 import Model.Customer;
 import Model.Employee;
@@ -742,10 +743,10 @@ public class BookingInfoGUI extends JFrame {
         nameTextField.setText(customer.getName());
         emailField.setText(customer.getEmail());
 
-        String[] address = customer.getAddress().split(" ");
-        addressField.setText(address[0] + " " + address[1]);
-        cityField.setText(address[2]);
-        zipCodeField.setText(address[3]);
+        Address customerAddress = customer.getAddress();
+        addressField.setText(customerAddress.getStreet() + " " + customerAddress.getStreetNo());
+        cityField.setText(customerAddress.getCity());
+        zipCodeField.setText(Integer.toString(customerAddress.getZipCode()));
     }
 
     private boolean informationInAnyTextFields() {

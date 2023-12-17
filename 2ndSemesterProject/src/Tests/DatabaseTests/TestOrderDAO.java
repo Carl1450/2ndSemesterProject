@@ -104,7 +104,7 @@ public class TestOrderDAO {
         Date date = new Date(1000);
         Price price = new Price(100, date);
         float totalPrice = 100;
-        Employee employee = new Admin(1, "", "", "", "",
+        Employee employee = new Admin(1, "", null, "", "",
                 "", "");
         Customer customer = new Customer(1, null, null, null, null);
         Product product = new Product(1001, null, 50, price);

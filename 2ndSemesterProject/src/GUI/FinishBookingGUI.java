@@ -1,12 +1,6 @@
 package GUI;
 
-import Model.Booking;
-import Model.Campsite;
-import Model.Customer;
-import Model.Employee;
-import Model.Price;
-
-import java.awt.EventQueue;
+import Model.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -20,8 +14,6 @@ import java.awt.Insets;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionListener;
-import java.sql.Date;
-import java.time.LocalDate;
 import java.awt.event.ActionEvent;
 
 public class FinishBookingGUI extends JFrame {
@@ -33,7 +25,7 @@ public class FinishBookingGUI extends JFrame {
 	private JLabel insertPhoneNumberLabel;
 	private JLabel insertEmailLabel;
 	private JLabel insertStreetNameLabel;
-	private JLabel insertZipcodeLabel;
+	private JLabel insertZipCodeLabel;
 	private JLabel insertCityLabel;
 	private JLabel insertStartDateLabel;
 	private JLabel insertEndDateLabel;
@@ -187,13 +179,13 @@ public class FinishBookingGUI extends JFrame {
 		gbc_zipCodeLabel.gridy = 4;
 		panel_3.add(zipCodeLabel, gbc_zipCodeLabel);
 
-		insertZipcodeLabel = new JLabel("");
+		insertZipCodeLabel = new JLabel("");
 		GridBagConstraints gbc_insertZipcodeLabel = new GridBagConstraints();
 		gbc_insertZipcodeLabel.anchor = GridBagConstraints.WEST;
 		gbc_insertZipcodeLabel.insets = new Insets(0, 0, 5, 0);
 		gbc_insertZipcodeLabel.gridx = 1;
 		gbc_insertZipcodeLabel.gridy = 4;
-		panel_3.add(insertZipcodeLabel, gbc_insertZipcodeLabel);
+		panel_3.add(insertZipCodeLabel, gbc_insertZipcodeLabel);
 
 		JLabel cityLabel = new JLabel("City:");
 		GridBagConstraints gbc_cityLabel = new GridBagConstraints();
@@ -383,10 +375,11 @@ public class FinishBookingGUI extends JFrame {
 		insertFirstnameLabel.setText(customer.getName());
 		insertPhoneNumberLabel.setText(customer.getPhoneNumber());
 		insertEmailLabel.setText(customer.getEmail());
-		String[] address = customer.getAddress().split(" ");
-		insertStreetNameLabel.setText(address[0] + " " + address[1]);
-		insertZipcodeLabel.setText(address[3]);
-		insertCityLabel.setText(address[2]);
+
+		Address customerAddress = customer.getAddress();
+		insertStreetNameLabel.setText(customerAddress.getStreet() + " " + customerAddress.getStreetNo());
+		insertCityLabel.setText(customerAddress.getCity());
+		insertZipCodeLabel.setText( Integer.toString(customerAddress.getZipCode()));
 	}
 
 	private void setBookingInfo() {

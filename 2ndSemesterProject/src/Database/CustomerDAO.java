@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import Model.Address;
 import com.microsoft.sqlserver.jdbc.SQLServerException;
 
 import Model.Customer;
@@ -15,282 +16,316 @@ import Model.Employee;
 
 public class CustomerDAO {
 
-	private ConnectionEnvironment env;
+    private ConnectionEnvironment env;
 
-	public CustomerDAO(ConnectionEnvironment env) {
-		this.env = env;
-	}
-
-	public Customer findCustomerByPhoneNumber(String phoneNumber) {
-
-		String findCustomerByPhoneNumberQ = "SELECT cust.id, cust.fname, cust.lname, cust.email, [address].street, [address].streetno, [address].zipcode, city.city "
-				+ "FROM customer cust " + "LEFT JOIN [address] ON cust.addressId = [address].id "
-				+ "LEFT JOIN city ON [address].zipcode = city.zipcode " + "WHERE phoneNo = ?";
+    public CustomerDAO(ConnectionEnvironment env) {
+        this.env = env;
+    }
 
-		Customer customer = null;
-
-		try (Connection connection = DBConnection.getConnection(env)) {
-			PreparedStatement prepStat = connection.prepareStatement(findCustomerByPhoneNumberQ);
-			prepStat.setString(1, phoneNumber);
-			ResultSet rs = prepStat.executeQuery();
+    public Customer findCustomerByPhoneNumber(String phoneNumber) {
 
-			if (rs.next()) {
+        String findCustomerByPhoneNumberQ = "SELECT cust.id as customerId, cust.fname, cust.lname, cust.email, [address].id as addressId, [address].street, [address].streetno, [address].zipcode, city.city "
+                + "FROM customer cust " + "LEFT JOIN [address] ON cust.addressId = [address].id "
+                + "LEFT JOIN city ON [address].zipcode = city.zipcode " + "WHERE phoneNo = ?";
 
-				int id = rs.getInt("id");
-				String fname = rs.getString("fname");
-				String lname = rs.getString("lname");
-				String street = rs.getString("street");
-				String streetno = rs.getString("streetno");
-				String zipcode = rs.getString("zipcode");
-				String city = rs.getString("city");
-				String email = rs.getString("email");
-				String name = fname + " " + lname;
-				String address = street + " " + streetno + " " + city + " " + zipcode;
+        Customer customer = null;
 
-				customer = new Customer(id, name, address, phoneNumber, email);
-			}
+        try (Connection connection = DBConnection.getConnection(env)) {
+            PreparedStatement prepStat = connection.prepareStatement(findCustomerByPhoneNumberQ);
+            prepStat.setString(1, phoneNumber);
+            ResultSet rs = prepStat.executeQuery();
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+            if (rs.next()) {
 
-		return customer;
-	}
+                int customerId = rs.getInt("customerId");
+                String fname = rs.getString("fname");
+                String lname = rs.getString("lname");
 
-	public List<Customer> getAllCustomers(String searchPhoneNumber) {
+                String email = rs.getString("email");
+                String name = fname + " " + lname;
 
-		List<Customer> customers = new ArrayList<>();
+                int addressId = rs.getInt("addressId"); // Corrected the field name
+                String street = rs.getNString("street");
+                int streetno = rs.getInt("streetno");
+                int zipCode = rs.getInt("zipcode");
+                String city = rs.getNString("city");
 
-		String findAllCustomersQuery = "SELECT cust.id, cust.fname, cust.lname, cust.phoneno, cust.email, "
-	            + "[address].street, [address].streetno, [address].zipcode, city.city " + "FROM Customer cust "
-	            + "LEFT JOIN [address] ON cust.addressId = [address].id "
-	            + "LEFT JOIN city ON [address].zipcode = city.zipcode "
-	            + "WHERE cust.phoneno LIKE ?";
+                Address address = new Address(addressId, street, streetno, zipCode, city);
 
-		try (Connection connection = DBConnection.getConnection(env);
-		         PreparedStatement preparedStatement = connection.prepareStatement(findAllCustomersQuery)) {
+                customer = new Customer(customerId, name, phoneNumber, email, address);
+            }
 
-		        preparedStatement.setString(1, "%" + searchPhoneNumber + "%");
-				ResultSet resultSet = preparedStatement.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-			while (resultSet.next()) {
-				int id = resultSet.getInt("id");
-				String fname = resultSet.getString("fname");
-				String lname = resultSet.getString("lname");
-				String street = resultSet.getString("street");
-				String streetno = resultSet.getString("streetno");
-				String zipcode = resultSet.getString("zipcode");
-				String city = resultSet.getString("city");
-				String phoneNumber = resultSet.getString("phoneno");
-				String email = resultSet.getString("email");
+        return customer;
+    }
 
-				String name = fname + " " + lname;
-				String address = street + " " + streetno + " " + city + " " + zipcode;
+    public List<Customer> getAllCustomers(String searchPhoneNumber) {
 
-				Customer customer = new Customer(id, name, address, phoneNumber, email);
-				customers.add(customer);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+        List<Customer> customers = new ArrayList<>();
 
-		return customers;
-	}
+        String findAllCustomersQuery = "SELECT cust.id as customerId, cust.fname, cust.lname, cust.phoneno, cust.email, "
+                + "[address].id as addressId, [address].street, [address].streetno, [address].zipcode, city.city " + "FROM Customer cust "
+                + "LEFT JOIN [address] ON cust.addressId = [address].id "
+                + "LEFT JOIN city ON [address].zipcode = city.zipcode "
+                + "WHERE cust.phoneno LIKE ?";
 
-	public boolean saveCustomer(String name, String address, String phoneNumber, String email, int zipCode,
-			String city) {
+        try (Connection connection = DBConnection.getConnection(env);
+             PreparedStatement preparedStatement = connection.prepareStatement(findAllCustomersQuery)) {
 
-		Connection conn = DBConnection.getConnection(env);
-		String insertCustomerQ = "INSERT INTO Customer( fname, lname, email, phoneno, addressId) VALUES (?, ?, ?, ?, ?);";
+            preparedStatement.setString(1, "%" + searchPhoneNumber + "%");
+            ResultSet resultSet = preparedStatement.executeQuery();
 
-		int rowsAffected = 0;
-		String[] splitName = name.split("\\s+");
-		String[] splitAddress = address.split("\\s+");
+            while (resultSet.next()) {
 
-		try {
-			boolean savedCity = saveCity(city, zipCode);
+                int customerId = resultSet.getInt("customerId");
+                String fname = resultSet.getString("fname");
+                String lname = resultSet.getString("lname");
 
-			if (!savedCity) {
-				updateCity(city, zipCode);
-			}
+                String phoneNumber = resultSet.getString("phoneno");
 
-			int addressId = saveAddress(splitAddress[0], Integer.parseInt(splitAddress[1]), zipCode);
+                String email = resultSet.getString("email");
+                String name = fname + " " + lname;
 
-			PreparedStatement preparedStatement = conn.prepareStatement(insertCustomerQ);
-			preparedStatement.setNString(1, splitName[0]);
-			preparedStatement.setNString(2, splitName[1]);
-			preparedStatement.setNString(3, email);
-			preparedStatement.setNString(4, phoneNumber);
-			preparedStatement.setInt(5, addressId);
+                int addressId = resultSet.getInt("addressId"); // Corrected the field name
+                String street = resultSet.getNString("street");
+                int streetno = resultSet.getInt("streetno");
+                int zipCode = resultSet.getInt("zipcode");
+                String city = resultSet.getNString("city");
 
-			rowsAffected = preparedStatement.executeUpdate();
+                Address address = new Address(addressId, street, streetno, zipCode, city);
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+                Customer customer = new Customer(customerId, name, phoneNumber, email, address);
 
-		DBConnection.closeConnection(conn);
+                customers.add(customer);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-		return rowsAffected > 0;
-	}
+        return customers;
+    }
 
-	private boolean saveCity(String city, int zipcode) {
-		int rowsAffected = 0;
+    public boolean saveCustomer(String firstName, String lastName, String phoneNumber, String email, String streetName, int streetNo, int zipCode, String city) {
 
-		String insertCityQ = "INSERT INTO City( city, zipcode) VALUES (?, ?);";
 
-		Connection connection = DBConnection.getConnection(env);
+        Connection conn = DBConnection.getConnection(env);
+        String insertCustomerQ = "INSERT INTO Customer(fname, lname, email, phoneno, addressId) VALUES (?, ?, ?, ?, ?);";
 
-		try {
-			PreparedStatement preparedStatement = connection.prepareStatement(insertCityQ);
-			preparedStatement.setNString(1, city);
-			preparedStatement.setInt(2, zipcode);
+        int rowsAffected = 0;
 
-			rowsAffected = preparedStatement.executeUpdate();
 
-		} catch (SQLException e) {
-			if (e.getSQLState().equals("23000") && e.getErrorCode() == 2627) {
-				System.err.println("Primary key violation: The record with the specified primary key already exists.");
-			} else {
-				e.printStackTrace();
-			}
-		}
+        try {
+            boolean savedCity = saveCity(city, zipCode);
 
-		DBConnection.closeConnection(connection);
+            if (!savedCity) {
+                updateCity(city, zipCode);
+            }
 
-		return rowsAffected > 0;
+            int addressId = saveAddress(streetName, streetNo, zipCode);
 
-	}
+            PreparedStatement preparedStatement = conn.prepareStatement(insertCustomerQ);
+            preparedStatement.setNString(1, firstName);
+            preparedStatement.setNString(2, lastName);
+            preparedStatement.setNString(3, email);
+            preparedStatement.setNString(4, phoneNumber);
+            preparedStatement.setInt(5, addressId);
 
-	private int saveAddress(String street, int streetno, int zipcode) {
-		int rowsAffected = 0;
+            rowsAffected = preparedStatement.executeUpdate();
 
-		int addressID = -1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-		String insertAddressQ = "INSERT INTO [Address](street, streetno, zipcode) VALUES (?, ?, ?);";
+        DBConnection.closeConnection(conn);
 
-		Connection connection = DBConnection.getConnection(env);
+        return rowsAffected > 0;
+    }
 
-		try {
-			PreparedStatement preparedStatement = connection.prepareStatement(insertAddressQ,
-					Statement.RETURN_GENERATED_KEYS);
-			preparedStatement.setNString(1, street);
-			preparedStatement.setInt(2, streetno);
-			preparedStatement.setInt(3, zipcode);
+    private boolean saveCity(String city, int zipcode) {
+        int rowsAffected = 0;
 
-			rowsAffected = preparedStatement.executeUpdate();
+        String insertCityQ = "INSERT INTO City( city, zipcode) VALUES (?, ?);";
 
-			if (rowsAffected > 0) {
-				try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
-					if (generatedKeys.next()) {
-						addressID = generatedKeys.getInt(1);
+        Connection connection = DBConnection.getConnection(env);
 
-					} else {
-						System.err.println("Failed to retrieve the generated ID for the address.");
-					}
-				}
-			}
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(insertCityQ);
+            preparedStatement.setNString(1, city);
+            preparedStatement.setInt(2, zipcode);
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			DBConnection.closeConnection(connection);
+            rowsAffected = preparedStatement.executeUpdate();
 
-		}
+        } catch (SQLException e) {
+            if (e.getSQLState().equals("23000") && e.getErrorCode() == 2627) {
+            } else {
+                e.printStackTrace();
+            }
+        }
 
-		return addressID;
+        DBConnection.closeConnection(connection);
 
-	}
+        return rowsAffected > 0;
 
-	public boolean updateCustomer(String name, String address, String email, String city, String phoneNumber,
-			int zipcode) {
+    }
 
-		Connection conn = DBConnection.getConnection(env);
-		String updateCustomerQ = "UPDATE Customer SET fname = ?, lname = ?, email = ?, phoneno = ?, addressId = ? WHERE phoneno = ?;";
+    private int saveAddress(String street, int streetno, int zipcode) {
+        int rowsAffected = 0;
 
-		int rowsAffected = 0;
-		String[] splitName = name.split("\\s+");
-		String[] splitAddress = address.split("\\s+");
+        int addressID = -1;
 
-		try {
-			// Update or create city
-			boolean updatedCity = updateCity(city, zipcode);
+        String insertAddressQ = "INSERT INTO [Address](street, streetno, zipcode) VALUES (?, ?, ?);";
 
-			if (!updatedCity) {
-				saveCity(city, zipcode);
-			}
+        Connection connection = DBConnection.getConnection(env);
 
-			// Update or create address
-			String street = splitAddress[0];
-			int streetno = Integer.parseInt(splitAddress[1]);
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(insertAddressQ,
+                    Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setNString(1, street);
+            preparedStatement.setInt(2, streetno);
+            preparedStatement.setInt(3, zipcode);
 
-			int addressId = saveAddress(street, streetno, zipcode);
+            rowsAffected = preparedStatement.executeUpdate();
 
-			PreparedStatement preparedStatement = conn.prepareStatement(updateCustomerQ);
-			preparedStatement.setNString(1, splitName[0]);
-			preparedStatement.setNString(2, splitName.length > 1 ? splitName[1] : "");
-			preparedStatement.setNString(3, email);
-			preparedStatement.setNString(4, phoneNumber);
-			preparedStatement.setInt(5, addressId);
-			preparedStatement.setNString(6, phoneNumber);
+            if (rowsAffected > 0) {
+                try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        addressID = generatedKeys.getInt(1);
 
-			rowsAffected = preparedStatement.executeUpdate();
+                    } else {
+                        System.err.println("Failed to retrieve the generated ID for the address.");
+                    }
+                }
+            }
 
-			DBConnection.closeConnection(conn);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBConnection.closeConnection(connection);
+        }
+        return addressID;
+    }
 
-			return rowsAffected > 0;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			DBConnection.closeConnection(conn);
-			return false;
-		}
+    public boolean updateCustomer(Customer updatedCustomer) {
 
-	}
+        Connection connection = DBConnection.getConnection(env);
+        String updateCustomerQuery = "UPDATE Customer SET fname = ?, lname = ?, email = ?, phoneno = ?, addressId = ? WHERE id = ?;";
 
-	private boolean updateCity(String city, int zipcode) {
-		Connection connection = DBConnection.getConnection(env);
-		String updateCityQ = "UPDATE City SET city = ?, zipcode = ? WHERE zipcode = ?;";
+        int rowsAffected = 0;
 
-		try {
-			PreparedStatement preparedStatement = connection.prepareStatement(updateCityQ);
-			preparedStatement.setNString(1, city);
-			preparedStatement.setInt(2, zipcode);
-			preparedStatement.setInt(3, zipcode);
+        Address address = updatedCustomer.getAddress();
 
-			int rowsAffected = preparedStatement.executeUpdate();
+        int addressId = address.getId();
 
-			DBConnection.closeConnection(connection);
+        try {
+            DBConnection.startTransaction(connection);
 
-			return rowsAffected > 0;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			DBConnection.closeConnection(connection);
-			return false;
-		}
-	}
+            boolean updatedCity = updateCity(address.getCity(), address.getZipCode());
 
-	public boolean deleteCustomer(String phoneNumber) {
+            if (!updatedCity) {
+                saveCity(address.getCity(), address.getZipCode());
+            }
 
-		String deleteCustomerQ = "DELETE FROM Customer WHERE phoneNo = ?";
-		int rowsAffected = 0;
+            boolean updatedAddress = updateAddress(address.getId(), address.getStreet(), address.getStreetNo(), address.getZipCode());
 
-		try (Connection connection = DBConnection.getConnection(env);
-				PreparedStatement preparedStatement = connection.prepareStatement(deleteCustomerQ)) {
+            if (!updatedAddress) {
+                addressId = saveAddress(address.getStreet(), address.getStreetNo(), address.getZipCode());
+            }
 
-			preparedStatement.setString(1, phoneNumber);
-			rowsAffected = preparedStatement.executeUpdate();
+            PreparedStatement preparedStatement = connection.prepareStatement(updateCustomerQuery);
+            preparedStatement.setNString(1, updatedCustomer.getFirstName());
+            preparedStatement.setNString(2, updatedCustomer.getLastName());
+            preparedStatement.setNString(3, updatedCustomer.getEmail());
+            preparedStatement.setNString(4, updatedCustomer.getPhoneNumber());
+            preparedStatement.setInt(5, addressId);
+            preparedStatement.setInt(6, updatedCustomer.getCustomerId());
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+            rowsAffected = preparedStatement.executeUpdate();
 
-		if (rowsAffected > 0) {
-			System.out.println("Customer succesfully deleted. ");
-		} else {
-			System.out.println("Failed to delete customer. ");
-		}
-		
-		return rowsAffected > 0;
+            DBConnection.commitTransaction(connection);
+        } catch (SQLException e) {
+            try {
+                e.printStackTrace();
+                DBConnection.rollbackTransaction(connection);
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        } finally {
+            DBConnection.closeConnection(connection);
+        }
 
-	}
+        return rowsAffected > 0;
+    }
+
+    private boolean updateCity(String city, int zipcode) {
+        Connection connection = DBConnection.getConnection(env);
+        String updateCityQ = "UPDATE City SET city = ?, zipcode = ? WHERE zipcode = ?;";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(updateCityQ);
+            preparedStatement.setNString(1, city);
+            preparedStatement.setInt(2, zipcode);
+            preparedStatement.setInt(3, zipcode);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            DBConnection.closeConnection(connection);
+
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DBConnection.closeConnection(connection);
+            return false;
+        }
+    }
+
+    private boolean updateAddress(int addressId, String street, int streetNo, int zipCode) {
+        Connection connection = DBConnection.getConnection(env);
+        String updateCityQ = "UPDATE [Address] SET street = ?, streetNo = ?, zipcode = ? WHERE id = ?;";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(updateCityQ);
+            preparedStatement.setString(1, street);
+            preparedStatement.setInt(2, streetNo);
+            preparedStatement.setInt(3, zipCode);
+            preparedStatement.setInt(4, addressId);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            DBConnection.closeConnection(connection);
+
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DBConnection.closeConnection(connection);
+            return false;
+        }
+    }
+
+    public boolean deleteCustomer(int customerId) {
+
+        String deleteCustomerQ = "DELETE FROM Customer WHERE id = ?";
+        int rowsAffected = 0;
+
+        try (Connection connection = DBConnection.getConnection(env);
+             PreparedStatement preparedStatement = connection.prepareStatement(deleteCustomerQ)) {
+
+            preparedStatement.setInt(1, customerId);
+            rowsAffected = preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        if (rowsAffected > 0) {
+            System.out.println("Customer succesfully deleted. ");
+        } else {
+            System.out.println("Failed to delete customer. ");
+        }
+
+        return rowsAffected > 0;
+
+    }
 }
