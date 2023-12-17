@@ -2,16 +2,16 @@ package Model;
 
 public abstract class Person {
 	private String name;
-	private String address;
 	private String phoneNumber;
 	private String email;
 
-	public Person(String name, String address, String phoneNumber, String email) {
+	private Address address;
+
+	public Person(String name, String phoneNumber, String email, Address address) {
 		this.name = name;
-		this.address = address;
 		this.phoneNumber = phoneNumber;
 		this.email = email;
-
+		this.address = address;
 	}
 
 	public String getName() {
@@ -22,11 +22,31 @@ public abstract class Person {
 		this.name = name;
 	}
 
-	public String getAddress() {
+	public String getFirstName() {
+		int lastSpaceIndex = name.lastIndexOf(" ");
+
+		if (lastSpaceIndex == -1 || lastSpaceIndex == name.length() - 1) {
+			return name;
+		}
+
+		return name.substring(0, lastSpaceIndex);
+	}
+
+	public String getLastName() {
+		int lastSpaceIndex = name.lastIndexOf(" ");
+
+		if (lastSpaceIndex == -1 || lastSpaceIndex == name.length() - 1) {
+			return "";
+		}
+
+		return name.substring(lastSpaceIndex + 1);
+	}
+
+	public Address getAddress() {
 		return address;
 	}
 
-	public void setAddress(String address) {
+	public void setAddress(Address address) {
 		this.address = address;
 	}
 
