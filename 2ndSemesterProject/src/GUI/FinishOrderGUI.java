@@ -32,7 +32,7 @@ public class FinishOrderGUI extends JFrame {
 	private JLabel filledEmployeeLabel;
 	private JLabel filledTotalPriceLabel;
 	private Employee employee;
-	private OrderLineTableModel productTableModel;
+	private OrderLineTableModel orderLineTableModel;
 	private OrderController orderController;
 	private ConnectionEnvironment env = ConnectionEnvironment.PRODUCTION;
 
@@ -178,7 +178,7 @@ public class FinishOrderGUI extends JFrame {
 
 	private void init(Order currentOrder, OrderLineTableModel productTableModel, Employee employee) {
 		this.employee = employee;
-		this.productTableModel = productTableModel;
+		this.orderLineTableModel = productTableModel;
 		this.currentOrder = currentOrder;
 
 		String dateString = String.valueOf(currentOrder.getFormattedDate());
@@ -193,7 +193,7 @@ public class FinishOrderGUI extends JFrame {
 	}
 
 	private void backButtonClicked() {
-		OrderInfoGUI orderInfoGUI = new OrderInfoGUI(currentOrder, productTableModel, employee);
+		OrderInfoGUI orderInfoGUI = new OrderInfoGUI(currentOrder, orderLineTableModel, employee);
 		orderInfoGUI.setVisible(true);
 		dispose();
 	}

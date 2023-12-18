@@ -34,7 +34,7 @@ public class OrderInfoGUI extends JFrame {
 	private JTextField barcodeTextField;
 	private JTextField quantityTextField;
 	private Employee employee;
-	private OrderLineTableModel productTableModel;
+	private OrderLineTableModel orderLineTableModel;
 	private ArrayList<OrderLine> orderLines;
 	private OrderController orderController;
 	private ConnectionEnvironment env = ConnectionEnvironment.PRODUCTION;
@@ -175,7 +175,7 @@ public class OrderInfoGUI extends JFrame {
 		if (productTableModel == null) {
 			productTableModel = new OrderLineTableModel(orderLines);
 		} else {
-			this.productTableModel = productTableModel;
+			this.orderLineTableModel = productTableModel;
 			this.orderLines.addAll(productTableModel.getData());
 		}
 		productTable.setModel(productTableModel);
@@ -229,16 +229,16 @@ public class OrderInfoGUI extends JFrame {
 	}
 
 	private void updateProductTableModel() {
-		productTableModel = new OrderLineTableModel(orderLines);
-		productTableModel.setData(orderLines);
-		productTable.setModel(productTableModel);
+		orderLineTableModel = new OrderLineTableModel(orderLines);
+		orderLineTableModel.setData(orderLines);
+		productTable.setModel(orderLineTableModel);
 	}
 
 	private void confirmOrderClicked(Order currentOrder) {
-		if (productTableModel == null) {
+		if (orderLineTableModel == null) {
 			JOptionPane.showMessageDialog(this, "Error: Add product to order");
 		} else {
-			FinishOrderGUI finishOrderGUI = new FinishOrderGUI(currentOrder, productTableModel, employee);
+			FinishOrderGUI finishOrderGUI = new FinishOrderGUI(currentOrder, orderLineTableModel, employee);
 			finishOrderGUI.setVisible(true);
 			dispose();
 		}
