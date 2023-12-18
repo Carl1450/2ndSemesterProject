@@ -41,10 +41,10 @@ public class FinishBookingGUI extends JFrame {
 	public FinishBookingGUI(Employee employee, BookingController bookingController) {
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
+
 		setSize(750, 600);
 		setLocationRelativeTo(null);
-		
+
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -262,7 +262,7 @@ public class FinishBookingGUI extends JFrame {
 		gbc_insertCampsiteLabel.gridx = 1;
 		gbc_insertCampsiteLabel.gridy = 2;
 		panel_4.add(insertCampsiteLabel, gbc_insertCampsiteLabel);
-		
+
 		JLabel amountOfAdultsLabel = new JLabel("Amount of Adults:");
 		amountOfAdultsLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		GridBagConstraints gbc_amountOfAdultsLabel = new GridBagConstraints();
@@ -271,7 +271,7 @@ public class FinishBookingGUI extends JFrame {
 		gbc_amountOfAdultsLabel.gridx = 0;
 		gbc_amountOfAdultsLabel.gridy = 3;
 		panel_4.add(amountOfAdultsLabel, gbc_amountOfAdultsLabel);
-		
+
 		insertAmountOfAdultsLabel = new JLabel("");
 		GridBagConstraints gbc_insertAmountOfAdultsLabel = new GridBagConstraints();
 		gbc_insertAmountOfAdultsLabel.anchor = GridBagConstraints.WEST;
@@ -279,7 +279,7 @@ public class FinishBookingGUI extends JFrame {
 		gbc_insertAmountOfAdultsLabel.gridx = 1;
 		gbc_insertAmountOfAdultsLabel.gridy = 3;
 		panel_4.add(insertAmountOfAdultsLabel, gbc_insertAmountOfAdultsLabel);
-		
+
 		JLabel amountOfChildrenLabel = new JLabel("Amount of Children:");
 		GridBagConstraints gbc_amountOfChildrenLabel = new GridBagConstraints();
 		gbc_amountOfChildrenLabel.anchor = GridBagConstraints.WEST;
@@ -287,7 +287,7 @@ public class FinishBookingGUI extends JFrame {
 		gbc_amountOfChildrenLabel.gridx = 0;
 		gbc_amountOfChildrenLabel.gridy = 4;
 		panel_4.add(amountOfChildrenLabel, gbc_amountOfChildrenLabel);
-		
+
 		insertAmountOfChildrenLabel = new JLabel("");
 		GridBagConstraints gbc_insertAmountOfChildrenLabel = new GridBagConstraints();
 		gbc_insertAmountOfChildrenLabel.anchor = GridBagConstraints.WEST;
@@ -379,7 +379,7 @@ public class FinishBookingGUI extends JFrame {
 		Address customerAddress = customer.getAddress();
 		insertStreetNameLabel.setText(customerAddress.getStreet() + " " + customerAddress.getStreetNo());
 		insertCityLabel.setText(customerAddress.getCity());
-		insertZipCodeLabel.setText( Integer.toString(customerAddress.getZipCode()));
+		insertZipCodeLabel.setText(Integer.toString(customerAddress.getZipCode()));
 	}
 
 	private void setBookingInfo() {
@@ -393,14 +393,15 @@ public class FinishBookingGUI extends JFrame {
 		insertCampsiteLabel.setText(campsite.getSection() + ", " + campsite.getRoad() + " " + campsite.getSiteNumber());
 		insertAmountOfAdultsLabel.setText("" + booking.getAmountOfAdults());
 		insertAmountOfChildrenLabel.setText("" + booking.getAmountOfChildren());
-		
+
 	}
 
 	private void finishButtonClicked() {
 		if (bookingController.saveBooking()) {
 			showSuccessMessage("Booking was saved successfully!");
 		} else {
-			showErrorMessage("Something went wrong. Booking was not saved, and payment was canceled. Please try again.");
+			showErrorMessage(
+					"Something went wrong. Booking was not saved, and payment was canceled. Please try again.");
 		}
 
 		MainMenuGUI mainMenuGUI = new MainMenuGUI(employee);

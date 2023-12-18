@@ -88,7 +88,7 @@ public class OrderLineTableModel extends AbstractTableModel {
 		super.fireTableDataChanged();
 	}
 
-	public List<OrderLine> getData(){
+	public List<OrderLine> getData() {
 		return data;
 	}
 }

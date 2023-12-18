@@ -28,25 +28,6 @@ public class EditCustomerGUI extends JFrame {
 	private UpdateDeleteCustomerGUI updateDeleteCustomerGUI;
 	private Customer customer;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					EditCustomerGUI frame = new EditCustomerGUI(null);
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
-	 * Create the frame.
-	 */
 	public EditCustomerGUI(Employee employee) {
 		this.employee = employee;
 		this.customer = customer;

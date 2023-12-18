@@ -45,264 +45,261 @@ import javax.swing.JScrollBar;
 
 public class CreateTaskGUI extends JFrame {
 
-    private List<Janitor> janitorList;
-    private JPanel contentPane;
-    private JList listJanitors;
-    private JTable tableTasks;
-    private TaskTableModel taskTableModel;
-    private JTable table_1;
+	private List<Janitor> janitorList;
+	private JPanel contentPane;
+	private JList listJanitors;
+	private JTable tableTasks;
+	private TaskTableModel taskTableModel;
+	private JTable table_1;
 
-    /**
-     * Create the frame.
-     */
-    public CreateTaskGUI(Employee employee) {
-	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	setSize(750, 600);
-	setLocationRelativeTo(null);
-	contentPane = new JPanel();
-	contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+	public CreateTaskGUI(Employee employee) {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setSize(750, 600);
+		setLocationRelativeTo(null);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-	setContentPane(contentPane);
-	GridBagLayout gbl_contentPane = new GridBagLayout();
-	gbl_contentPane.columnWidths = new int[] { 150, 150, 0, 0 };
-	gbl_contentPane.rowHeights = new int[] { 0, 475, 25, 25, 0 };
-	gbl_contentPane.columnWeights = new double[] { 0.0, 0.0, 1.0, Double.MIN_VALUE };
-	gbl_contentPane.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
-	contentPane.setLayout(gbl_contentPane);
+		setContentPane(contentPane);
+		GridBagLayout gbl_contentPane = new GridBagLayout();
+		gbl_contentPane.columnWidths = new int[] { 150, 150, 0, 0 };
+		gbl_contentPane.rowHeights = new int[] { 0, 475, 25, 25, 0 };
+		gbl_contentPane.columnWeights = new double[] { 0.0, 0.0, 1.0, Double.MIN_VALUE };
+		gbl_contentPane.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		contentPane.setLayout(gbl_contentPane);
 
-	JLabel lblDescription = new JLabel("Description");
-	lblDescription.setFont(new Font("Tahoma", Font.PLAIN, 15));
-	GridBagConstraints gbc_lblDescription = new GridBagConstraints();
-	gbc_lblDescription.insets = new Insets(0, 0, 5, 5);
-	gbc_lblDescription.gridx = 0;
-	gbc_lblDescription.gridy = 0;
-	contentPane.add(lblDescription, gbc_lblDescription);
+		JLabel lblDescription = new JLabel("Description");
+		lblDescription.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		GridBagConstraints gbc_lblDescription = new GridBagConstraints();
+		gbc_lblDescription.insets = new Insets(0, 0, 5, 5);
+		gbc_lblDescription.gridx = 0;
+		gbc_lblDescription.gridy = 0;
+		contentPane.add(lblDescription, gbc_lblDescription);
 
-	JLabel lblJanitors = new JLabel("Janitors");
-	lblJanitors.setFont(new Font("Tahoma", Font.PLAIN, 15));
-	GridBagConstraints gbc_lblJanitors = new GridBagConstraints();
-	gbc_lblJanitors.insets = new Insets(0, 0, 5, 5);
-	gbc_lblJanitors.gridx = 1;
-	gbc_lblJanitors.gridy = 0;
-	contentPane.add(lblJanitors, gbc_lblJanitors);
+		JLabel lblJanitors = new JLabel("Janitors");
+		lblJanitors.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		GridBagConstraints gbc_lblJanitors = new GridBagConstraints();
+		gbc_lblJanitors.insets = new Insets(0, 0, 5, 5);
+		gbc_lblJanitors.gridx = 1;
+		gbc_lblJanitors.gridy = 0;
+		contentPane.add(lblJanitors, gbc_lblJanitors);
 
-	JLabel lblTasks = new JLabel("Tasks");
-	lblTasks.setFont(new Font("Tahoma", Font.PLAIN, 15));
-	GridBagConstraints gbc_lblTasks = new GridBagConstraints();
-	gbc_lblTasks.insets = new Insets(0, 0, 5, 0);
-	gbc_lblTasks.gridx = 2;
-	gbc_lblTasks.gridy = 0;
-	contentPane.add(lblTasks, gbc_lblTasks);
+		JLabel lblTasks = new JLabel("Tasks");
+		lblTasks.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		GridBagConstraints gbc_lblTasks = new GridBagConstraints();
+		gbc_lblTasks.insets = new Insets(0, 0, 5, 0);
+		gbc_lblTasks.gridx = 2;
+		gbc_lblTasks.gridy = 0;
+		contentPane.add(lblTasks, gbc_lblTasks);
 
-	JPanel panel_left = new JPanel();
-	panel_left.setLayout(null);
-	GridBagConstraints gbc_panel_left = new GridBagConstraints();
-	gbc_panel_left.insets = new Insets(0, 0, 5, 5);
-	gbc_panel_left.fill = GridBagConstraints.BOTH;
-	gbc_panel_left.gridx = 0;
-	gbc_panel_left.gridy = 1;
-	contentPane.add(panel_left, gbc_panel_left);
+		JPanel panel_left = new JPanel();
+		panel_left.setLayout(null);
+		GridBagConstraints gbc_panel_left = new GridBagConstraints();
+		gbc_panel_left.insets = new Insets(0, 0, 5, 5);
+		gbc_panel_left.fill = GridBagConstraints.BOTH;
+		gbc_panel_left.gridx = 0;
+		gbc_panel_left.gridy = 1;
+		contentPane.add(panel_left, gbc_panel_left);
 
-	JTextArea textAreaDescription = new JTextArea();
-	textAreaDescription.setBounds(0, 0, 145, 470);
-	textAreaDescription.setLineWrap(true);
-	textAreaDescription.setWrapStyleWord(true); // Make words wrap, not just letters
-	panel_left.add(textAreaDescription);
+		JTextArea textAreaDescription = new JTextArea();
+		textAreaDescription.setBounds(0, 0, 145, 470);
+		textAreaDescription.setLineWrap(true);
+		textAreaDescription.setWrapStyleWord(true); // Make words wrap, not just letters
+		panel_left.add(textAreaDescription);
 
-	JPanel panel_middle = new JPanel();
-	panel_middle.setLayout(null);
-	GridBagConstraints gbc_panel_middle = new GridBagConstraints();
-	gbc_panel_middle.insets = new Insets(0, 0, 5, 5);
-	gbc_panel_middle.fill = GridBagConstraints.BOTH;
-	gbc_panel_middle.gridx = 1;
-	gbc_panel_middle.gridy = 1;
-	contentPane.add(panel_middle, gbc_panel_middle);
+		JPanel panel_middle = new JPanel();
+		panel_middle.setLayout(null);
+		GridBagConstraints gbc_panel_middle = new GridBagConstraints();
+		gbc_panel_middle.insets = new Insets(0, 0, 5, 5);
+		gbc_panel_middle.fill = GridBagConstraints.BOTH;
+		gbc_panel_middle.gridx = 1;
+		gbc_panel_middle.gridy = 1;
+		contentPane.add(panel_middle, gbc_panel_middle);
 
-	JScrollPane scrollPane = new JScrollPane();
-	scrollPane.setBounds(0, 0, 145, 470);
-	panel_middle.add(scrollPane);
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(0, 0, 145, 470);
+		panel_middle.add(scrollPane);
 
-	listJanitors = new JList();
-	scrollPane.setViewportView(listJanitors);
+		listJanitors = new JList();
+		scrollPane.setViewportView(listJanitors);
 
-	JPanel panel_right = new JPanel();
-	panel_right.setLayout(null);
-	GridBagConstraints gbc_panel_right = new GridBagConstraints();
-	gbc_panel_right.insets = new Insets(0, 0, 5, 0);
-	gbc_panel_right.fill = GridBagConstraints.BOTH;
-	gbc_panel_right.gridx = 2;
-	gbc_panel_right.gridy = 1;
-	contentPane.add(panel_right, gbc_panel_right);
+		JPanel panel_right = new JPanel();
+		panel_right.setLayout(null);
+		GridBagConstraints gbc_panel_right = new GridBagConstraints();
+		gbc_panel_right.insets = new Insets(0, 0, 5, 0);
+		gbc_panel_right.fill = GridBagConstraints.BOTH;
+		gbc_panel_right.gridx = 2;
+		gbc_panel_right.gridy = 1;
+		contentPane.add(panel_right, gbc_panel_right);
 
-	JScrollPane scrollPaneTasks = new JScrollPane();
-	scrollPaneTasks.setBounds(0, 0, 426, 470);
-	panel_right.add(scrollPaneTasks);
+		JScrollPane scrollPaneTasks = new JScrollPane();
+		scrollPaneTasks.setBounds(0, 0, 426, 470);
+		panel_right.add(scrollPaneTasks);
 
-	tableTasks = new JTable();
-	scrollPaneTasks.setViewportView(tableTasks);
+		tableTasks = new JTable();
+		scrollPaneTasks.setViewportView(tableTasks);
 
-	JPanel panelPriority = new JPanel();
-	GridBagConstraints gbc_panelPriority = new GridBagConstraints();
-	gbc_panelPriority.insets = new Insets(0, 0, 5, 5);
-	gbc_panelPriority.fill = GridBagConstraints.BOTH;
-	gbc_panelPriority.gridx = 0;
-	gbc_panelPriority.gridy = 2;
-	contentPane.add(panelPriority, gbc_panelPriority);
-	GridBagLayout gbl_panelPriority = new GridBagLayout();
-	gbl_panelPriority.columnWidths = new int[] { 51, 32, 0 };
-	gbl_panelPriority.rowHeights = new int[] { 13, 0 };
-	gbl_panelPriority.columnWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
-	gbl_panelPriority.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
-	panelPriority.setLayout(gbl_panelPriority);
+		JPanel panelPriority = new JPanel();
+		GridBagConstraints gbc_panelPriority = new GridBagConstraints();
+		gbc_panelPriority.insets = new Insets(0, 0, 5, 5);
+		gbc_panelPriority.fill = GridBagConstraints.BOTH;
+		gbc_panelPriority.gridx = 0;
+		gbc_panelPriority.gridy = 2;
+		contentPane.add(panelPriority, gbc_panelPriority);
+		GridBagLayout gbl_panelPriority = new GridBagLayout();
+		gbl_panelPriority.columnWidths = new int[] { 51, 32, 0 };
+		gbl_panelPriority.rowHeights = new int[] { 13, 0 };
+		gbl_panelPriority.columnWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
+		gbl_panelPriority.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
+		panelPriority.setLayout(gbl_panelPriority);
 
-	JLabel lblPriority = new JLabel("Priority");
-	GridBagConstraints gbc_lblPriority = new GridBagConstraints();
-	gbc_lblPriority.anchor = GridBagConstraints.WEST;
-	gbc_lblPriority.insets = new Insets(0, 0, 0, 5);
-	gbc_lblPriority.gridx = 0;
-	gbc_lblPriority.gridy = 0;
-	panelPriority.add(lblPriority, gbc_lblPriority);
+		JLabel lblPriority = new JLabel("Priority");
+		GridBagConstraints gbc_lblPriority = new GridBagConstraints();
+		gbc_lblPriority.anchor = GridBagConstraints.WEST;
+		gbc_lblPriority.insets = new Insets(0, 0, 0, 5);
+		gbc_lblPriority.gridx = 0;
+		gbc_lblPriority.gridy = 0;
+		panelPriority.add(lblPriority, gbc_lblPriority);
 
-	JComboBox comboBoxPriority = new JComboBox();
-	for (int i = 0; i < 3; i++) {
-	    comboBoxPriority.addItem(i + 1);
-	}
-	GridBagConstraints gbc_comboBoxPriority = new GridBagConstraints();
-	gbc_comboBoxPriority.fill = GridBagConstraints.HORIZONTAL;
-	gbc_comboBoxPriority.gridx = 1;
-	gbc_comboBoxPriority.gridy = 0;
-	panelPriority.add(comboBoxPriority, gbc_comboBoxPriority);
-
-	JPanel panelBottomRow = new JPanel();
-	GridBagConstraints gbc_panelBottomRow = new GridBagConstraints();
-	gbc_panelBottomRow.gridwidth = 3;
-	gbc_panelBottomRow.insets = new Insets(0, 0, 0, 5);
-	gbc_panelBottomRow.fill = GridBagConstraints.BOTH;
-	gbc_panelBottomRow.gridx = 0;
-	gbc_panelBottomRow.gridy = 3;
-	contentPane.add(panelBottomRow, gbc_panelBottomRow);
-	panelBottomRow.setLayout(new BorderLayout(0, 0));
-
-	JPanel panelDeadline = new JPanel();
-	panelBottomRow.add(panelDeadline, BorderLayout.WEST);
-
-	JLabel lblDeadline = new JLabel("Deadline");
-	panelDeadline.add(lblDeadline);
-
-	DatePickerSettings dateSettings = new DatePickerSettings();
-
-	DatePicker deadlineDatePicker = new DatePicker(dateSettings);
-	panelDeadline.add(deadlineDatePicker);
-
-	JPanel panelBottomButtons = new JPanel();
-	panelBottomRow.add(panelBottomButtons, BorderLayout.EAST);
-
-	JButton btnBack = new JButton("Back");
-	btnBack.addActionListener(new ActionListener() {
-	    public void actionPerformed(ActionEvent e) {
-		backButtonClicked(employee);
-	    }
-
-	});
-	panelBottomButtons.add(btnBack);
-
-	JButton btnAddTask = new JButton("Add Task");
-	panelBottomButtons.add(btnAddTask);
-	btnAddTask.addActionListener(new ActionListener() {
-	    public void actionPerformed(ActionEvent e) {
-		String description = textAreaDescription.getText();
-		int priority = Integer.parseInt(comboBoxPriority.getSelectedItem().toString());
-		Date deadline = null;
-		Janitor janitor = null;
-		int selectedIndex = listJanitors.getSelectedIndex();
-
-		System.out.println(description);
-
-		// Checks if the description has contents besides whitespace
-		if (description == null || description.trim().length() == 0) {
-		    JOptionPane.showMessageDialog(null, "You need to enter a description");
-		    return;
+		JComboBox comboBoxPriority = new JComboBox();
+		for (int i = 0; i < 3; i++) {
+			comboBoxPriority.addItem(i + 1);
 		}
+		GridBagConstraints gbc_comboBoxPriority = new GridBagConstraints();
+		gbc_comboBoxPriority.fill = GridBagConstraints.HORIZONTAL;
+		gbc_comboBoxPriority.gridx = 1;
+		gbc_comboBoxPriority.gridy = 0;
+		panelPriority.add(comboBoxPriority, gbc_comboBoxPriority);
 
-		if (selectedIndex == -1) {
-		    JOptionPane.showMessageDialog(null, "You need to select a janitor");
-		    return;
-		}
+		JPanel panelBottomRow = new JPanel();
+		GridBagConstraints gbc_panelBottomRow = new GridBagConstraints();
+		gbc_panelBottomRow.gridwidth = 3;
+		gbc_panelBottomRow.insets = new Insets(0, 0, 0, 5);
+		gbc_panelBottomRow.fill = GridBagConstraints.BOTH;
+		gbc_panelBottomRow.gridx = 0;
+		gbc_panelBottomRow.gridy = 3;
+		contentPane.add(panelBottomRow, gbc_panelBottomRow);
+		panelBottomRow.setLayout(new BorderLayout(0, 0));
 
-		if (deadlineDatePicker.getDate() == null) {
-		    JOptionPane.showMessageDialog(null, "You need to select a deadline");
-		    return;
-		}
+		JPanel panelDeadline = new JPanel();
+		panelBottomRow.add(panelDeadline, BorderLayout.WEST);
 
-		deadline = Date.valueOf(deadlineDatePicker.getDate());
-		janitor = janitorList.get(selectedIndex);
-		createTaskButtonClicked(description, priority, deadline, employee, janitor);
-		textAreaDescription.setText("");
-		deadlineDatePicker.setText("");
-		listJanitors.clearSelection();
-	    }
-	});
+		JLabel lblDeadline = new JLabel("Deadline");
+		panelDeadline.add(lblDeadline);
 
-	init();
-    }
+		DatePickerSettings dateSettings = new DatePickerSettings();
 
-    private void init() {
-	TaskController taskController = new TaskController(ConnectionEnvironment.PRODUCTION);
-	janitorList = taskController.getAllJanitors();
-	String[] janitorArray = new String[janitorList.size()];
-	for (int i = 0; i < janitorList.size(); i++) {
-	    janitorArray[i] = janitorList.get(i).getName();
+		DatePicker deadlineDatePicker = new DatePicker(dateSettings);
+		panelDeadline.add(deadlineDatePicker);
+
+		JPanel panelBottomButtons = new JPanel();
+		panelBottomRow.add(panelBottomButtons, BorderLayout.EAST);
+
+		JButton btnBack = new JButton("Back");
+		btnBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				backButtonClicked(employee);
+			}
+
+		});
+		panelBottomButtons.add(btnBack);
+
+		JButton btnAddTask = new JButton("Add Task");
+		panelBottomButtons.add(btnAddTask);
+		btnAddTask.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String description = textAreaDescription.getText();
+				int priority = Integer.parseInt(comboBoxPriority.getSelectedItem().toString());
+				Date deadline = null;
+				Janitor janitor = null;
+				int selectedIndex = listJanitors.getSelectedIndex();
+
+				System.out.println(description);
+
+				// Checks if the description has contents besides whitespace
+				if (description == null || description.trim().length() == 0) {
+					JOptionPane.showMessageDialog(null, "You need to enter a description");
+					return;
+				}
+
+				if (selectedIndex == -1) {
+					JOptionPane.showMessageDialog(null, "You need to select a janitor");
+					return;
+				}
+
+				if (deadlineDatePicker.getDate() == null) {
+					JOptionPane.showMessageDialog(null, "You need to select a deadline");
+					return;
+				}
+
+				deadline = Date.valueOf(deadlineDatePicker.getDate());
+				janitor = janitorList.get(selectedIndex);
+				createTaskButtonClicked(description, priority, deadline, employee, janitor);
+				textAreaDescription.setText("");
+				deadlineDatePicker.setText("");
+				listJanitors.clearSelection();
+			}
+		});
+
+		init();
 	}
 
-	listJanitors.setListData(janitorArray);
-	updateTableModel();
-    }
+	private void init() {
+		TaskController taskController = new TaskController(ConnectionEnvironment.PRODUCTION);
+		janitorList = taskController.getAllJanitors();
+		String[] janitorArray = new String[janitorList.size()];
+		for (int i = 0; i < janitorList.size(); i++) {
+			janitorArray[i] = janitorList.get(i).getName();
+		}
 
-    private void updateTableModel() {
-	TaskController taskController = new TaskController(ConnectionEnvironment.PRODUCTION);
-	List<Task> taskList = taskController.getUncompletedTasks(0, false);
-	taskTableModel = new TaskTableModel(taskList);
-	tableTasks.setModel(taskTableModel);
-	tableTasks.setDefaultRenderer(Object.class, new MultilineCellRenderer());
-	tableTasks.setRowHeight(50);
-
-	// Make the priority field to take up less space, making space for others
-	tableTasks.getColumnModel().getColumn(0).setPreferredWidth(20);
-	// Setting the size of the deadline field, making it readable for most scales
-	tableTasks.getColumnModel().getColumn(2).setMinWidth(60);
-	tableTasks.getColumnModel().getColumn(2).setPreferredWidth(60);
-    }
-
-    private void createTaskButtonClicked(String description, int priority, Date deadline, Employee employee,
-	    Janitor janitor) {
-	TaskController taskController = new TaskController(ConnectionEnvironment.PRODUCTION);
-	taskController.createTask(description, priority, employee, deadline);
-	taskController.assignJanitorToTask(janitor);
-	taskController.saveTask();
-	updateTableModel();
-    }
-
-    private void backButtonClicked(Employee employee) {
-	MainMenuGUI mainMenuGUI = new MainMenuGUI(employee);
-	mainMenuGUI.setVisible(true);
-	dispose();
-    }
-
-    static class MultilineCellRenderer extends DefaultTableCellRenderer {
-	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
-		int row, int column) {
-	    Component cellComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
-		    column);
-	    if (value != null) {
-
-		JTextArea textArea = new JTextArea(value.toString());
-		textArea.setWrapStyleWord(true);
-		textArea.setLineWrap(true); 
-		textArea.setOpaque(true);
-		textArea.setBackground(cellComponent.getBackground());
-		return textArea;
-	    }
-	    return cellComponent;
+		listJanitors.setListData(janitorArray);
+		updateTableModel();
 	}
-    }
+
+	private void updateTableModel() {
+		TaskController taskController = new TaskController(ConnectionEnvironment.PRODUCTION);
+		List<Task> taskList = taskController.getUncompletedTasks(0, false);
+		taskTableModel = new TaskTableModel(taskList);
+		tableTasks.setModel(taskTableModel);
+		tableTasks.setDefaultRenderer(Object.class, new MultilineCellRenderer());
+		tableTasks.setRowHeight(50);
+
+		// Make the priority field to take up less space, making space for others
+		tableTasks.getColumnModel().getColumn(0).setPreferredWidth(20);
+		// Setting the size of the deadline field, making it readable for most scales
+		tableTasks.getColumnModel().getColumn(2).setMinWidth(60);
+		tableTasks.getColumnModel().getColumn(2).setPreferredWidth(60);
+	}
+
+	private void createTaskButtonClicked(String description, int priority, Date deadline, Employee employee,
+			Janitor janitor) {
+		TaskController taskController = new TaskController(ConnectionEnvironment.PRODUCTION);
+		taskController.createTask(description, priority, employee, deadline);
+		taskController.assignJanitorToTask(janitor);
+		taskController.saveTask();
+		updateTableModel();
+	}
+
+	private void backButtonClicked(Employee employee) {
+		MainMenuGUI mainMenuGUI = new MainMenuGUI(employee);
+		mainMenuGUI.setVisible(true);
+		dispose();
+	}
+
+	static class MultilineCellRenderer extends DefaultTableCellRenderer {
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+				int row, int column) {
+			Component cellComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
+					column);
+			if (value != null) {
+
+				JTextArea textArea = new JTextArea(value.toString());
+				textArea.setWrapStyleWord(true);
+				textArea.setLineWrap(true);
+				textArea.setOpaque(true);
+				textArea.setBackground(cellComponent.getBackground());
+				return textArea;
+			}
+			return cellComponent;
+		}
+	}
 }

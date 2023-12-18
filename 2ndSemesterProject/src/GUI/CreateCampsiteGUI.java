@@ -69,10 +69,6 @@ public class CreateCampsiteGUI extends JFrame {
 	private JButton createUpdateButton;
 	private int newSiteNo;
 
-
-	/**
-	 * Create the frame.
-	 */
 	public CreateCampsiteGUI(Employee employee) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(750, 600);
@@ -382,7 +378,7 @@ public class CreateCampsiteGUI extends JFrame {
 
 	private void getTextFieldDataForCampsite() {
 		try {
-			if(!maxPeopleTextField.getText().isEmpty() || !depositTextField.getText().isEmpty()) {
+			if (!maxPeopleTextField.getText().isEmpty() || !depositTextField.getText().isEmpty()) {
 				maxPeople = Integer.parseInt(maxPeopleTextField.getText());
 				deposit = Float.parseFloat(depositTextField.getText());
 			}
@@ -428,19 +424,20 @@ public class CreateCampsiteGUI extends JFrame {
 	private void updateButtonClicked() {
 		boolean updated = false;
 		int inputSiteNumber = 0;
-		
+
 		try {
 			inputSiteNumber = Integer.parseInt(siteNumberTextField.getText());
 		} catch (NumberFormatException e) {
 			JOptionPane.showMessageDialog(this, "Error: Site Number is not valid");
-			return; 
+			return;
 		}
 
 		Campsite campsite = campsiteCRUDTableModel.getCampsite(campsiteTable.getSelectedRow());
 		getTextFieldDataForCampsite();
-		campsiteController.updateCampsite(siteNo, campsite.getSiteNumber(), section, road, type, fee, price, maxPeople, deposit);
+		campsiteController.updateCampsite(siteNo, campsite.getSiteNumber(), section, road, type, fee, price, maxPeople,
+				deposit);
 		updated = true;
-		
+
 		if (updated) {
 			JOptionPane.showMessageDialog(this, "Succesfully updated campsite");
 			updateTable(true);
@@ -455,16 +452,16 @@ public class CreateCampsiteGUI extends JFrame {
 	private void deleteButtonClicked() {
 		boolean deleted = false;
 		int selectedRow = campsiteTable.getSelectedRow();
-		if(selectedRow == -1) {
+		if (selectedRow == -1) {
 			JOptionPane.showMessageDialog(null, "Please select a row to delete.", "Error", JOptionPane.ERROR_MESSAGE);
-	        return;
+			return;
 		}
-		
+
 		Campsite campsite = campsiteCRUDTableModel.getCampsite(campsiteTable.getSelectedRow());
 		campsiteController.deleteCampsite(campsite.getSiteNumber());
-		
+
 		deleted = true;
-		
+
 		if (deleted) {
 			JOptionPane.showMessageDialog(this, "Succesfully deleted campsite");
 			updateTable(true);
@@ -562,4 +559,3 @@ public class CreateCampsiteGUI extends JFrame {
 	}
 
 }
-

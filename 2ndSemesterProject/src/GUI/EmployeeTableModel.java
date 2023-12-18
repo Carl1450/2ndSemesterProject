@@ -11,84 +11,85 @@ import Model.Product;
 
 public class EmployeeTableModel extends AbstractTableModel {
 
-    private List<Employee> data;
-    private static final String[] COL_NAMES = {"Name", "Email", "Phone Number", "Address", "City", "Zip Code", "Role"};
+	private List<Employee> data;
+	private static final String[] COL_NAMES = { "Name", "Email", "Phone Number", "Address", "City", "Zip Code",
+			"Role" };
 
-    public EmployeeTableModel(List<Employee> employees) {
-        super();
+	public EmployeeTableModel(List<Employee> employees) {
+		super();
 
-        if (employees != null) {
-            this.data = employees;
-        } else {
-            this.data = new ArrayList<>();
-        }
-    }
+		if (employees != null) {
+			this.data = employees;
+		} else {
+			this.data = new ArrayList<>();
+		}
+	}
 
-    @Override
-    public String getColumnName(int col) {
-        return COL_NAMES[col];
-    }
+	@Override
+	public String getColumnName(int col) {
+		return COL_NAMES[col];
+	}
 
-    @Override
-    public int getRowCount() {
-        return data.size();
-    }
+	@Override
+	public int getRowCount() {
+		return data.size();
+	}
 
-    @Override
-    public int getColumnCount() {
-        return COL_NAMES.length;
-    }
+	@Override
+	public int getColumnCount() {
+		return COL_NAMES.length;
+	}
 
-    @Override
-    public Object getValueAt(int rowIndex, int columnIndex) {
-        Employee employee = data.get(rowIndex);
-        String res = "";
+	@Override
+	public Object getValueAt(int rowIndex, int columnIndex) {
+		Employee employee = data.get(rowIndex);
+		String res = "";
 
-        Address employeeAddress = employee.getAddress();
+		Address employeeAddress = employee.getAddress();
 
-        if (employee != null) {
-            switch (columnIndex) {
-                case 0:
-                    res = employee.getName();
-                    break;
-                case 1:
-                    res = employee.getEmail();
-                    break;
-                case 2:
-                    res = employee.getPhoneNumber();
-                    break;
-                case 3:
-                    res = employeeAddress.getStreet() + " " + employeeAddress.getStreetNo();
-                    break;
-                case 4:
-                    res = employeeAddress.getCity();
-                    break;
-                case 5:
-                    res = Integer.toString(employeeAddress.getZipCode());
-                    break;
-                case 6:
-                    res = employee.toString();
-                    break;
-                default:
-                    res = "Unknown";
-            }
-        } else {
-            res = "N/A";
-        }
-        return res;
+		if (employee != null) {
+			switch (columnIndex) {
+			case 0:
+				res = employee.getName();
+				break;
+			case 1:
+				res = employee.getEmail();
+				break;
+			case 2:
+				res = employee.getPhoneNumber();
+				break;
+			case 3:
+				res = employeeAddress.getStreet() + " " + employeeAddress.getStreetNo();
+				break;
+			case 4:
+				res = employeeAddress.getCity();
+				break;
+			case 5:
+				res = Integer.toString(employeeAddress.getZipCode());
+				break;
+			case 6:
+				res = employee.toString();
+				break;
+			default:
+				res = "Unknown";
+			}
+		} else {
+			res = "N/A";
+		}
+		return res;
 
-    }
+	}
 
-    public Employee getEmployee(int index) {
-        return data.get(index);
-    }
+	public Employee getEmployee(int index) {
+		return data.get(index);
+	}
 
-    public void setData(List<Employee> data) {
-        this.data = data;
-        super.fireTableDataChanged();
-    }
+	public void setData(List<Employee> data) {
+		this.data = data;
+		super.fireTableDataChanged();
+	}
 
-    public List<Employee> getData() {
-        return data;
-    }
+	public List<Employee> getData() {
+		return data;
+	}
 }

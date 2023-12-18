@@ -356,20 +356,19 @@ public class UpdateDeleteCustomerGUI extends JFrame {
 	private void updateCustomerTable(boolean retrieveNewData) {
 
 		String customerPhoneNumberString = customerSearchTextField.getText();
-	    if (customerPhoneNumberString.equals("Search for phone number ...")) {
-	        customerPhoneNumberString = "";
-	    }
+		if (customerPhoneNumberString.equals("Search for phone number ...")) {
+			customerPhoneNumberString = "";
+		}
 
-	    List<Customer> customers = customerController.findAllCustomers(customerPhoneNumberString, true);
+		List<Customer> customers = customerController.findAllCustomers(customerPhoneNumberString, true);
 
-	    customerTableModel = new CustomerTableModel(customers);
-	    customerTable.setModel(customerTableModel);
+		customerTableModel = new CustomerTableModel(customers);
+		customerTable.setModel(customerTableModel);
 	}
 
 	private void updateButtonClicked() {
 
 		try {
-
 
 			String name = nameTextField.getText();
 			String email = emailTextField.getText();
@@ -378,9 +377,11 @@ public class UpdateDeleteCustomerGUI extends JFrame {
 			int zipCode = Integer.parseInt(zipcodeTextField.getText());
 			String city = cityTextField.getText();
 
-			// Customer oldCustomer, String name, String email, String phoneNumber, String street, int streetNo, int zipCode, String city
+			// Customer oldCustomer, String name, String email, String phoneNumber, String
+			// street, int streetNo, int zipCode, String city
 
-			if (customerController.updateCustomer(getSelectedCustomer(), name, email, phoneNumber, address, zipCode, city)) {
+			if (customerController.updateCustomer(getSelectedCustomer(), name, email, phoneNumber, address, zipCode,
+					city)) {
 				JOptionPane.showMessageDialog(null, "Customer updated successfully", "Success",
 						JOptionPane.INFORMATION_MESSAGE);
 				updateCustomerTable(true);

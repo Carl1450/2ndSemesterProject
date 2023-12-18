@@ -39,13 +39,6 @@ public class OrderInfoGUI extends JFrame {
 	private OrderController orderController;
 	private ConnectionEnvironment env = ConnectionEnvironment.PRODUCTION;
 
-	/**
-	 * Launch the application.
-	 */
-
-	/**
-	 * Create the frame.
-	 */
 	public OrderInfoGUI(Order currentOrder, OrderLineTableModel productTableModel, Employee employee) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(750, 600);
@@ -210,7 +203,7 @@ public class OrderInfoGUI extends JFrame {
 			Product product = orderController.findProductByBarcode(barcode);
 
 			OrderLine orderLine = new OrderLine(product, quantity);
-			
+
 			if (product != null) {
 				boolean updated = false;
 				for (OrderLine existingOrderLine : orderLines) {
