@@ -6,6 +6,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import com.github.lgooddatepicker.components.DatePicker;
+
 import Control.BookingController;
 import Database.ConnectionEnvironment;
 import Model.Campsite;
@@ -64,12 +66,8 @@ public class BookingInfoGUI extends JFrame {
     private ConnectionEnvironment env = ConnectionEnvironment.PRODUCTION;
 
     private CampsiteTableModel campsiteTableModel;
-    private JComboBox startYearComboBox;
-    private JComboBox startMonthComboBox;
-    private JComboBox startDayComboBox;
-    private JComboBox endYearComboBox;
-    private JComboBox endMonthComboBox;
-    private JComboBox endDayComboBox;
+    private DatePicker startYearComboBox;
+    private DatePicker endYearComboBox;
 
     private boolean customerInfoWarningDisplayed = false;
     private JRadioButton includeFeeRadioButton;
@@ -282,7 +280,7 @@ public class BookingInfoGUI extends JFrame {
         JLabel startDateLabel = new JLabel("Start Date:");
         GridBagConstraints gbc_startDateLabel = new GridBagConstraints();
         gbc_startDateLabel.insets = new Insets(0, 0, 5, 5);
-        gbc_startDateLabel.anchor = GridBagConstraints.WEST;
+        gbc_startDateLabel.anchor = GridBagConstraints.SOUTHWEST;
         gbc_startDateLabel.gridx = 0;
         gbc_startDateLabel.gridy = 0;
         panel_1.add(startDateLabel, gbc_startDateLabel);
@@ -302,49 +300,14 @@ public class BookingInfoGUI extends JFrame {
         gbl_panel_4.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
         panel_4.setLayout(gbl_panel_4);
 
-        JLabel yearLabel = new JLabel("Year");
-        GridBagConstraints gbc_yearLabel = new GridBagConstraints();
-        gbc_yearLabel.insets = new Insets(0, 0, 5, 5);
-        gbc_yearLabel.gridx = 0;
-        gbc_yearLabel.gridy = 0;
-        panel_4.add(yearLabel, gbc_yearLabel);
-
-        JLabel monthLabel = new JLabel("Month");
-        GridBagConstraints gbc_monthLabel = new GridBagConstraints();
-        gbc_monthLabel.insets = new Insets(0, 0, 5, 5);
-        gbc_monthLabel.gridx = 1;
-        gbc_monthLabel.gridy = 0;
-        panel_4.add(monthLabel, gbc_monthLabel);
-
-        JLabel dayLabel = new JLabel("Day");
-        GridBagConstraints gbc_dayLabel = new GridBagConstraints();
-        gbc_dayLabel.insets = new Insets(0, 0, 5, 0);
-        gbc_dayLabel.gridx = 2;
-        gbc_dayLabel.gridy = 0;
-        panel_4.add(dayLabel, gbc_dayLabel);
-
-        startYearComboBox = new JComboBox();
+        
+        startYearComboBox = new DatePicker();
         GridBagConstraints gbc_startYearComboBox = new GridBagConstraints();
         gbc_startYearComboBox.insets = new Insets(0, 0, 0, 5);
         gbc_startYearComboBox.fill = GridBagConstraints.HORIZONTAL;
         gbc_startYearComboBox.gridx = 0;
         gbc_startYearComboBox.gridy = 1;
         panel_4.add(startYearComboBox, gbc_startYearComboBox);
-
-        startMonthComboBox = new JComboBox();
-        GridBagConstraints gbc_startMonthComboBox = new GridBagConstraints();
-        gbc_startMonthComboBox.insets = new Insets(0, 0, 0, 5);
-        gbc_startMonthComboBox.fill = GridBagConstraints.HORIZONTAL;
-        gbc_startMonthComboBox.gridx = 1;
-        gbc_startMonthComboBox.gridy = 1;
-        panel_4.add(startMonthComboBox, gbc_startMonthComboBox);
-
-        startDayComboBox = new JComboBox();
-        GridBagConstraints gbc_startDayComboBox = new GridBagConstraints();
-        gbc_startDayComboBox.fill = GridBagConstraints.HORIZONTAL;
-        gbc_startDayComboBox.gridx = 2;
-        gbc_startDayComboBox.gridy = 1;
-        panel_4.add(startDayComboBox, gbc_startDayComboBox);
 
         JLabel endDateLabel = new JLabel("End Date:");
         GridBagConstraints gbc_endDateLabel = new GridBagConstraints();
@@ -369,28 +332,13 @@ public class BookingInfoGUI extends JFrame {
         gbl_panel_5.rowWeights = new double[]{0.0, Double.MIN_VALUE};
         panel_5.setLayout(gbl_panel_5);
 
-        endYearComboBox = new JComboBox();
+        endYearComboBox = new DatePicker();
         GridBagConstraints gbc_endYearComboBox = new GridBagConstraints();
         gbc_endYearComboBox.insets = new Insets(0, 0, 0, 5);
         gbc_endYearComboBox.fill = GridBagConstraints.HORIZONTAL;
         gbc_endYearComboBox.gridx = 0;
         gbc_endYearComboBox.gridy = 0;
         panel_5.add(endYearComboBox, gbc_endYearComboBox);
-
-        endMonthComboBox = new JComboBox();
-        GridBagConstraints gbc_endMonthComboBox = new GridBagConstraints();
-        gbc_endMonthComboBox.insets = new Insets(0, 0, 0, 5);
-        gbc_endMonthComboBox.fill = GridBagConstraints.HORIZONTAL;
-        gbc_endMonthComboBox.gridx = 1;
-        gbc_endMonthComboBox.gridy = 0;
-        panel_5.add(endMonthComboBox, gbc_endMonthComboBox);
-
-        endDayComboBox = new JComboBox();
-        GridBagConstraints gbc_endDayComboBox = new GridBagConstraints();
-        gbc_endDayComboBox.fill = GridBagConstraints.HORIZONTAL;
-        gbc_endDayComboBox.gridx = 2;
-        gbc_endDayComboBox.gridy = 0;
-        panel_5.add(endDayComboBox, gbc_endDayComboBox);
 
         JLabel amountOfAdultsLabel = new JLabel("Amount of adults");
         GridBagConstraints gbc_amountOfAdultsLabel = new GridBagConstraints();
@@ -571,10 +519,8 @@ public class BookingInfoGUI extends JFrame {
 
     private void searchButtonClicked() {
         Thread thread = new Thread(() -> {
-            String startDateString = formatComboBoxValuesToDate(
-                    startYearComboBox, startMonthComboBox, startDayComboBox);
-            String endDateString = formatComboBoxValuesToDate(endYearComboBox,
-                    endMonthComboBox, endDayComboBox);
+            String startDateString = startYearComboBox.getDate().toString();
+            String endDateString = endYearComboBox.getDate().toString();
 
             boolean searchForCabin = cabinCheckBox.isSelected();
             boolean searchForPitch = pitchCheckBox.isSelected();
@@ -600,7 +546,7 @@ public class BookingInfoGUI extends JFrame {
         });
         thread.setDaemon(true);
         thread.start();
-    }
+    }  
 
     private boolean isDate(String dateString) {
         try {
@@ -615,10 +561,8 @@ public class BookingInfoGUI extends JFrame {
     private void confirmButtonClicked() {
 
         if (necessaryInformationValid()) {
-            String startDateString = formatComboBoxValuesToDate(
-                    startYearComboBox, startMonthComboBox, startDayComboBox);
-            String endDateString = formatComboBoxValuesToDate(endYearComboBox,
-                    endMonthComboBox, endDayComboBox);
+            String startDateString = startYearComboBox.getDate().toString();
+            String endDateString = startYearComboBox.getDate().toString();
 
             int rowIndex = campsiteTable.getSelectedRow();
             Campsite currentCampsite = campsiteTableModel.getCampsite(rowIndex);
@@ -768,18 +712,6 @@ public class BookingInfoGUI extends JFrame {
         // Define the range of years, months, and days
         int startYear = 2023;
         int endYear = 2030;
-
-        // Populate the start and end year JComboBoxes
-        populateComboBox(startYearComboBox, startYear, endYear);
-        populateComboBox(endYearComboBox, startYear, endYear);
-
-        // Populate the month JComboBoxes (1 to 12)
-        populateComboBox(startMonthComboBox, 1, 12);
-        populateComboBox(endMonthComboBox, 1, 12);
-
-        // Populate the day JComboBoxes (1 to 31)
-        populateComboBox(startDayComboBox, 1, 31);
-        populateComboBox(endDayComboBox, 1, 31);
 
         populateComboBox(amountOfAdultsComboBox, 1, 10);
         populateComboBox(amountOfChildrenComboBox, 0, 10);
