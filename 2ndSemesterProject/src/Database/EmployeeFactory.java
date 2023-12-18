@@ -7,16 +7,38 @@ import java.sql.SQLException;
 
 public class EmployeeFactory {
 
+    public static Employee getEmployee(int employeeId, String name, Address address, String phoneNumber, String email, String role) {
+
+        Employee employee = null;
+
+        switch (role.toLowerCase()) {
+            case "admin":
+                employee = new Admin(employeeId, name, address, phoneNumber, email, null, null);
+                break;
+            case "receptionist":
+                employee = new Receptionist(employeeId, name, address, phoneNumber, email, null, null);
+                break;
+            case "salesassistant":
+                employee = new SalesAssistant(employeeId, name, address, phoneNumber, email, null, null);
+                break;
+            case "janitor":
+                employee = new Janitor(employeeId, name, address, phoneNumber, email, null, null);
+                break;
+        }
+        return employee;
+    }
+
     public static Employee getEmployee(ResultSet resultSet) {
         Employee employee = null;
         try {
-            int id = resultSet.getInt("id");
+            int id = resultSet.getInt("employeeId");
 
             String role = resultSet.getString("role");
 
             String fname = resultSet.getString("fname");
             String lname = resultSet.getString("lname");
 
+            int addressId = resultSet.getInt("addressId");
             String street = resultSet.getString("street");
             String streetno = resultSet.getString("streetno");
             String zipcode = resultSet.getString("zipcode");
@@ -29,7 +51,8 @@ public class EmployeeFactory {
             String email = resultSet.getString("email");
 
             String name = fname + " " + lname;
-            String address = street + " " + streetno + " " + city + " " + zipcode;
+
+            Address address = new Address(addressId, street, Integer.parseInt(streetno), Integer.parseInt(zipcode), city);
 
             switch (role.toLowerCase()) {
                 case "admin":

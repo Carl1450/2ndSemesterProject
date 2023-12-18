@@ -3,9 +3,9 @@ package Model;
 public class Customer extends Person {
 
 	private int customerId;
-	
-	public Customer(int customerId, String name, String address, String phoneNumber, String email ) {
-		super(name, address, phoneNumber, email);
+
+	public Customer(int customerId, String name, String phoneNumber, String email, Address address) {
+		super(name, phoneNumber, email, address);
 		this.customerId = customerId;
 	}
 
@@ -16,6 +16,5 @@ public class Customer extends Person {
 	public void setCustomerId(int customerId) {
 		this.customerId = customerId;
 	}
-	
-	
+
 }

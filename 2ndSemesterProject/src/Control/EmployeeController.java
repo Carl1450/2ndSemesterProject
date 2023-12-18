@@ -1,6 +1,8 @@
 package Control;
 
 import Database.ConnectionEnvironment;
+import Database.EmployeeFactory;
+import Model.Address;
 import Model.Employee;
 
 import java.nio.charset.StandardCharsets;
@@ -69,20 +71,74 @@ public class EmployeeController {
 
     public int saveEmployee(String name, String phoneNumber, String email, String address, String zipcode, String city, String role, String cprNo, String password) {
 
+        String firstName = getFirstNameFrom(name);
+
+        String lastName = getLastNameFrom(name);
+
+        String street = getStreetFromAdressString(address);
+
+        int streetNo = getStreetNumberFromAdressString(address);
+
+
         String hashedCpr = hashinput(cprNo);
         String hashedPassword = hashinput(password);
 
-        return employeeDAO.saveEmployee(name, address, phoneNumber, email, Integer.parseInt(zipcode), city, role, hashedCpr, hashedPassword);
 
+        return employeeDAO.saveEmployee(firstName, lastName, phoneNumber, email, street, streetNo, Integer.parseInt(zipcode), city, role, hashedCpr, hashedPassword);
+
+    }
+
+    private String getFirstNameFrom(String name) {
+        String[] splitName = name.split(" ");
+
+        String firstName = "";
+
+        for (int i = 0; i < splitName.length - 1; i++) {
+            firstName += " " + splitName[i];
+        }
+        return firstName.trim();
+    }
+
+    private String getLastNameFrom(String name) {
+        String[] splitName = name.split(" ");
+        String lastName = splitName[splitName.length - 1];
+        return lastName;
+    }
+
+    private String getStreetFromAdressString(String address) {
+        String[] splitAddress = address.split(" ");
+
+        String streetName = "";
+
+        for (int i = 0; i < splitAddress.length - 1; i++) {
+            streetName += " " + splitAddress[i];
+        }
+        return streetName.trim();
+    }
+
+    private int getStreetNumberFromAdressString(String address) {
+
+        String[] splitAddress = address.split(" ");
+
+        int streetNo = Integer.parseInt(splitAddress[splitAddress.length - 1]);
+
+        return streetNo;
     }
 
     public boolean deleteEmployee(int employeeId) {
         return employeeDAO.deleteEmployee(employeeId);
     }
 
-    public boolean updateEmployee(int employeeId, String name, String address, int zipCode, String city, String phoneNumber, String email, String role) {
+    public boolean updateEmployee(Employee oldEmployee , String name, String address, int zipCode, String city, String phoneNumber, String email, String role) {
 
-        return employeeDAO.UpdateEmployee(employeeId, name, address, zipCode, city, phoneNumber, email, role);
+        String street = getStreetFromAdressString(address);
+        int streetNo = getStreetNumberFromAdressString(address);
+
+        Address employeeAddress = new Address(oldEmployee.getAddress().getId(), street,streetNo, zipCode, city);
+
+        Employee updatedEmployee = EmployeeFactory.getEmployee(oldEmployee.getId(), name, employeeAddress, phoneNumber, email, role);
+
+        return employeeDAO.UpdateEmployee(updatedEmployee);
     }
 
 }

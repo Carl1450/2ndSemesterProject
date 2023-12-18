@@ -67,6 +67,7 @@ public class CreateCampsiteGUI extends JFrame {
 
 	private CampsiteCRUDTableModel campsiteCRUDTableModel;
 	private JButton createUpdateButton;
+	private int newSiteNo;
 
 
 	/**
@@ -379,23 +380,12 @@ public class CreateCampsiteGUI extends JFrame {
 		updateTable(false);
 	}
 
-	private void getTextFieldDataForCabin() {
+	private void getTextFieldDataForCampsite() {
 		try {
-			siteNo = Integer.parseInt(siteNumberTextField.getText());
-			section = sectionTextField.getText();
-			road = roadTextField.getText();
-			type = typeComboBox.getSelectedItem().toString();
-			fee = Float.parseFloat(feeTextField.getText());
-			maxPeople = Integer.parseInt(maxPeopleTextField.getText());
-			deposit = Float.parseFloat(depositTextField.getText());
-			price = Float.parseFloat(priceTextField.getText());
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void getTextFieldDataForPitch() {
-		try {
+			if(!maxPeopleTextField.getText().isEmpty() || !depositTextField.getText().isEmpty()) {
+				maxPeople = Integer.parseInt(maxPeopleTextField.getText());
+				deposit = Float.parseFloat(depositTextField.getText());
+			}
 			siteNo = Integer.parseInt(siteNumberTextField.getText());
 			section = sectionTextField.getText();
 			road = roadTextField.getText();
@@ -423,18 +413,8 @@ public class CreateCampsiteGUI extends JFrame {
 			return;
 		}
 
-		if (typeComboBox.getSelectedItem().equals("Cabin")) {
-			getTextFieldDataForCabin();
-			campsiteController.saveCampsite(siteNo, section, road, type, fee, price);
-			campsiteController.saveCabin(siteNo, maxPeople, deposit);
-		}
-
-		if (typeComboBox.getSelectedItem().equals("Pitch")) {
-			getTextFieldDataForPitch();
-			campsiteController.saveCampsite(siteNo, section, road, type, fee, price);
-			campsiteController.savePitch(siteNo);
-		}
- 
+		getTextFieldDataForCampsite();
+		campsiteController.saveCampsite(siteNo, section, road, type, fee, price, maxPeople, deposit);
 		saved = true;
 
 		if (saved) {
@@ -448,7 +428,7 @@ public class CreateCampsiteGUI extends JFrame {
 	private void updateButtonClicked() {
 		boolean updated = false;
 		int inputSiteNumber = 0;
-
+		
 		try {
 			inputSiteNumber = Integer.parseInt(siteNumberTextField.getText());
 		} catch (NumberFormatException e) {
@@ -457,33 +437,43 @@ public class CreateCampsiteGUI extends JFrame {
 		}
 
 		Campsite campsite = campsiteCRUDTableModel.getCampsite(campsiteTable.getSelectedRow());
-		
-		if (typeComboBox.getSelectedItem().equals("Cabin")) {
-			getTextFieldDataForCabin();
-			campsiteController.updateCampsite(campsite.getSiteNumber(), section, road, type, fee, price);
-			campsiteController.updateCabin(campsite.getSiteNumber(), maxPeople, deposit);
-		}
-
-		if (typeComboBox.getSelectedItem().equals("Pitch")) {
-			getTextFieldDataForPitch();
-			campsiteController.updateCampsite(campsite.getSiteNumber(), section, road, type, fee, price);
-			campsiteController.updatePitch(campsite.getSiteNumber());
-		}
-		
+		getTextFieldDataForCampsite();
+		campsiteController.updateCampsite(siteNo, campsite.getSiteNumber(), section, road, type, fee, price, maxPeople, deposit);
 		updated = true;
 		
 		if (updated) {
 			JOptionPane.showMessageDialog(this, "Succesfully updated campsite");
 			updateTable(true);
+			clearCampsiteTextFields();
+			setUpdateCreateButtonTo("Create");
 		} else {
 			JOptionPane.showMessageDialog(this, "Error: Failed to update campsite");
+			clearCampsiteTextFields();
 		}
 	}
 
 	private void deleteButtonClicked() {
+		boolean deleted = false;
+		int selectedRow = campsiteTable.getSelectedRow();
+		if(selectedRow == -1) {
+			JOptionPane.showMessageDialog(null, "Please select a row to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+	        return;
+		}
+		
 		Campsite campsite = campsiteCRUDTableModel.getCampsite(campsiteTable.getSelectedRow());
 		campsiteController.deleteCampsite(campsite.getSiteNumber());
-		updateTable(true);
+		
+		deleted = true;
+		
+		if (deleted) {
+			JOptionPane.showMessageDialog(this, "Succesfully deleted campsite");
+			updateTable(true);
+			clearCampsiteTextFields();
+			setUpdateCreateButtonTo("Create");
+		} else {
+			JOptionPane.showMessageDialog(this, "Error: Failed to delete campsite");
+			clearCampsiteTextFields();
+		}
 	}
 
 	private void backButtonClicked() {

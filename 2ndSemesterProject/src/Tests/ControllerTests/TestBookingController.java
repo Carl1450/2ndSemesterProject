@@ -110,13 +110,14 @@ public class TestBookingController {
     @Test
     public void testReserveAndSaveBookingForSameEmployee() {
         // Arrange
-        Employee employee = new Admin(1, "", "", "", "", "", "");
+        Employee employee = new Admin(1, "", new Address(1, null, 0, 0, null), "", "",
+                "", "");
         Date startDate = Date.valueOf("2023-07-01");
         Date endDate = Date.valueOf("2023-07-07");
         float price = 5000;
         int amountOfAdults = 2;
         int amountOfChildren = 1;
-        Customer customer = new Customer(1, "", "", "", "");
+        Customer customer = new Customer(1, "", "", "", null);
         Price pitchPrice = new Price(500, startDate);
         Campsite campsite = new Pitch(1, "", "", pitchPrice, 1000);
 
@@ -140,13 +141,14 @@ public class TestBookingController {
     @Test
     public void testReserveAndSaveTwoDifferentCampsitesForSameEmployee() {
         // Arrange
-        Employee employee = new Admin(1, "", "", "", "", "", "");
+        Employee employee = new Admin(1, "", new Address(1, null, 0, 0, null), "", "",
+                "", "");
         Date startDate = Date.valueOf("2023-07-01");
         Date endDate = Date.valueOf("2023-07-07");
         float price = 5000;
         int amountOfAdults = 2;
         int amountOfChildren = 1;
-        Customer customer = new Customer(1, "", "", "", "");
+        Customer customer = new Customer(1, "", "", "", null);
         Price pitchPrice = new Price(500, startDate);
 
         Campsite campsite1 = new Pitch(1, "", "", pitchPrice, 1000);
@@ -176,14 +178,16 @@ public class TestBookingController {
     @Test
     public void testConcurrentReservationAndBooking() {
         // Arrange
-        Employee employee1 = new Admin(1, "", "", "", "", "", "");
-        Employee employee2 = new Admin(2, "", "", "", "", "", "");
+        Employee employee1 = new Admin(1, "", new Address(1, null, 0, 0, null), "", "",
+                "", "");
+        Employee employee2 = new Admin(1, "", new Address(1, null, 0, 0, null), "", "",
+                "", "");
         Date startDate = Date.valueOf("2023-07-01");
         Date endDate = Date.valueOf("2023-07-07");
         float price = 5000;
         int amountOfAdults = 2;
         int amountOfChildren = 1;
-        Customer customer = new Customer(1, "", "", "", "");
+        Customer customer = new Customer(1, "", "", "", null);
         Price pitchPrice = new Price(500, startDate);
 
         Campsite campsite = new Pitch(1, "", "", pitchPrice, 1000);
@@ -215,8 +219,10 @@ public class TestBookingController {
     @Test
     public void testNonOverlappingReservationAndBooking() {
         // Arrange
-        Employee employee1 = new Admin(1, "", "", "", "", "", "");
-        Employee employee2 = new Admin(2, "", "", "", "", "", "");
+        Employee employee1 = new Admin(1, "", new Address(1, null, 0, 0, null), "", "",
+                "", "");
+        Employee employee2 = new Admin(1, "", new Address(1, null, 0, 0, null), "", "",
+                "", "");
         Date startDate1 = Date.valueOf("2023-07-01");
         Date endDate1 = Date.valueOf("2023-07-07");
         Date startDate2 = Date.valueOf("2023-07-08");
@@ -224,7 +230,7 @@ public class TestBookingController {
         float price = 5000;
         int amountOfAdults = 2;
         int amountOfChildren = 1;
-        Customer customer = new Customer(1, "", "", "", "");
+        Customer customer = new Customer(1, "", "", "", null);
         Price pitchPrice = new Price(500, startDate1);
 
         Campsite campsite = new Pitch(1, "", "", pitchPrice, 1000);
@@ -274,7 +280,7 @@ public class TestBookingController {
     @Test
     void TS_1_TC_3_invalid_value_booking_is_not_persisted_in_database() {
         // Arrange
-        Employee employee = new Admin(1, "", "", "", "",
+        Employee employee = new Admin(1, "", new Address(1, null, 0, 0, null), "", "",
                 "", "");
         BookingController SUT = new BookingController(employee , ConnectionEnvironment.TESTING);
 

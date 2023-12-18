@@ -95,7 +95,7 @@ public class TestBookingDAO {
         int amountOfAdults = 2;
         int amountOfChildren = 1;
         Customer customer = new Customer(1, null, null, null, null);
-        Employee employee = new Admin(1, "", "", "", "",
+        Employee employee = new Admin(1, "", new Address(1, null, 0, 0, null), "", "",
                 "", "");
         Price pitchPrice = new Price(500, startDate);
         Campsite campsite = new Pitch(1, "", "", pitchPrice, 1000);
@@ -122,7 +122,7 @@ public class TestBookingDAO {
         int amountOfAdults = 2;
         int amountOfChildren = 1;
         Customer customer = new Customer(1, null, null, null, null);
-        Employee employee = new Admin(1, "", "", "", "",
+        Employee employee = new Admin(1, "", new Address(1, null, 0, 0, null), "", "",
                 "", "");
         Price pitchPrice = new Price(500, startDate);
         Campsite campsite = new Pitch(1, "", "", pitchPrice, 1000);
