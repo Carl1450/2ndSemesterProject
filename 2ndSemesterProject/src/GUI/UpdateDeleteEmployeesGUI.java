@@ -370,12 +370,8 @@ public class UpdateDeleteEmployeesGUI extends JFrame {
 
 	private void updateButtonClicked() {
 
-		// int employeeId, String name, String address, String phoneNumber, String
-		// email, int zipCode,
-		// String city, String role
 		Employee employee = getSelectedEmployee();
 
-		int employeeId = employee.getId();
 		String newName = nameTextField.getText();
 		String newAddress = addressTextField.getText();
 		int newZipCode = Integer.parseInt(zipcodeTextField.getText());

@@ -180,7 +180,7 @@ public class TestBookingController {
         // Arrange
         Employee employee1 = new Admin(1, "", new Address(1, null, 0, 0, null), "", "",
                 "", "");
-        Employee employee2 = new Admin(1, "", new Address(1, null, 0, 0, null), "", "",
+        Employee employee2 = new Admin(2, "", new Address(1, null, 0, 0, null), "", "",
                 "", "");
         Date startDate = Date.valueOf("2023-07-01");
         Date endDate = Date.valueOf("2023-07-07");
