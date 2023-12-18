@@ -297,7 +297,7 @@ public class CreateTaskGUI extends JFrame {
 
 		JTextArea textArea = new JTextArea(value.toString());
 		textArea.setWrapStyleWord(true);
-		textArea.setLineWrap(true);
+		textArea.setLineWrap(true); 
 		textArea.setOpaque(true);
 		textArea.setBackground(cellComponent.getBackground());
 		return textArea;

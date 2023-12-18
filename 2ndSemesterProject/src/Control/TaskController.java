@@ -30,11 +30,6 @@ public class TaskController {
         currentTask = new Task(0, description, priority, deadline, receptionist, null);
         return currentTask;
     }
-    
-    public boolean saveTask() {
-	return taskDAO.saveTask(currentTask);
-	
-    }
 
     public List<Janitor> getAllJanitors() {
         List<Janitor> janitors = null;
@@ -49,7 +44,7 @@ public class TaskController {
         currentTask.setJanitors(janitor);
     }
 
-    public boolean finishTask() {
+    public boolean saveTask() {
 
         boolean result = false;
 
@@ -64,7 +59,7 @@ public class TaskController {
 	return taskDAO.getUncompletedTasks(janitorId, useId);
     }
 
-    public boolean finishTask(Task task) {
+    public boolean completeTask(Task task) {
         return taskDAO.finishTask(task.getId());
     }
 

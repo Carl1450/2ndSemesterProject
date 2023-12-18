@@ -103,7 +103,7 @@ public class TestTaskController {
         SUT.createTask(description, priority, receptionist, deadline);
         SUT.assignJanitorToTask(janitor);
 
-        Boolean result = SUT.finishTask();
+        Boolean result = SUT.saveTask();
 
         // Assert
         assertTrue(result);
@@ -124,7 +124,7 @@ public class TestTaskController {
         SUT.createTask(description, priority, receptionist, Date.valueOf("2023-01-01"));
         SUT.assignJanitorToTask(janitor);
 
-        Boolean result = SUT.finishTask();
+        Boolean result = SUT.saveTask();
 
         // Assert
         assertFalse(result);
