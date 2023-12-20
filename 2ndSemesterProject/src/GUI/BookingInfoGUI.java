@@ -630,17 +630,21 @@ public class BookingInfoGUI extends JFrame {
     private boolean informationInFieldsMatchesCustomer(Customer customer) {
         boolean informationMatches = false;
 
-        String textFieldName = nameTextField.getText();
-        String textFieldEmail = emailField.getText();
+        String textFieldName = nameTextField.getText().trim();
+        String textFieldEmail = emailField.getText().trim();
 
-        String textFieldAddress = addressField.getText();
-        String textFieldCity = cityField.getText();
-        String textFieldZipCode = zipCodeField.getText();
+        String textFieldAddress = addressField.getText().trim();
+        String textFieldCity = cityField.getText().trim();
+        String textFieldZipCode = zipCodeField.getText().trim();
 
         String combinedTextFieldAddress = textFieldAddress + " " + textFieldCity + " " + textFieldZipCode;
 
+        Address customerAddress = customer.getAddress();
+
+        String customerAddressString = customerAddress.getStreet() + " " + customerAddress.getStreetNo() + " " + customerAddress.getCity() + " " + customerAddress.getZipCode();
+
         if (customer.getName().equals(textFieldName) && customer.getEmail().equals(textFieldEmail)
-                && customer.getAddress().equals(combinedTextFieldAddress)) {
+                && customerAddressString.equals(combinedTextFieldAddress)) {
             informationMatches = true;
         }
 
