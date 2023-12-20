@@ -70,7 +70,7 @@ public class CustomerDAO {
                 + "[address].id as addressId, [address].street, [address].streetno, [address].zipcode, city.city " + "FROM Customer cust "
                 + "LEFT JOIN [address] ON cust.addressId = [address].id "
                 + "LEFT JOIN city ON [address].zipcode = city.zipcode "
-                + "WHERE cust.phoneno LIKE ?";
+                + "WHERE cust.phoneno LIKE ? AND cust.id > 0";
 
         try (Connection connection = DBConnection.getConnection(env);
              PreparedStatement preparedStatement = connection.prepareStatement(findAllCustomersQuery)) {

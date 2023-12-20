@@ -223,6 +223,7 @@ public class MainMenuGUI extends JFrame {
 			bookingButton.setVisible(true);
 			orderButton.setVisible(true);
 			taskButton.setVisible(true);
+			editCustomerButton.setVisible(true);
 		} else if (employee instanceof SalesAssistant) {
 			orderButton.setVisible(true);
 		} else if (employee instanceof Janitor) {
