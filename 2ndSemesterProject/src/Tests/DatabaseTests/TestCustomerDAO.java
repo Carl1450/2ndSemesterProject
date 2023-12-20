@@ -122,8 +122,8 @@ public class TestCustomerDAO {
 
         // Assert
         assertNotNull(updatedCustomer);
-        assertEquals(newEmail, updatedCustomer.getEmail());
-        assertEquals(newName, updatedCustomer.getName());
+        assertEquals(newEmail, updatedCustomerInDatabase.getEmail());
+        assertEquals(newName, updatedCustomerInDatabase.getName());
     }
 
     @Test
