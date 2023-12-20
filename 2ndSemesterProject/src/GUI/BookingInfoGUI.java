@@ -538,7 +538,7 @@ public class BookingInfoGUI extends JFrame {
     private void confirmButtonClicked() {
 
         if (necessaryInformationValid()) {
-            String startDateString = endDateDatePicker.getDate().toString();
+            String startDateString = startDateDatePicker.getDate().toString();
             String endDateString = endDateDatePicker.getDate().toString();
 
             int rowIndex = campsiteTable.getSelectedRow();
@@ -583,10 +583,13 @@ public class BookingInfoGUI extends JFrame {
     }
 
     private void backButtonClicked() {
-        Thread cancelBookingThread = new Thread(() -> {
+        Thread cancelBookingThread = new Thread (() -> {
             bookingController.cancelBooking();
-        });
+
+        }); 
         cancelBookingThread.start();
+        
+        
         MainMenuGUI mainMenuGUI = new MainMenuGUI(employee);
         mainMenuGUI.setVisible(true);
         dispose();

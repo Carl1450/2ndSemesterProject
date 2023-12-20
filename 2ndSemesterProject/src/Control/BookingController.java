@@ -1,174 +1,186 @@
 package Control;
 
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.SQLException;
-import java.util.ArrayList;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import Database.BookingDAO;
-import Database.CampsiteFactory;
 import Database.ConnectionEnvironment;
-import Database.DBConnection;
 import Model.Booking;
 import Model.Campsite;
 import Model.Customer;
 import Model.Employee;
 
 public class BookingController {
-    private BookingDAO bookingDAO;
-    private CampsiteController campsiteController;
-    private Booking currentBooking;
-    private CustomerController customerController;
-    private Employee currentEmployee;
+	private BookingDAO bookingDAO;
+	private CampsiteController campsiteController;
+	private Booking currentBooking;
+	private CustomerController customerController;
+	private Employee currentEmployee;
 
-    private ConnectionEnvironment env;
+	private ConnectionEnvironment env;
 
-    public BookingController(Employee employee, ConnectionEnvironment env) {
-        this.env = env;
+	public BookingController(Employee employee, ConnectionEnvironment env) {
+		this.env = env;
 
-        customerController = new CustomerController(env);
-        campsiteController = new CampsiteController(env);
+		customerController = new CustomerController(env);
+		campsiteController = new CampsiteController(env);
 
-        bookingDAO = new BookingDAO(env);
+		bookingDAO = new BookingDAO(env);
 
-        currentEmployee = employee;
+		currentEmployee = employee;
 
-    }
+	}
 
-    public Booking startBooking() {
-        currentBooking = new Booking(currentEmployee);
-        return currentBooking;
-    }
+	public Booking startBooking() {
+		currentBooking = new Booking(currentEmployee);
+		return currentBooking;
+	}
 
-    public Customer findCustomerByPhoneNumber(String phoneNumber) {
-        Customer customer = customerController.findCustomerByPhoneNumber(phoneNumber);
-        currentBooking.setCustomer(customer);
-        return customer;
-    }
+	public Customer findCustomerByPhoneNumber(String phoneNumber) {
+		Customer customer = customerController.findCustomerByPhoneNumber(phoneNumber);
+		if (customer != null) {
+			currentBooking.setCustomer(customer);
+		}
+		return customer;
+	}
 
-    public List<Campsite> getAvailableCampsites(String startDate, String endDate, boolean searchForCabin, boolean searchForPitch) {
-        Date startDateFormatted = Date.valueOf(startDate);
-        Date endDateFormatted = Date.valueOf(endDate);
-        return campsiteController.getAvailableCampsites(startDateFormatted, endDateFormatted, searchForCabin, searchForPitch);
-    }
+	public List<Campsite> getAvailableCampsites(String startDate, String endDate, boolean searchForCabin,
+			boolean searchForPitch) {
+		Date startDateFormatted = Date.valueOf(startDate);
+		Date endDateFormatted = Date.valueOf(endDate);
+		return campsiteController.getAvailableCampsites(startDateFormatted, endDateFormatted, searchForCabin,
+				searchForPitch);
+	}
 
-    public void addCampsiteToBooking(Campsite campsite, String startDate, String endDate, boolean includeFee) {
-        Date startDateFormatted = Date.valueOf(startDate);
-        Date endDateFormatted = Date.valueOf(endDate);
-        if (reserveCampsite(campsite, startDateFormatted, endDateFormatted)) {
-            currentBooking.setCampsite(campsite);
+	public void addCampsiteToBooking(Campsite campsite, String startDate, String endDate, boolean includeFee) {
+		Date startDateFormatted = Date.valueOf(startDate);
+		Date endDateFormatted = Date.valueOf(endDate);
+		System.out.println(startDateFormatted.toString() + endDateFormatted.toString());
+		if (reserveCampsite(campsite, startDateFormatted, endDateFormatted)) {
+			currentBooking.setCampsite(campsite);
 
-            float totalPrice = 0;
-            totalPrice += campsite.getPrice().getPrice();
-            if (includeFee) {
-                totalPrice += campsite.getFee();
-            }
-            currentBooking.setTotalPrice(totalPrice);
+			long stayAmountOfDays = getDaysDifference(startDateFormatted, endDateFormatted);
 
-            currentBooking.setStartDate(startDateFormatted);
-            currentBooking.setEndDate(endDateFormatted);
-        }
-    }
+			float totalPrice = campsite.getPrice().getPrice() * stayAmountOfDays;
+			if (includeFee) {
+				totalPrice += campsite.getFee();
+			}
+			currentBooking.setTotalPrice(totalPrice);
 
-    public boolean reserveCampsite(Campsite campsite, Date startDate, Date endDate) {
-        return campsiteController.reserveCampsite(campsite, startDate, endDate, currentEmployee);
+			currentBooking.setStartDate(startDateFormatted);
+			currentBooking.setEndDate(endDateFormatted);
+		}
 
-    }
+	}
 
-    public boolean cancelReservationOfCampsite() {
+	private long getDaysDifference(Date date1, Date date2) {
 
-        boolean successfullCancel;
+		java.time.LocalDate localDate1 = date1.toLocalDate();
+		java.time.LocalDate localDate2 = date2.toLocalDate();
 
-        Campsite campsite = currentBooking.getCampsite();
-        Date startDate = currentBooking.getStartDate();
-        Date endDate = currentBooking.getEndDate();
+		long daysDifference = ChronoUnit.DAYS.between(localDate1, localDate2);
+		if (daysDifference == 0) { 
+			daysDifference = 1;
+		}
 
-        if (campsite == null || startDate == null || endDate == null || currentEmployee == null) {
-            successfullCancel = false;
-        } else {
-            successfullCancel = campsiteController.cancelReservationOfCampsite(campsite, startDate, endDate, currentEmployee);
-        }
+		return daysDifference;
+	}
 
+	public boolean reserveCampsite(Campsite campsite, Date startDate, Date endDate) {
+		return campsiteController.reserveCampsite(campsite, startDate, endDate, currentEmployee);
 
-        return successfullCancel;
+	}
 
+	public boolean cancelReservationOfCampsite() {
 
-    }
+		boolean successfullCancel;
 
-    public boolean saveBooking() {
-        boolean success = false;
+		Campsite campsite = currentBooking.getCampsite();
+		Date startDate = currentBooking.getStartDate();
+		Date endDate = currentBooking.getEndDate();
 
-        if (validateBooking(currentBooking)) {
-            success = bookingDAO.saveBooking(currentBooking);
-        }
+		if (campsite == null || startDate == null || endDate == null || currentEmployee == null) {
+			successfullCancel = false;
+		} else {
+			successfullCancel = campsiteController.cancelReservationOfCampsite(campsite, startDate, endDate,
+					currentEmployee);
+		}
 
+		return successfullCancel;
 
-        return success;
-    }
+	}
 
-    private boolean validateBooking(Booking booking) {
-        boolean validBooking = true;
+	public boolean saveBooking() {
+		boolean success = false;
 
-        if (booking == null) {
-            validBooking = false;
-        } else {
-            if (booking.getEndDate() == null || booking.getStartDate() == null || booking.getEndDate().before(booking.getStartDate())) {
-                return false;
-            }
+		if (validateBooking(currentBooking)) {
+			success = bookingDAO.saveBooking(currentBooking);
+		}
 
-            if (booking.getTotalPrice() <= 0) {
-                validBooking = false;
-            }
+		return success;
+	}
 
-            if (booking.getCustomer() == null) {
-                validBooking = false;
-            }
+	private boolean validateBooking(Booking booking) {
+		boolean validBooking = true;
 
-            if (booking.getEmployee() == null) {
-                validBooking = false;
-            }
+		if (booking == null) {
+			validBooking = false;
+		} else {
+			if (booking.getEndDate() == null || booking.getStartDate() == null
+					|| booking.getEndDate().before(booking.getStartDate())) {
+				return false;
+			}
 
-            if (booking.getCampsite() == null) {
-                validBooking = false;
-            }
+			if (booking.getTotalPrice() <= 0) {
+				validBooking = false;
+			}
 
-            if (booking.getAmountOfAdults() < 1) {
-                validBooking = false;
-            }
+			if (booking.getCustomer() == null) {
+				validBooking = false;
+			}
 
-            if (booking.getAmountOfChildren() < 0) {
-                validBooking = false;
-            }
-        }
+			if (booking.getEmployee() == null) {
+				validBooking = false;
+			}
 
+			if (booking.getCampsite() == null) {
+				validBooking = false;
+			}
 
-        return validBooking;
-    }
+			if (booking.getAmountOfAdults() < 1) {
+				validBooking = false;
+			}
 
+			if (booking.getAmountOfChildren() < 0) {
+				validBooking = false;
+			}
+		}
 
-    public void cancelBooking() {
-        cancelReservationOfCampsite();
-        currentBooking = null;
-    }
+		return validBooking;
+	}
 
+	public void cancelBooking() {
+		cancelReservationOfCampsite();
+		currentBooking = null;
+	}
 
-    public void setAmountOfPeople(int amountOfAdults, int amountOfChildren) {
-        currentBooking.setAmountOfAdults(amountOfAdults);
-        currentBooking.setAmountOfChildren(amountOfChildren);
-    }
+	public void setAmountOfPeople(int amountOfAdults, int amountOfChildren) {
+		currentBooking.setAmountOfAdults(amountOfAdults);
+		currentBooking.setAmountOfChildren(amountOfChildren);
+	}
 
-    public boolean handlePayment(float amount) {
-        return amount > 0;
+	public boolean handlePayment(float amount) {
+		return amount > 0;
 
-    }
+	}
 
-    public Booking getCurrentBooking() {
-        return currentBooking;
+	public Booking getCurrentBooking() {
+		return currentBooking;
 
-    }
+	}
 
-    public void setCurrentBooking(Booking booking) {
-        this.currentBooking = booking;
-    }
+	public void setCurrentBooking(Booking booking) {
+		this.currentBooking = booking;
+	}
 }
