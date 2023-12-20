@@ -38,7 +38,7 @@ public class EmployeeController {
     public boolean validateLogin(Employee employee, String password) {
 
         if (employee != null) {
-            String enteredPasswordHash = hashinput(password);
+            String enteredPasswordHash = hashInput(password);
             if (enteredPasswordHash.equals(employee.getPassword())) {
                 return true;
             }
@@ -46,7 +46,7 @@ public class EmployeeController {
         return false;
     }
 
-    public String hashinput(String input) {
+    public String hashInput(String input) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             byte[] hashedPassword = md.digest(input.getBytes(StandardCharsets.UTF_8));
@@ -80,8 +80,8 @@ public class EmployeeController {
         int streetNo = getStreetNumberFromAdressString(address);
 
 
-        String hashedCpr = hashinput(cprNo);
-        String hashedPassword = hashinput(password);
+        String hashedCpr = hashInput(cprNo);
+        String hashedPassword = hashInput(password);
 
 
         return employeeDAO.saveEmployee(firstName, lastName, phoneNumber, email, street, streetNo, Integer.parseInt(zipcode), city, role, hashedCpr, hashedPassword);
