@@ -56,7 +56,6 @@ public class BookingController {
 	public void addCampsiteToBooking(Campsite campsite, String startDate, String endDate, boolean includeFee) {
 		Date startDateFormatted = Date.valueOf(startDate);
 		Date endDateFormatted = Date.valueOf(endDate);
-		System.out.println(startDateFormatted.toString() + endDateFormatted.toString());
 		if (reserveCampsite(campsite, startDateFormatted, endDateFormatted)) {
 			currentBooking.setCampsite(campsite);
 

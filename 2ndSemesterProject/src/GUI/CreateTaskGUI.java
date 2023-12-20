@@ -213,8 +213,6 @@ public class CreateTaskGUI extends JFrame {
 				Janitor janitor = null;
 				int selectedIndex = listJanitors.getSelectedIndex();
 
-				System.out.println(description);
-
 				// Checks if the description has contents besides whitespace
 				if (description == null || description.trim().length() == 0) {
 					JOptionPane.showMessageDialog(null, "You need to enter a description");
