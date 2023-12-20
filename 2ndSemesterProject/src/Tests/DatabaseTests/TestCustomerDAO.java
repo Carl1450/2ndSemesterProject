@@ -113,8 +113,9 @@ public class TestCustomerDAO {
 
         Address address = new Address(1, "Mockaddress", 123, 9000, "Aalborg");
 
-        Customer updatedCustomer = new Customer(1, "Paul John", phoneNumber, "old.email.example.com", address);
+        Customer oldCustomer = new Customer(1, "Paul John", phoneNumber, "old.email.example.com", address);
 
+        Customer updatedCustomer = new Customer(1, newName, phoneNumber, newEmail, address);
 
         // Act
         SUT.updateCustomer(updatedCustomer);
